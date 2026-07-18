@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+    <title>kassa-game</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta id="gameViewport" name="viewport" content="width=device-width initial-scale=1">
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <script src="soundmanager2-setup.js"></script>
+    <script src="soundmanager2-jsmin.js"></script>
+    <!-- Yandex Games SDK -->
+    <script src="/sdk.js"></script>
+    <script>
+        YaGames.init()
+        .then(ysdk => {
+            window.ysdk = ysdk; // сохранить глобально
+
+            // Сохраняем язык в глобальную переменную для Java
+            window.ysdk_lang = ysdk.environment.i18n.lang;
+            console.log('Язык игрока:', window.ysdk_lang); // например "ru" или "en")
+
+        });
+    </script>
+    <script>
+        window.getPlayerString = function(callback) {
+            if (!ysdk) {
+                console.error("YSDK not ready");
+                callback("");
+                return;
+            }
+            ysdk.getPlayer({scopes:false}).then(player=>{
+                if (!player.isAuthorized()) {
+                    callback("");
+                } else {
+                    // сохраняем в глобальную переменную
+                    window.yandexPlayer = player;
+                    callback(player.getUniqueID() + "|" + player.getName());
+                }
+            });
+        };
+
+        window.authorizePlayer = function(callback) {
+            if (!ysdk) {
+                console.error("YSDK not ready");
+                callback("");
+                return;
+            }
+            ysdk.auth.openAuthDialog()
+                .then(() => ysdk.getPlayer({scopes:true}))
+                .then(player => {
+                    if (player.isAuthorized()) {
+                        callback(player.getUniqueID() + "|" + player.getName());
+                    } else {
+                        callback("");
+                    }
+                })
+                .catch(err => {
+                    console.warn("Auth canceled", err);
+                    callback("");
+                });
+        };
+    </script>
+    <script>
+        // --- Сохранение ---
+        window.saveUserToCloud = function(dataString) {
+            const player = window.yandexPlayer;
+            if (!player) return console.error("Player не готов");
+
+            player.setData({ saveData: dataString })
+                .then(() => {
+                    console.log("Сохранено в облаке:", dataString);
+                })
+                .catch(err => console.error("Ошибка setData:", err));
+        };
+
+        // --- Загрузка ---
+        window.loadUserFromCloud = function() {
+            const player = window.yandexPlayer;
+            if (!player) return console.error("Player не готов");
+
+            player.getData(['saveData'])
+                .then(data => {
+                    let value = data.saveData || "";
+                    console.log("Загружено из облака:", value);
+
+                    if (typeof window.YandexBridge_onUserLoaded === "function") {
+                        window.YandexBridge_onUserLoaded(value);
+                    }
+                })
+                .catch(err => console.error("Ошибка getData:", err));
+        };
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Ждём пока GWT создаст канвас
+            setTimeout(function() {
+                var canvas = document.querySelector("#embed-html canvas");
+                if (canvas) {
+                    canvas.setAttribute("tabindex", "0");
+                    console.log("Canvas tabindex set to 0");
+                }
+            }, 1000);
+        });
+    </script>
+    <script>
+        if (typeof YaGames !== "undefined") {
+            window.isYandex = true;
+        }
+    </script>
+</head>
+
+<body>
+<div align="center" id="embed-html"></div>
+<script type="text/javascript" src="html/html.nocache.js"></script>
+</body>
+
+<script>
+    <!-- Предотвращение контекстного меню правой кнопки мыши -->
+    document.getElementById('embed-html').addEventListener('contextmenu', handleMouseDown, false);
+
+    document.getElementById('gameViewport').setAttribute('content',
+       'width=device-width initial-scale=' + 1/window.devicePixelRatio);
+
+    function handleMouseDown(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      window.focus();
+    }
+
+    function handleMouseUp(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+    }
+    document.getElementById('embed-html').addEventListener('mousedown', handleMouseDown, false);
+    document.getElementById('embed-html').addEventListener('mouseup', handleMouseUp, false);
+</script>
+</html>

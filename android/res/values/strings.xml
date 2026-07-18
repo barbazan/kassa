@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Супермаркет Шестерочка</string>
+    <string name="game_services_project_id">4973206975043974911</string> <!-- где 4973206975043974911 — числовой Project ID из Google Play Console / Play Games Services (без g: и без 0x).-->
+</resources>
