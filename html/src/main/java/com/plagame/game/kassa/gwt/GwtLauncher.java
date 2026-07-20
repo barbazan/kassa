@@ -5,10 +5,10 @@ import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
-import com.plagame.game.kassa.platform.service.api.PlatformServices;
-import com.plagame.game.kassa.platform.service.api.model.TargetPlatform;
-import com.plagame.game.kassa.platform.service.local.LocalPlatformServices;
-import com.plagame.game.kassa.platform.service.yandex.YandexPlatformServices;
+import com.plagame.game.integration.platform.service.api.PlatformServices;
+import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
+import com.plagame.game.integration.platform.service.local.LocalPlatformServices;
+import com.plagame.game.integration.platform.service.yandex.YandexPlatformServices;
 
 /** Launches the GWT application. */
 public class GwtLauncher extends GwtApplication {

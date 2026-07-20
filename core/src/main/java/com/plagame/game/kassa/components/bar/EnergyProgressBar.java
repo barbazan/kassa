@@ -73,7 +73,7 @@ public class EnergyProgressBar extends AbstractProgressBar {
     }
 
     public float getPercent() {
-        return User.get().getEnergyPercent();
+        return 0.5f;
     }
 
     private TextureRegion getCurrentColorTextureRegion() {

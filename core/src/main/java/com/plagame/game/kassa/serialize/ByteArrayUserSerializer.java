@@ -36,29 +36,8 @@ public class ByteArrayUserSerializer {
 
             out.writeLong(user.gold);
             out.writeLong(user.dollars);
-            out.writeLong(user.folowers);
-            out.writeLong(user.maxFolowers);
-            out.writeLong(user.lastMaxFolowers);
-
-            out.writeFloat(user.pasIncome);
-            out.writeFloat(user.tapIncome);
-            out.writeFloat(user.folowersIncome);
-
-            out.writeLong(user.maxEnergy);
-            out.writeLong((long) user.energy);
-
-            out.writeBoolean(user.isMax);
-
-            writeIntMap(out, user.upgradesMap);
-            writeLongMap(out, user.boostersMap);
-            writeIntMap(out, user.perksMap);
-
-            out.writeLong(user.lastRefreshTime);
             out.writeLong(user.lastSaveTime);
             out.writeLong(user.lastLoginTime);
-
-            out.writeLong(user.absenceMinutes);
-            out.writeLong(user.absenceDollars);
 
             out.writeBoolean(user.soundOn);
             out.writeBoolean(user.musicOn);
@@ -94,29 +73,9 @@ public class ByteArrayUserSerializer {
 
             user.gold = in.readLong();
             user.dollars = in.readLong();
-            user.folowers = in.readLong();
-            user.maxFolowers = in.readLong();
-            user.lastMaxFolowers = in.readLong();
 
-            user.pasIncome = in.readFloat();
-            user.tapIncome = in.readFloat();
-            user.folowersIncome = in.readFloat();
-
-            user.maxEnergy = in.readLong();
-            user.energy = in.readLong();
-
-            user.isMax = in.readBoolean();
-
-            user.upgradesMap = readIntMap(in);
-            user.boostersMap = readLongMap(in);
-            user.perksMap = readIntMap(in);
-
-            user.lastRefreshTime = in.readLong();
             user.lastSaveTime = in.readLong();
             user.lastLoginTime = in.readLong();
-
-            user.absenceMinutes = in.readLong();
-            user.absenceDollars = in.readLong();
 
             user.soundOn = in.readBoolean();
             user.musicOn = in.readBoolean();

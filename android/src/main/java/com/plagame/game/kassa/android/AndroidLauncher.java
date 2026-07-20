@@ -8,12 +8,12 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.github.czyzby.websocket.CommonWebSockets;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
-import com.plagame.game.kassa.android.play.GooglePlayPlatformServices;
-import com.plagame.game.kassa.android.rustore.RuStorePlatformServices;
-import com.plagame.game.kassa.android.xsolla.XsollaPlatformServices;
-import com.plagame.game.kassa.platform.service.api.PlatformServices;
-import com.plagame.game.kassa.platform.service.api.model.TargetPlatform;
-import com.plagame.game.kassa.platform.service.local.LocalPlatformServices;
+import com.plagame.game.integration.play.GooglePlayPlatformServices;
+import com.plagame.game.integration.rustore.RuStorePlatformServices;
+import com.plagame.game.integration.xsolla.XsollaPlatformServices;
+import com.plagame.game.integration.platform.service.api.PlatformServices;
+import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
+import com.plagame.game.integration.platform.service.local.LocalPlatformServices;
 
 /** Launches the Android application. */
 public class AndroidLauncher extends AndroidApplication {

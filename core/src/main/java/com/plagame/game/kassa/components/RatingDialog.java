@@ -18,9 +18,9 @@ import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.beans.User;
-import com.plagame.game.kassa.platform.service.api.model.LeaderboardEntry;
-import com.plagame.game.kassa.platform.service.api.model.PlatformCallback;
-import com.plagame.game.kassa.platform.service.api.model.TargetPlatform;
+import com.plagame.game.integration.platform.service.api.model.LeaderboardEntry;
+import com.plagame.game.integration.platform.service.api.model.PlatformCallback;
+import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
 import com.plagame.game.kassa.utils.NumberFormat;
 import com.plagame.game.kassa.utils.SoundUtil;
 

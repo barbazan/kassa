@@ -11,10 +11,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.plagame.game.kassa.net.kassa.KassaNetworkWebSocketClient;
-import com.plagame.game.kassa.platform.service.api.PlatformServices;
-import com.plagame.game.kassa.platform.service.api.model.DefaultPurchaseListener;
+import com.plagame.game.net.kassa.KassaNetworkWebSocketClient;
+import com.plagame.game.integration.platform.service.api.PlatformServices;
+import com.plagame.game.integration.platform.service.api.model.DefaultPurchaseListener;
 import com.plagame.game.kassa.pools.ParticlePool;
 import com.plagame.game.kassa.screens.GameScreen;
 import com.plagame.game.kassa.screens.LoadingScreen;
@@ -107,8 +108,8 @@ public class GameApplication extends Game {
     }
 
     private void goToFirstScreen() {
-        setSettingsScreen();
-//        setGameScreen();
+//        setSettingsScreen();
+        setGameScreen();
     }
 
     public void setGameScreen() {
@@ -134,8 +135,12 @@ public class GameApplication extends Game {
     }
 
     public void initScreenSize() {
-        screenWidth = Gdx.graphics.getWidth();
-        screenHeight = Gdx.graphics.getHeight();
+        initScreenSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+    }
+
+    public void initScreenSize(float width, float height) {
+        screenWidth = width;
+        screenHeight = height;
         minScreenSize = Math.min(screenWidth, screenHeight);
     }
 
@@ -165,6 +170,7 @@ public class GameApplication extends Game {
         camera.position.set(screenWidth / 2f, screenHeight / 2f, 0);
         camera.zoom = 1.0f;
         camera.update();
+        viewport = new StretchViewport(screenWidth, screenHeight, camera);
     }
 
     public void batchBegin() {

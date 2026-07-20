@@ -1,13 +1,13 @@
 package com.plagame.game.kassa.lwjgl3;
 
-import com.plagame.game.kassa.platform.service.api.AdsService;
-import com.plagame.game.kassa.platform.service.api.BillingService;
-import com.plagame.game.kassa.platform.service.api.CloudSaveService;
-import com.plagame.game.kassa.platform.service.api.I18nService;
-import com.plagame.game.kassa.platform.service.api.LeaderboardService;
-import com.plagame.game.kassa.platform.service.api.PlatformServices;
-import com.plagame.game.kassa.platform.service.api.model.PurchaseListener;
-import com.plagame.game.kassa.platform.service.api.model.TargetPlatform;
+import com.plagame.game.integration.platform.service.api.AdsService;
+import com.plagame.game.integration.platform.service.api.BillingService;
+import com.plagame.game.integration.platform.service.api.CloudSaveService;
+import com.plagame.game.integration.platform.service.api.I18nService;
+import com.plagame.game.integration.platform.service.api.LeaderboardService;
+import com.plagame.game.integration.platform.service.api.PlatformServices;
+import com.plagame.game.integration.platform.service.api.model.PurchaseListener;
+import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
 
 /**
  * Created by Дмитрий Малышев on 25.06.2026.

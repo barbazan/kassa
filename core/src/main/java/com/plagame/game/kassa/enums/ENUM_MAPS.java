@@ -10,10 +10,5 @@ import java.util.Map;
 public class ENUM_MAPS {
 
     public static final Map<Integer, SceneObjectInfo> SceneObjectInfoMap = new HashMap<>();
-    public static final Map<Integer, LocationInfo> LocationInfoMap = new HashMap<>();
-    public static final Map<Integer, ShopInfo> ShopInfoMap = new HashMap<>();
-    public static final Map<Integer, PerkInfo> BoosterInfoMap = new HashMap<>();
-    public static final Map<Integer, BoosterInfo> BuffInfoMap = new HashMap<>();
-    public static final Map<Integer, UpgradeInfo> UpgradeInfoMap = new HashMap<>();
 
 }

@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.I18NBundle;
-import com.plagame.game.kassa.enums.LocationInfo;
 import com.plagame.game.kassa.pools.ParticlePool;
 import com.plagame.game.kassa.utils.AssetUtil;
 
@@ -19,7 +18,7 @@ public class Resources {
     public static I18NBundle GAME_I18N_BUNDLE;
     private static final String ATLAS_1_FILENAME = "images/kassa_atlas_1.atlas";
 
-    public static final String MENU_SCREEN_2_BG_FILENAME = "images/menu_screen_2_bg.jpg";
+    public static final String GAME_BG_FILENAME = "images/game_bg.jpg";
     public static final String SOUND_CLICK_FILENAME = "sounds/click.mp3";
     public static final String SOUND_SPEND_MONEY_FILENAME = "sounds/money.mp3";
     public static final String SOUND_GOT_MONEY_FILENAME = "sounds/money_3.mp3";
@@ -76,7 +75,7 @@ public class Resources {
     }
 
     private static void loadImages() {
-        AssetUtil.loadTexture(MENU_SCREEN_2_BG_FILENAME);
+        AssetUtil.loadTexture(GAME_BG_FILENAME);
         loadedImages = true;
     }
 
@@ -89,7 +88,6 @@ public class Resources {
 
     public static boolean isLoadingFinished() {
         return loadedAtlas && loadedImages && loadedSounds;
-//        return false;
     }
 
 }

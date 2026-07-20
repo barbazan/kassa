@@ -26,7 +26,7 @@ public abstract class BaseScreen implements Screen {
 
     public BaseScreen() {
         skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
-        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), GameApplication.get().batch);
+        stage = new Stage(GameApplication.get().viewport, GameApplication.get().batch);
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
     }
@@ -82,8 +82,9 @@ public abstract class BaseScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         System.out.println("------------- BASE_SCREEN RESIZE() -------------");
-        GameApplication.get().initScreenSize();
-        GameApplication.get().initCam();
+        GameApplication.get().initScreenSize(width, height);
+        GameApplication.get().viewport.setWorldSize(width, height);
+        GameApplication.get().viewport.update(width, height,true);
     }
 
     @Override

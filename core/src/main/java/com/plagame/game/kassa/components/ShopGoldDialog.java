@@ -4,7 +4,7 @@ import static com.plagame.game.kassa.GameApplication.FONT_DIALOG_BUTTON;
 import static com.plagame.game.kassa.GameApplication.FONT_DIALOG_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_SMALL;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
-import static com.plagame.game.kassa.platform.service.api.model.BillingCatalog.PRODUCT_HIDE_ADV;
+import static com.plagame.game.integration.platform.service.api.model.BillingCatalog.PRODUCT_HIDE_ADV;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
@@ -23,8 +23,8 @@ import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.components.buttons.LabelButton;
 import com.plagame.game.kassa.enums.ColorInfo;
-import com.plagame.game.kassa.platform.service.api.model.BillingProduct;
-import com.plagame.game.kassa.platform.service.api.model.PlatformCallback;
+import com.plagame.game.integration.platform.service.api.model.BillingProduct;
+import com.plagame.game.integration.platform.service.api.model.PlatformCallback;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 import java.util.Comparator;
@@ -200,7 +200,7 @@ public class ShopGoldDialog extends Table {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                GameApplication.get().getGameScreen().uiStage.showShopActionsDialog();
+//                GameApplication.get().getGameScreen().uiStage.showShopActionsDialog();
             }
         });
         return button;
