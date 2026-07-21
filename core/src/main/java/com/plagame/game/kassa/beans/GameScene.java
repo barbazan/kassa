@@ -23,12 +23,19 @@ public class GameScene extends Group {
         setSize(GameApplication.get().screenWidth, GameApplication.get().screenHeight);
         addSceneObject(SceneObjectInfo.BACKGROUND);
         addSceneObject(SceneObjectInfo.LENTA);
+        addCashRegister();
     }
 
     private void addSceneObject(SceneObjectInfo sceneObjectInfo) {
         SceneObject sceneObject = new SceneObject(sceneObjectInfo); // если есть экшн то в конструкторе он включится сам
         objectsMap.put(sceneObjectInfo.type, sceneObject);
         addActor(sceneObject);
+    }
+
+    private void addCashRegister() {
+        CashRegister cashRegister = new CashRegister();
+        cashRegister.setPosition(GameApplication.get().screenWidth / 2 - cashRegister.getWidth() * 1.1f, -cashRegister.getHeight() * 0.4f);
+        addActor(cashRegister);
     }
 
     public void refreshScene() {
