@@ -47,7 +47,7 @@ public class GameScreen extends BaseScreen {
 
     @Override
     protected InputProcessor initInputProcessor() {
-        return uiStage;
+        return stage;
     }
 
     @Override

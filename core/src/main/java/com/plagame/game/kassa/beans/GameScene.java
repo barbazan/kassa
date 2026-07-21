@@ -34,7 +34,7 @@ public class GameScene extends Group {
 
     private void addCashRegister() {
         CashRegister cashRegister = new CashRegister();
-        cashRegister.setPosition(GameApplication.get().screenWidth / 2 - cashRegister.getWidth() * 1.1f, -cashRegister.getHeight() * 0.4f);
+        cashRegister.setPosition(GameApplication.get().screenWidth / 2 - cashRegister.getWidth() * 1.03f, -cashRegister.getHeight() * 0.38f);
         addActor(cashRegister);
     }
 

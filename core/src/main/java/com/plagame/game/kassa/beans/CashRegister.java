@@ -6,13 +6,17 @@ import static com.plagame.game.kassa.Resources.ATLAS_1;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.utils.SoundUtil;
 
 /**
  * Created by Дмитрий Малышев on 21.07.2026.
@@ -28,7 +32,7 @@ public class CashRegister extends Group {
         Group kassaGroup = createKassa();
         addActor(kassaGroup);
 
-        float terminalHeight = kassaGroup.getHeight() * 0.55f;
+        float terminalHeight = kassaGroup.getHeight() * 0.63f;
         Group terminalGroup = createTerminal(terminalHeight);
         terminalGroup.setPosition(kassaGroup.getWidth(), kassaGroup.getHeight() - terminalHeight);
         addActor(terminalGroup);
@@ -56,10 +60,10 @@ public class CashRegister extends Group {
         terminalGroup.setSize(terminalWidth, terminalHeight);
         terminalGroup.addActor(imageTerminal);
 
-        float btnSize = terminalWidth / 5;
-        float btnPad = btnSize / 3;
+        float btnSize = terminalWidth * 0.22f;
+        float btnPad = btnSize / 10;
         Table btnTable = new Table();
-        btnTable.pad(btnPad * 1.5f);
+        btnTable.pad(btnPad * 2.9f).padTop(0);
 //        btnTable.setDebug(true);
         btnTable.setSize(terminalWidth, terminalHeight);
         btnTable.add().colspan(3).expand();
@@ -67,35 +71,91 @@ public class CashRegister extends Group {
 
         Label costLabel = new Label("12.55", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK));
         costLabel.setAlignment(Align.center);
-        btnTable.add(costLabel).pad(btnPad).align(Align.center).colspan(3).fill();
+        costLabel.setHeight(btnSize);
+        btnTable.add(costLabel).align(Align.center).padBottom(btnPad).colspan(3).fill();
         btnTable.row();
 
         for(int i = 1; i <= 9; i++) {
-            Button btn = new Button(
-                new TextureRegionDrawable(ATLAS_1.findRegion("btn_" + i + "_up")),
-                new TextureRegionDrawable(ATLAS_1.findRegion("btn_" + i + "_down"))
-            );
-            btn.setSize(btnSize, btnSize);
+            Button btn = createBtn(String.valueOf(i), btnSize);
             float padLeft = btnPad / 2;
             if(i % 3 == 1) {
                 padLeft = 0;
             }
-            btnTable.add(btn).size(btnSize, btnSize).padLeft(padLeft).padTop(btnPad);
+            btnTable.add(btn).size(btnSize, btnSize).padLeft(padLeft).padTop(btnPad).fill();
             if(i % 3 == 0) {
                 btnTable.row();
             }
         }
 
+        Button btnBack = createBtn("back", btnSize);
+        btnBack.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                // todo
+                super.tap(event, x, y, count, button);
+            }
+        });
+        btnTable.add(btnBack).size(btnSize, btnSize).padLeft(0).padTop(btnPad);
+
+        Button btnZero = createBtn("0", btnSize);
+        btnZero.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                // todo
+                super.tap(event, x, y, count, button);
+            }
+        });
+        btnTable.add(btnZero).size(btnSize, btnSize).padLeft(btnPad / 2).padTop(btnPad);
+
+        Button btnDot = createBtn("dot", btnSize);
+        btnDot.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                // todo
+                super.tap(event, x, y, count, button);
+            }
+        });
+        btnTable.add(btnDot).size(btnSize, btnSize).padLeft(btnPad / 2).padTop(btnPad);
+
+        btnTable.row();
+
         Button btnOk = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
         );
-        float h = btnSize * 1.1f;
+        float h = btnSize * 0.91f;
         float w = btnOk.getWidth() * h / btnOk.getHeight();
         btnOk.setSize(w, h);
-        btnTable.add(btnOk).size(btnOk.getWidth(), btnOk.getHeight()).colspan(3).align(Align.center).pad(btnPad * 2);
+        btnOk.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                // todo
+                super.tap(event, x, y, count, button);
+            }
+        });
+        btnTable.add(btnOk).size(btnOk.getWidth(), btnOk.getHeight()).colspan(3).align(Align.center).padTop(btnPad).padBottom(btnSize * 0.67f);
 
         terminalGroup.addActor(btnTable);
         return terminalGroup;
+    }
+
+    private Button createBtn(String btnNum, float btnSize) {
+        Button btn = new Button(
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_" + btnNum + "_up")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_" + btnNum + "_down"))
+        );
+        btn.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                // todo
+            }
+        });
+        btn.setSize(btnSize, btnSize);
+        return btn;
     }
 }
