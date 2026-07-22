@@ -55,7 +55,7 @@ public class GameScene extends Group {
 //        for(SceneObject sceneObject : objectsMap.values()) {
 //            sceneObject.resize();
 //        }
-        clearChildren();
+        clear();
         init();
     }
 

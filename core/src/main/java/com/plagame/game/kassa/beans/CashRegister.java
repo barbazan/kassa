@@ -25,7 +25,7 @@ import com.plagame.game.kassa.utils.SoundUtil;
  */
 public class CashRegister extends Group {
 
-    private static final int MAX_PRICE_LENGTH = 10;
+    private static final int MAX_PRICE_LENGTH = 8;
     private String terminalValue = "";
 
     public CashRegister() {

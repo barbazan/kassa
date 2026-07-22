@@ -22,68 +22,6 @@ public class FontGenerator {
         return generateBitmapFont(scale, color, fontFilename);
     }
 
-    public BitmapFont generateHeaderBitmapFont(float scale, Color color) {
-        float minSize = GameApplication.get().screenWidth;
-        int fontSize = minSize <= 1080 ? 28 : 36;
-        String fontFilename = "fonts/Montserrat-SemiBold_" + fontSize + ".fnt";
-        return generateBitmapFont(scale, color, fontFilename);
-    }
-
-    public BitmapFont generateDialogHeaderBitmapFont(float scale, Color color) {
-        float minSize = GameApplication.get().screenWidth;
-        int fontSize = minSize <= 1080 ? 48 : 64;
-        return generateBitmapFont(fontSize, scale, color);
-    }
-
-    public BitmapFont generateDialogButtonBitmapFont(float scale, Color color) {
-        float minSize = GameApplication.get().screenWidth;
-        int fontSize = minSize <= 1080 ? 36 : 48;
-        return generateBitmapFont(fontSize, scale, color);
-    }
-
-    public BitmapFont generateRatingBitmapFont(float scale, Color color) {
-        float minSize = GameApplication.get().screenWidth;
-        int fontSize = minSize <= 1080 ? 36 : 48;
-        String fontFilename = "fonts/Montserrat-SemiBold_" + fontSize + ".fnt";
-        return generateBitmapFont(scale, color, fontFilename);
-    }
-
-    public BitmapFont generateVeryBigBitmapFont(float scale, Color color) {
-        float minSize = GameApplication.get().screenWidth;
-        int fontSize = minSize <= 1080 ? 96 : 128;
-        return generateBitmapFont(fontSize, scale, color);
-    }
-
-    public BitmapFont generateSmallBitmapFont(float scale, Color color) {
-        float minSize = GameApplication.get().screenWidth;
-        int fontSize = minSize <= 1080 ? 28 : 36;
-        return generateBitmapFont(fontSize, scale, color);
-    }
-
-    public BitmapFont generateVerySmallBitmapFont(float scale, Color color) {
-        float minSize = GameApplication.get().screenWidth;
-        int fontSize = minSize <= 1080 ? 24 : 28;
-        String fontFilename = "fonts/Montserrat-SemiBold_" + fontSize + ".fnt";
-        return generateBitmapFont(scale, color, fontFilename);
-    }
-
-    public BitmapFont generateBitmapFont(int size) {
-        return generateBitmapFont(size, 1, Color.WHITE);
-    }
-
-    public BitmapFont generateBitmapFont(int size, float scale) {
-        return generateBitmapFont(size, scale, Color.WHITE);
-    }
-
-    public BitmapFont generateBitmapFont(int size, Color color) {
-        return generateBitmapFont(size, 1, color);
-    }
-
-    public BitmapFont generateBitmapFont(int size, float scale, Color color) {
-        String fontFilename = getFontFilename(size);
-        return generateBitmapFont(scale, color, fontFilename);
-    }
-
     public BitmapFont generateBitmapFont(float scale, Color color, String fontFilename) {
         BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal(fontFilename), false);
         bitmapFont.setColor(color);
@@ -91,15 +29,9 @@ public class FontGenerator {
         return bitmapFont;
     }
 
-    private String getFontFilename(int size) {
-        //return "fonts/Montserrat-SemiBold_" + size + ".fnt";
-        System.out.println("------------------size = " + size);
-        return "fonts/Simpler-Dnm_" + size + ".fnt";
-    }
-
     private int getDefaultFontSize() {
-        float minSize = GameApplication.get().screenWidth;
-        System.out.println("---------------minSize = " + minSize);
+        float minSize = GameApplication.get().screenHeight;
+        System.out.println("--------FontGenerator-------screenHeight = " + minSize);
         if(minSize <= 300) {
             return 14;
         } if(minSize <= 400) {
@@ -107,13 +39,13 @@ public class FontGenerator {
         } else if(minSize <= 720) {
             return 20;
         } else if(minSize <= 1080) {
-            return 24;
-        } else if(minSize <= 1280) {
-            return 26;
-        } else if(minSize <= 1600) {
             return 28;
-        } else if(minSize <= 1790) {
+        } else if(minSize <= 1280) {
+            return 28;
+        } else if(minSize <= 1600) {
             return 32;
+        } else if(minSize <= 1790) {
+            return 36;
         } else {
             return 36;
         }

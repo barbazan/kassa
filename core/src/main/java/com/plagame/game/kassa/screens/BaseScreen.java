@@ -82,9 +82,7 @@ public abstract class BaseScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         System.out.println("------------- BASE_SCREEN RESIZE() -------------");
-        GameApplication.get().initScreenSize(width, height);
-        GameApplication.get().viewport.setWorldSize(width, height);
-        GameApplication.get().viewport.update(width, height,true);
+        GameApplication.get().onResize(width, height);
     }
 
     @Override
