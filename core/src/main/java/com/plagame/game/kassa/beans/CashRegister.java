@@ -1,7 +1,6 @@
 package com.plagame.game.kassa.beans;
 
 import static com.plagame.game.kassa.GameApplication.FONT_DEFAULT;
-import static com.plagame.game.kassa.GameApplication.FONT_DIALOG_BUTTON;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 
 import com.badlogic.gdx.graphics.Color;
@@ -12,17 +11,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.components.ModelLabel;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 /**
  * Created by Дмитрий Малышев on 21.07.2026.
  * Email: dmitry.malyshev@gmail.com
+ * ---
+ * Кассовый аппарат с терминалом для карты
  */
 public class CashRegister extends Group {
+
+    private static final int MAX_PRICE_LENGTH = 10;
+    private String terminalValue = "";
 
     public CashRegister() {
         init();
@@ -40,7 +44,7 @@ public class CashRegister extends Group {
         setSize(kassaGroup.getWidth() + terminalGroup.getWidth(), kassaGroup.getHeight());
     }
 
-    private Group createKassa() {
+    private Group createKassa() {  // Кассовый аппарат
         Group kassaGroup = new Group();
         Image imageKassa = new Image(ATLAS_1.findRegion("kassa"));
         float kassaHeight = GameApplication.get().screenHeight * 0.71f;
@@ -51,7 +55,7 @@ public class CashRegister extends Group {
         return kassaGroup;
     }
 
-    private Group createTerminal(float height) {
+    private Group createTerminal(float height) { // Терминал
         Group terminalGroup = new Group();
         Image imageTerminal = new Image(ATLAS_1.findRegion("terminal"));
         float terminalHeight = height;
@@ -69,7 +73,12 @@ public class CashRegister extends Group {
         btnTable.add().colspan(3).expand();
         btnTable.row();
 
-        Label costLabel = new Label("12.55", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK));
+        Label costLabel = new ModelLabel(terminalValue, new Label.LabelStyle(FONT_DEFAULT, Color.BLACK)) {
+            @Override
+            protected String getValue() {
+                return terminalValue;
+            }
+        };
         costLabel.setAlignment(Align.center);
         costLabel.setHeight(btnSize);
         btnTable.add(costLabel).align(Align.center).padBottom(btnPad).colspan(3).fill();
@@ -77,6 +86,19 @@ public class CashRegister extends Group {
 
         for(int i = 1; i <= 9; i++) {
             Button btn = createBtn(String.valueOf(i), btnSize);
+            int btnValue = i;
+            btn.addListener(new ActorGestureListener() {
+                @Override
+                public void tap(InputEvent event, float x, float y, int count, int button) {
+                    SoundUtil.playClickSound();
+                    if(terminalValue.length() < MAX_PRICE_LENGTH) {
+                        if(!terminalValue.contains(".") || terminalValue.substring(terminalValue.indexOf(".")).length() <= 2) {
+                            terminalValue = terminalValue + btnValue;
+                        }
+                    }
+                }
+            });
+
             float padLeft = btnPad / 2;
             if(i % 3 == 1) {
                 padLeft = 0;
@@ -92,7 +114,9 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                // todo
+                if(!terminalValue.isEmpty()) {
+                    terminalValue = terminalValue.substring(0, terminalValue.length() - 1);
+                }
                 super.tap(event, x, y, count, button);
             }
         });
@@ -103,7 +127,9 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                // todo
+                if(terminalValue.length() < MAX_PRICE_LENGTH) {
+                    terminalValue = terminalValue + "0";
+                }
                 super.tap(event, x, y, count, button);
             }
         });
@@ -114,7 +140,9 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                // todo
+                if(terminalValue.length() < MAX_PRICE_LENGTH && !terminalValue.isEmpty() && !terminalValue.contains(".")) {
+                    terminalValue = terminalValue + ".";
+                }
                 super.tap(event, x, y, count, button);
             }
         });
@@ -133,7 +161,7 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                // todo
+                terminalValue = "";
                 super.tap(event, x, y, count, button);
             }
         });
@@ -148,13 +176,6 @@ public class CashRegister extends Group {
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_" + btnNum + "_up")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_" + btnNum + "_down"))
         );
-        btn.addListener(new ActorGestureListener() {
-            @Override
-            public void tap(InputEvent event, float x, float y, int count, int button) {
-                SoundUtil.playClickSound();
-                // todo
-            }
-        });
         btn.setSize(btnSize, btnSize);
         return btn;
     }
