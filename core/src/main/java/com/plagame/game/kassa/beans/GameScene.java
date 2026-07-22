@@ -14,6 +14,7 @@ public class GameScene extends Group {
     private Image background;
     public CashRegister cashRegister;
     public ConveerLenta conveerLenta;
+    public ProductCortege productCortege;
 
     public GameScene() {
         init();
@@ -24,6 +25,7 @@ public class GameScene extends Group {
         addBackground();
         addConveerLenta();
         addCashRegister();
+        addProductCortege();
     }
 
     private void addBackground() {
@@ -51,6 +53,12 @@ public class GameScene extends Group {
             cashRegister.setPosition(cashRegister.terminalWidth * 0.1f, -cashRegister.getHeight() + cashRegister.terminalHeight * 1.15f);
         }
         addActor(cashRegister);
+    }
+
+    private void addProductCortege() {
+        productCortege = new ProductCortege(conveerLenta.getWidth(), conveerLenta.getHeight());
+        productCortege.setPosition(GameApplication.get().screenWidth / 2 - conveerLenta.getWidth() / 2, 0);
+        addActor(productCortege);
     }
 
     public void resize() {

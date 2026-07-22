@@ -164,6 +164,7 @@ public class CashRegister extends Group {
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
                 terminalValue = "";
+                GameApplication.get().getGameScreen().gameScene.productCortege.nextCustomer();//todo remove
                 super.tap(event, x, y, count, button);
             }
         });
