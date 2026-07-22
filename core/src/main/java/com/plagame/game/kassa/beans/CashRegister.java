@@ -28,6 +28,7 @@ public class CashRegister extends Group {
     private static final int MAX_PRICE_LENGTH = 8;
     public float terminalWidth, terminalHeight;
     private String terminalValue = "";
+    public Group terminal;
 
     public CashRegister() {
         init();
@@ -37,11 +38,11 @@ public class CashRegister extends Group {
         Group kassaGroup = createKassa();
         addActor(kassaGroup);
 
-        Group terminalGroup = createTerminal(kassaGroup.getHeight() * 0.58f);
-        terminalGroup.setPosition(kassaGroup.getWidth(), kassaGroup.getHeight() - terminalHeight);
-        addActor(terminalGroup);
+        terminal = createTerminal(kassaGroup.getHeight() * 0.58f);
+        terminal.setPosition(kassaGroup.getWidth(), kassaGroup.getHeight() - terminalHeight);
+        addActor(terminal);
 
-        setSize(kassaGroup.getWidth() + terminalGroup.getWidth(), kassaGroup.getHeight());
+        setSize(kassaGroup.getWidth() + terminal.getWidth(), kassaGroup.getHeight());
     }
 
     private Group createKassa() {  // Кассовый аппарат

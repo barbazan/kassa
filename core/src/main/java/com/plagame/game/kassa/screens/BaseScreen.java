@@ -5,10 +5,13 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.utils.AssetUtil;
 
 /**
@@ -27,6 +30,12 @@ public abstract class BaseScreen implements Screen {
     public BaseScreen() {
         skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
         stage = new Stage(GameApplication.get().viewport, GameApplication.get().batch);
+        stage.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                GameApplication.get().getGameScreen().gameScene.conveerLenta.nextCustomer();//todo remove
+            }
+        });
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
     }

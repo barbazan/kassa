@@ -51,7 +51,9 @@ public enum ProductInfo {
 
     public TextureRegion getTextureRegion() {
         if(textureRegion == null) {
+            System.out.println("\"product_\" + type = " + "product_" + type);
             textureRegion = ATLAS_1.findRegion("product_" + type);
+            System.out.println("--------textureRegion = " + textureRegion);
         }
         return textureRegion;
     }

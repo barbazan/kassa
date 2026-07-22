@@ -56,7 +56,7 @@ public enum SceneObjectInfo {
 
     public float getY() {
         switch (this) {
-            case BACKGROUND: return 0;
+            case BACKGROUND:  return GameApplication.get().screenHeight / 2 - getHeight() / 2;
         }
         return GameApplication.get().screenHeight * getPercentY();
     }

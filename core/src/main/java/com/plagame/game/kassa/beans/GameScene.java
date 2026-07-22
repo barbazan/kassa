@@ -1,19 +1,19 @@
 package com.plagame.game.kassa.beans;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.plagame.game.kassa.GameApplication;
-import com.plagame.game.kassa.enums.SceneObjectInfo;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.plagame.game.kassa.utils.AssetUtil;
 
 /**
  * Created by Дмитрий Малышев on 10.04.2026.
  * Email: dmitry.malyshev@gmail.com
  */
 public class GameScene extends Group {
-
-    public Map<Integer, SceneObject> objectsMap = new HashMap<>(); // предметы на сцене: машина, дом и т.д.
+    private Image background;
+    public CashRegister cashRegister;
+    public ConveerLenta conveerLenta;
 
     public GameScene() {
         init();
@@ -21,26 +21,30 @@ public class GameScene extends Group {
 
     private void init() {
         setSize(GameApplication.get().screenWidth, GameApplication.get().screenHeight);
-        addSceneObject(SceneObjectInfo.BACKGROUND);
+        addBackground();
         addConveerLenta();
         addCashRegister();
     }
 
-    private void addSceneObject(SceneObjectInfo sceneObjectInfo) {
-        SceneObject sceneObject = new SceneObject(sceneObjectInfo); // если есть экшн то в конструкторе он включится сам
-        objectsMap.put(sceneObjectInfo.type, sceneObject);
-        addActor(sceneObject);
+    private void addBackground() {
+        TextureRegion textureRegion = new TextureRegion(AssetUtil.getTexture("images/game_bg.jpg"));
+        background = new Image(textureRegion);
+        float scaleX = GameApplication.get().screenWidth / textureRegion.getRegionWidth();
+        float scaleY = GameApplication.get().screenHeight / textureRegion.getRegionHeight();
+        float scale = Math.max(scaleX, scaleY);
+        background.setSize(textureRegion.getRegionWidth() * scale, textureRegion.getRegionHeight() * scale);
+        background.setPosition(GameApplication.get().screenWidth / 2 - background.getWidth() / 2, GameApplication.get().screenHeight / 2 - background.getHeight() / 2);
+        addActor(background);
     }
 
-
     private void addConveerLenta() {
-        ConveerLenta conveerLenta = new ConveerLenta();
+        conveerLenta = new ConveerLenta();
         conveerLenta.setPosition(GameApplication.get().screenWidth / 2 - conveerLenta.getWidth() / 2, 0);
         addActor(conveerLenta);
     }
 
     private void addCashRegister() {
-        CashRegister cashRegister = new CashRegister();
+        cashRegister = new CashRegister();
         if(GameApplication.get().isPortrait()) {
             cashRegister.setPosition(- cashRegister.getWidth() + cashRegister.terminalWidth * 1.1f, -cashRegister.getHeight() + cashRegister.terminalHeight * 1.15f);
         } else {
@@ -49,23 +53,7 @@ public class GameScene extends Group {
         addActor(cashRegister);
     }
 
-    public void refreshScene() {
-        // todo тут можно экшены навешиватьт когда очередь нужно передвигать
-//        if(!upgradedObjects.isEmpty()) {
-//            for(Integer key: upgradedObjects) {
-//                SceneObject sceneObject = objectsMap.get(key);
-//                if(sceneObject != null) {
-//                    sceneObject.doUpgradeAction();
-//                }
-//            }
-//            upgradedObjects.clear();
-//        }
-    }
-
     public void resize() {
-//        for(SceneObject sceneObject : objectsMap.values()) {
-//            sceneObject.resize();
-//        }
         clear();
         init();
     }
