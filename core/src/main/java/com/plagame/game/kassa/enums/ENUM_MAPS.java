@@ -10,5 +10,6 @@ import java.util.Map;
 public class ENUM_MAPS {
 
     public static final Map<Integer, SceneObjectInfo> SceneObjectInfoMap = new HashMap<>();
+    public static final Map<Integer, ProductInfo> PRODUCT_INFO_MAP = new HashMap<>();
 
 }

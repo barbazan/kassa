@@ -1,7 +1,5 @@
 package com.plagame.game.kassa.enums;
 
-import static com.plagame.game.kassa.Resources.ATLAS_1;
-
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -15,7 +13,6 @@ import com.plagame.game.kassa.utils.AssetUtil;
  */
 public enum SceneObjectInfo {
     BACKGROUND(1, 0.0f, 0.0f, 0f), // задний фон - полки с продуктами
-    LENTA(2, 0.0f, 0.0f, 1.0f), // прилавок - конвеерная лента
     ;
 
     public int type;
@@ -52,8 +49,7 @@ public enum SceneObjectInfo {
 
     public float getX() {
         switch (this) {
-            case BACKGROUND:
-            case LENTA: return GameApplication.get().screenWidth / 2 - getWidth() / 2;
+            case BACKGROUND: return GameApplication.get().screenWidth / 2 - getWidth() / 2;
         }
         return GameApplication.get().screenWidth * getPercentX();
     }
@@ -73,10 +69,6 @@ public enum SceneObjectInfo {
                 float width = baseWidth * getHeight() / baseHeight;
                 System.out.println("------------------BACKGROUND---------------width = " + width);
                 return width;
-            case LENTA:
-                width = baseWidth * getHeight() / baseHeight;
-                System.out.println("-------------------LENTA--------------width = " + width);
-                return width;
         }
         return GameApplication.get().screenWidth * getPercentWidth();
     }
@@ -86,9 +78,6 @@ public enum SceneObjectInfo {
             case BACKGROUND:
                 System.out.println("------------------BACKGROUND---------------height = " + GameApplication.get().screenHeight);
                 return GameApplication.get().screenHeight;
-            case LENTA:
-                System.out.println("------------------LENTA---------------height = " + GameApplication.get().screenHeight * 0.27);
-                return GameApplication.get().screenHeight * 0.27f;
         }
         float baseWidth = getTexture().getRegionWidth();
         float baseHeight = getTexture().getRegionHeight();
@@ -100,9 +89,6 @@ public enum SceneObjectInfo {
             switch (this) {
                 case BACKGROUND:
                     textureRegion = new TextureRegion(AssetUtil.getTexture("images/game_bg.jpg"));
-                    break;
-                case LENTA:
-                    textureRegion = ATLAS_1.findRegion("lenta");
                     break;
             }
         }

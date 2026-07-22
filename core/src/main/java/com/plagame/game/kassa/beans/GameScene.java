@@ -22,7 +22,7 @@ public class GameScene extends Group {
     private void init() {
         setSize(GameApplication.get().screenWidth, GameApplication.get().screenHeight);
         addSceneObject(SceneObjectInfo.BACKGROUND);
-        addSceneObject(SceneObjectInfo.LENTA);
+        addConveerLenta();
         addCashRegister();
     }
 
@@ -32,9 +32,20 @@ public class GameScene extends Group {
         addActor(sceneObject);
     }
 
+
+    private void addConveerLenta() {
+        ConveerLenta conveerLenta = new ConveerLenta();
+        conveerLenta.setPosition(GameApplication.get().screenWidth / 2 - conveerLenta.getWidth() / 2, 0);
+        addActor(conveerLenta);
+    }
+
     private void addCashRegister() {
         CashRegister cashRegister = new CashRegister();
-        cashRegister.setPosition(GameApplication.get().screenWidth / 2 - cashRegister.getWidth() * 1.03f, -cashRegister.getHeight() * 0.38f);
+        if(GameApplication.get().isPortrait()) {
+            cashRegister.setPosition(- cashRegister.getWidth() + cashRegister.terminalWidth * 1.1f, -cashRegister.getHeight() + cashRegister.terminalHeight * 1.15f);
+        } else {
+            cashRegister.setPosition(cashRegister.terminalWidth * 0.1f, -cashRegister.getHeight() + cashRegister.terminalHeight * 1.15f);
+        }
         addActor(cashRegister);
     }
 

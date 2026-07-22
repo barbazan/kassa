@@ -26,6 +26,7 @@ import com.plagame.game.kassa.utils.SoundUtil;
 public class CashRegister extends Group {
 
     private static final int MAX_PRICE_LENGTH = 8;
+    public float terminalWidth, terminalHeight;
     private String terminalValue = "";
 
     public CashRegister() {
@@ -36,8 +37,7 @@ public class CashRegister extends Group {
         Group kassaGroup = createKassa();
         addActor(kassaGroup);
 
-        float terminalHeight = kassaGroup.getHeight() * 0.63f;
-        Group terminalGroup = createTerminal(terminalHeight);
+        Group terminalGroup = createTerminal(kassaGroup.getHeight() * 0.58f);
         terminalGroup.setPosition(kassaGroup.getWidth(), kassaGroup.getHeight() - terminalHeight);
         addActor(terminalGroup);
 
@@ -47,7 +47,8 @@ public class CashRegister extends Group {
     private Group createKassa() {  // Кассовый аппарат
         Group kassaGroup = new Group();
         Image imageKassa = new Image(ATLAS_1.findRegion("kassa"));
-        float kassaHeight = GameApplication.get().screenHeight * 0.71f;
+
+        float kassaHeight = GameApplication.get().isPortrait() ? GameApplication.get().screenHeight * 0.69f : GameApplication.get().screenHeight * 0.85f;
         float kassaWidth = imageKassa.getWidth() * kassaHeight / imageKassa.getHeight();
         imageKassa.setSize(kassaWidth, kassaHeight);
         kassaGroup.setSize(kassaWidth, kassaHeight);
@@ -56,10 +57,10 @@ public class CashRegister extends Group {
     }
 
     private Group createTerminal(float height) { // Терминал
-        Group terminalGroup = new Group();
         Image imageTerminal = new Image(ATLAS_1.findRegion("terminal"));
-        float terminalHeight = height;
-        float terminalWidth = imageTerminal.getWidth() * terminalHeight / imageTerminal.getHeight();
+        terminalHeight = height;
+        terminalWidth = imageTerminal.getWidth() * terminalHeight / imageTerminal.getHeight();
+        Group terminalGroup = new Group();
         imageTerminal.setSize(terminalWidth, terminalHeight);
         terminalGroup.setSize(terminalWidth, terminalHeight);
         terminalGroup.addActor(imageTerminal);
