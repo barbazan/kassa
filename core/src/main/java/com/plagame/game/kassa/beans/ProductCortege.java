@@ -72,12 +72,14 @@ public class ProductCortege extends Group {
             img.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    SoundUtil.playClickSound();
-                    if(img.getActions().isEmpty()) {
-                        currentProduct = img;
-                        Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
-                        moveProduct(img, terminal.getX());
-                        moveAllProducts();
+                    if(img == productImageList.getFirst()) {
+                        SoundUtil.playClickSound();
+                        if(img != currentProduct) {
+                            currentProduct = img;
+                            productImageList.remove(img);
+                            moveProduct(img);
+                            moveAllProducts();
+                        }
                     }
                 }
             });
@@ -102,10 +104,11 @@ public class ProductCortege extends Group {
         init();
     }
 
-    private void moveProduct(Image img, float targetX) {
+    private void moveProduct(Image img) {
+        Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
         img.addAction(
             Actions.sequence(
-                Actions.moveTo(targetX - img.getWidth() / 2, img.getY(), 0.7f, Interpolation.elasticOut),
+                Actions.moveTo(terminal.getX() - img.getWidth() / 2, img.getY(), 0.7f, Interpolation.elasticOut),
                 Actions.parallel(
                     Actions.sizeTo(0, 0, 0.4f, Interpolation.linear),
                     Actions.moveTo(0, 0, 0.4f, Interpolation.linear)
@@ -113,7 +116,6 @@ public class ProductCortege extends Group {
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        productImageList.removeFirst();
                         currentProduct = null;
                     }
                 })
@@ -125,7 +127,7 @@ public class ProductCortege extends Group {
     private void moveAllProducts() {
         for(int i = 0; i < productImageList.size(); i++) {
             Image img = productImageList.get(i);
-            if(i > 0 && currentProduct != null) {
+            if(currentProduct != null) {
                 img.addAction(Actions.moveBy(-currentProduct.getWidth(), 0, 0.7f, Interpolation.linear));
             }
         }
