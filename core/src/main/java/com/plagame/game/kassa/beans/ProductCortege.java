@@ -20,9 +20,9 @@ import java.util.List;
  * Email: dmitry.malyshev@gmail.com
  */
 public class ProductCortege extends Group {
-    private float panelWidth, panelHeight;
-    private List<ProductInfo> productList = new ArrayList<>();
-    private LinkedList<Image> productImageList = new LinkedList<>();
+    private final float panelWidth, panelHeight;
+    private final List<ProductInfo> productList = new ArrayList<>();
+    private final LinkedList<Image> productImageList = new LinkedList<>();
     private Image currentProduct;
 
     public ProductCortege(float width, float height) {
@@ -41,57 +41,54 @@ public class ProductCortege extends Group {
         } else {
             startX = width * 0.38f;
         }
-        float startY = height * 0.11f;
+        float startY = height * 0.3f;
+        float heightDelta = height * 0.1f;
         float maxH = height * 1.1f;
         float prevX = startX;
-        float prevY = startY;
         for(int i = 0; i < productList.size(); i++) {
             ProductInfo productInfo = productList.get(i);
             Image img = new Image(productInfo.getTextureRegion());
             if(img.getHeight() > maxH) { // если товар больше чем лента по высоте, то высотут товара нужно уменьшить
-                float h = maxH;
-                float w = img.getWidth() * h / img.getHeight();
-                img.setSize(w, h);
+                float w = img.getWidth() * maxH / img.getHeight();
+                img.setSize(w, maxH);
             }
             float x = prevX + img.getWidth() * 0.01f;
-            float y = startY + GameConfig.random.nextFloat() * height * 0.34f;
-            if(prevY > y) {
-                float delta;
-//                boolean isMinus = GameConfig.random.nextBoolean();
-//                if(isMinus) {
-//                    delta = -GameConfig.random.nextFloat() * (img.getWidth() * 0.5f);
-//                } else {
-//                    delta = img.getWidth() * 0.1f;
-//                }
-                delta = img.getWidth() * 0.1f;
-                x = prevX + delta;
-            }
+            float mult = GameConfig.random.nextFloat();
+            float y = startY + (GameConfig.random.nextBoolean() ? -heightDelta : heightDelta) * mult;
             img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
             img.setPosition(x, y);
 
             img.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    if(img == productImageList.getFirst()) {
-                        SoundUtil.playClickSound();
-                        if(img != currentProduct) {
-                            currentProduct = img;
-                            productImageList.remove(img);
-                            moveProduct(img);
-                            moveAllProducts();
+                    try {
+                        if(productImageList != null && !productImageList.isEmpty()) {
+                            Image first = productImageList.get(0);
+                            if(first != null && first == img) {
+                                SoundUtil.playClickSound();
+                                if(img != currentProduct) {
+                                    currentProduct = img;
+                                    productImageList.remove(img);
+                                    moveProduct(img);
+                                    moveAllProducts();
+                                }
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });
 
             addActor(img);
             prevX = x + img.getWidth();
-            prevY = y;
             productImageList.add(img);
+            currentProduct = null;
         }
     }
 
     public void nextCustomer() {
+        productImageList.clear();
         productList.clear();
         for(int i = 0; i < 5; i++) {
             ProductInfo productInfo = ProductInfo.getRandom();
@@ -106,9 +103,16 @@ public class ProductCortege extends Group {
 
     private void moveProduct(Image img) {
         Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
+        float deltaX;
+        if(GameApplication.get().isPortrait()) {
+            deltaX = img.getParent().getX() + img.getX();
+        } else {
+            deltaX = img.getX() - terminal.getX() + img.getWidth() / 2;
+        }
+        img.clearActions();
         img.addAction(
             Actions.sequence(
-                Actions.moveTo(terminal.getX() - img.getWidth() / 2, img.getY(), 0.7f, Interpolation.elasticOut),
+                Actions.moveBy(-deltaX, 0, 0.7f, Interpolation.elasticOut),
                 Actions.parallel(
                     Actions.sizeTo(0, 0, 0.4f, Interpolation.linear),
                     Actions.moveTo(0, 0, 0.4f, Interpolation.linear)
