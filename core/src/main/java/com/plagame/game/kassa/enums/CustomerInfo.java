@@ -5,6 +5,8 @@ import static com.plagame.game.kassa.Resources.ATLAS_CUSTOMERS;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.plagame.game.kassa.GameConfig;
 
+import java.util.Arrays;
+
 /**
  * Created by Дмитрий Малышев on 23.07.2026.
  * Email: dmitry.malyshev@gmail.com
@@ -22,13 +24,15 @@ public enum CustomerInfo {
     CUSTOMER_INFO_9(9),
     CUSTOMER_INFO_10(10),
     CUSTOMER_INFO_11(11),
-//    CUSTOMER_INFO_12(12),
-//    CUSTOMER_INFO_13(13),
-//    CUSTOMER_INFO_14(14),
-//    CUSTOMER_INFO_15(15),
-//    CUSTOMER_INFO_16(16),
-//    CUSTOMER_INFO_17(17),
-//    CUSTOMER_INFO_18(18),
+
+    // без ног
+    CUSTOMER_INFO_100(100),
+    CUSTOMER_INFO_101(101),
+    CUSTOMER_INFO_102(102),
+    CUSTOMER_INFO_103(103),
+    CUSTOMER_INFO_104(104),
+    CUSTOMER_INFO_105(105),
+    CUSTOMER_INFO_106(106),
     ;
 
     public final int type;
@@ -44,17 +48,19 @@ public enum CustomerInfo {
     }
 
     public static CustomerInfo getRandom() {
-        int rndType = 1 + GameConfig.random.nextInt(values().length);
-        return ENUM_MAPS.CUSTOMER_INFO_MAP.get(rndType);
+        int rndType = GameConfig.random.nextInt(values().length);
+        CustomerInfo customerInfo = Arrays.asList(values()).get(rndType);
+        return customerInfo;
     }
 
     public TextureRegion getTextureRegion() {
         if(textureRegion == null) {
-            System.out.println("\"customer_\" + type = " + "customer_" + type);
             textureRegion = ATLAS_CUSTOMERS.findRegion("customer_" + type);
-            System.out.println("--------textureRegion = " + textureRegion);
         }
         return textureRegion;
     }
 
+    public boolean isLegless() {
+        return type >= CUSTOMER_INFO_100.type;
+    }
 }

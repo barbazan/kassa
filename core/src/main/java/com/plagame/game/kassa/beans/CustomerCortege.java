@@ -43,7 +43,12 @@ public class CustomerCortege extends Group {
                 img.setSize(w, maxH);
             }
             float x = prevX + img.getWidth() * 0.01f;
-            float y = startY;
+            float y;
+            if(customerInfo.isLegless() && GameApplication.get().isPortrait()) {
+                y = startY + img.getHeight() * 0.2f;
+            } else {
+                y = startY;
+            }
             img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
             img.setPosition(x, y);
             float scaleDelta = 0.04f;

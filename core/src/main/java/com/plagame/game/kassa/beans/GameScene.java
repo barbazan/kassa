@@ -92,7 +92,6 @@ public class GameScene extends Group {
     private List<CustomerInfo> createCustomerList() {
         Set<CustomerInfo> set = new HashSet<>();
         int count = 4 + GameConfig.random.nextInt(4);
-        int i = 0;
         while(set.size() < count) {
             try {
                 set.add(CustomerInfo.getRandom());
