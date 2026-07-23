@@ -58,8 +58,6 @@ public class ProductCortege extends Group {
             float x = prevX + img.getWidth() * 0.01f;
             float mult = GameConfig.random.nextFloat();
             float y = startY + (GameConfig.random.nextBoolean() ? -heightDelta : heightDelta) * mult;
-            img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
-            img.setPosition(x, y);
 
             img.addListener(new ActorGestureListener() {
                 @Override
@@ -83,6 +81,22 @@ public class ProductCortege extends Group {
                     }
                 }
             });
+
+            img.setVisible(false);
+            img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
+            img.setPosition(x, y + 100);
+            float duration = 0.2f;
+            float delay = 0.1f * (i + 1);
+            img.addAction(Actions.sequence(
+                Actions.delay(delay),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        img.setVisible(true);
+                    }
+                }),
+                Actions.moveBy(0, -100, duration, Interpolation.sine)
+            ));
 
             addActor(img);
             prevX = x + img.getWidth();
