@@ -25,8 +25,7 @@ public class GameScene extends Group {
     public CustomerCortege customerCortege;
 
     public GameScene() {
-        List<CustomerInfo> customerList = createCustomerList();
-        init(customerList);
+        nextDay();
     }
 
     private void init(List<CustomerInfo> customerList) {
@@ -76,6 +75,11 @@ public class GameScene extends Group {
         productCortege.setPosition(GameApplication.get().screenWidth / 2 - conveerLenta.getWidth() / 2, 0);
         productCortege.nextProducts();
         addActor(productCortege);
+    }
+
+    public void nextDay() {
+        List<CustomerInfo> customerList = createCustomerList();
+        init(customerList);
     }
 
     public void resize() {

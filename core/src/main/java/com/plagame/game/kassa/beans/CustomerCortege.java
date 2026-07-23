@@ -61,6 +61,8 @@ public class CustomerCortege extends Group {
                     GameApplication.get().getGameScreen().gameScene.productCortege.nextProducts();
                 }
             }
+        } else {
+            GameApplication.get().getGameScreen().gameScene.nextDay();
         }
     }
 
