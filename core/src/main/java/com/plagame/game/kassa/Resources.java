@@ -17,6 +17,7 @@ import java.util.Locale;
 public class Resources {
     public static I18NBundle GAME_I18N_BUNDLE;
     private static final String ATLAS_1_FILENAME = "images/kassa_atlas_1.atlas";
+    private static final String ATLAS_CUSTOMERS_FILENAME = "images/kassa_atlas_customers.atlas";
 
     public static final String GAME_BG_FILENAME = "images/game_bg.jpg";
     public static final String SOUND_CLICK_FILENAME = "sounds/click.mp3";
@@ -24,6 +25,7 @@ public class Resources {
     public static final String SOUND_GOT_MONEY_FILENAME = "sounds/money_3.mp3";
 
     public static TextureAtlas ATLAS_1;
+    public static TextureAtlas ATLAS_CUSTOMERS;
     public static TextureRegion IMAGE_UNKNOWN_TEXTURE_REGION;
     public static TextureRegion HP_BAR_BG_TEXTURE_REGION, HP_BAR_FRAME_TEXTURE_REGION;
     public static TextureRegion HP_BAR_ENERGY_GREEN_TEXTURE_REGION, HP_BAR_ENERGY_YELLOW_TEXTURE_REGION, HP_BAR_ENERGY_RED_TEXTURE_REGION,
@@ -42,6 +44,8 @@ public class Resources {
         if(!resourcesAssigned) {
             ATLAS_1 = AssetUtil.getTextureAtlas(ATLAS_1_FILENAME);
             applyFilter(ATLAS_1);
+            ATLAS_CUSTOMERS = AssetUtil.getTextureAtlas(ATLAS_CUSTOMERS_FILENAME);
+            applyFilter(ATLAS_CUSTOMERS);
 
             GameApplication.get().particlePool = new ParticlePool(80);    // new ParticleManager() или new ParticleManager(800);
             GameApplication.get().particlePool.loadDefaults(ATLAS_1);                   // атлас где хранятся картинки для партикла
@@ -71,6 +75,7 @@ public class Resources {
 
     private static void loadAtlases() {
         AssetUtil.loadAtlas(ATLAS_1_FILENAME);
+        AssetUtil.loadAtlas(ATLAS_CUSTOMERS_FILENAME);
         loadedAtlas = true;
     }
 

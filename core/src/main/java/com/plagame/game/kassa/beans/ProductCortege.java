@@ -83,8 +83,8 @@ public class ProductCortege extends Group {
             addActor(img);
             prevX = x + img.getWidth();
             productImageList.add(img);
-            currentProduct = null;
         }
+        currentProduct = null;
     }
 
     public void nextCustomer() {

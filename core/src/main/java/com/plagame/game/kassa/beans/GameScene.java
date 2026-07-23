@@ -4,7 +4,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
+import com.plagame.game.kassa.enums.CustomerInfo;
 import com.plagame.game.kassa.utils.AssetUtil;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Дмитрий Малышев on 10.04.2026.
@@ -15,14 +22,17 @@ public class GameScene extends Group {
     public CashRegister cashRegister;
     public ConveerLenta conveerLenta;
     public ProductCortege productCortege;
+    public CustomerCortege customerCortege;
 
     public GameScene() {
-        init();
+        List<CustomerInfo> customerList = createCustomerList();
+        init(customerList);
     }
 
-    private void init() {
+    private void init(List<CustomerInfo> customerList) {
         setSize(GameApplication.get().screenWidth, GameApplication.get().screenHeight);
         addBackground();
+        addCustomerCortege(customerList);
         addConveerLenta();
         addCashRegister();
         addProductCortege();
@@ -55,6 +65,12 @@ public class GameScene extends Group {
         addActor(cashRegister);
     }
 
+    private void addCustomerCortege(List<CustomerInfo> customerList) {
+        customerCortege = new CustomerCortege(customerList);
+        customerCortege.setPosition(GameApplication.get().screenWidth / 2 - customerCortege.getWidth() / 2, 0);
+        addActor(customerCortege);
+    }
+
     private void addProductCortege() {
         productCortege = new ProductCortege(conveerLenta.getWidth(), conveerLenta.getHeight());
         productCortege.setPosition(GameApplication.get().screenWidth / 2 - conveerLenta.getWidth() / 2, 0);
@@ -63,7 +79,20 @@ public class GameScene extends Group {
 
     public void resize() {
         clear();
-        init();
+        init(customerCortege.customerList);
     }
 
+    private List<CustomerInfo> createCustomerList() {
+        Set<CustomerInfo> set = new HashSet<>();
+        int count = 4 + GameConfig.random.nextInt(4);
+        int i = 0;
+        while(set.size() < count) {
+            try {
+                set.add(CustomerInfo.getRandom());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return new ArrayList<>(set);
+    }
 }

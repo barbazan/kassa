@@ -1,0 +1,132 @@
+
+kassa_atlas_customers.png
+size: 4096,2048
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+customer_1
+  rotate: false
+  xy: 1078, 142
+  size: 294, 885
+  orig: 294, 885
+  offset: 0, 0
+  index: -1
+customer_10
+  rotate: false
+  xy: 2906, 302
+  size: 299, 818
+  orig: 299, 818
+  offset: 0, 0
+  index: -1
+customer_11
+  rotate: false
+  xy: 1790, 121
+  size: 366, 1060
+  orig: 366, 1060
+  offset: 0, 0
+  index: -1
+customer_19
+  rotate: false
+  xy: 1, 7
+  size: 451, 964
+  orig: 451, 964
+  offset: 0, 0
+  index: -1
+customer_2
+  rotate: false
+  xy: 454, 1
+  size: 308, 970
+  orig: 308, 970
+  offset: 0, 0
+  index: -1
+customer_20
+  rotate: false
+  xy: 1087, 1153
+  size: 543, 891
+  orig: 543, 891
+  offset: 0, 0
+  index: -1
+customer_21
+  rotate: false
+  xy: 3040, 1122
+  size: 427, 922
+  orig: 427, 922
+  offset: 0, 0
+  index: -1
+customer_22
+  rotate: false
+  xy: 3207, 469
+  size: 306, 651
+  orig: 306, 651
+  offset: 0, 0
+  index: -1
+customer_23
+  rotate: false
+  xy: 2158, 308
+  size: 428, 882
+  orig: 428, 882
+  offset: 0, 0
+  index: -1
+customer_24
+  rotate: false
+  xy: 2599, 1127
+  size: 439, 917
+  orig: 439, 917
+  offset: 0, 0
+  index: -1
+customer_25
+  rotate: false
+  xy: 2588, 312
+  size: 316, 813
+  orig: 316, 813
+  offset: 0, 0
+  index: -1
+customer_3
+  rotate: false
+  xy: 1, 973
+  size: 529, 1071
+  orig: 529, 1071
+  offset: 0, 0
+  index: -1
+customer_4
+  rotate: false
+  xy: 2133, 1192
+  size: 464, 852
+  orig: 464, 852
+  offset: 0, 0
+  index: -1
+customer_5
+  rotate: false
+  xy: 764, 46
+  size: 312, 981
+  orig: 312, 981
+  offset: 0, 0
+  index: -1
+customer_6
+  rotate: false
+  xy: 1632, 1183
+  size: 499, 861
+  orig: 499, 861
+  offset: 0, 0
+  index: -1
+customer_7
+  rotate: false
+  xy: 1374, 63
+  size: 414, 1088
+  orig: 414, 1088
+  offset: 0, 0
+  index: -1
+customer_8
+  rotate: false
+  xy: 532, 1029
+  size: 553, 1015
+  orig: 553, 1015
+  offset: 0, 0
+  index: -1
+customer_9
+  rotate: false
+  xy: 3469, 1137
+  size: 431, 907
+  orig: 431, 907
+  offset: 0, 0
+  index: -1
