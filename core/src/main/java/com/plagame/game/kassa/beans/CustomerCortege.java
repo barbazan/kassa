@@ -17,11 +17,12 @@ import java.util.List;
  */
 public class CustomerCortege extends Group {
 
-    public List<CustomerInfo> customerList;
+    public LinkedList<CustomerInfo> customerList = new LinkedList<>();
     private final LinkedList<Image> customerImageList = new LinkedList<>();
 
     public CustomerCortege(List<CustomerInfo> customerList) {
-        this.customerList = customerList;
+        this.customerList.clear();
+        this.customerList.addAll(customerList);
         init(customerList);
     }
 
@@ -64,6 +65,7 @@ public class CustomerCortege extends Group {
             Image first = customerImageList.get(0);
             if(first != null) {
                 customerImageList.removeFirst();
+                customerList.removeFirst();
                 moveCustomer(first);
                 moveAllCustomers(first.getWidth());
                 if(!customerImageList.isEmpty()) {
