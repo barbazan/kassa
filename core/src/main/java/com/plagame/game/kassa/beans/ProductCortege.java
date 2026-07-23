@@ -1,6 +1,7 @@
 package com.plagame.game.kassa.beans;
 
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -88,6 +89,7 @@ public class ProductCortege extends Group {
             productImageList.add(img);
         }
         currentProductImage = null;
+        addForeverScaleAction(productImageList.getFirst());
     }
 
     public void nextProducts() {
@@ -135,11 +137,25 @@ public class ProductCortege extends Group {
             Image img = productImageList.get(i);
             if(currentProductImage != null) {
                 img.addAction(Actions.moveBy(-currentProductImage.getWidth(), 0, 0.7f, Interpolation.linear));
+                if(i == 0) {
+                    addForeverScaleAction(img);
+                }
             }
         }
     }
 
     public boolean isEmpty() {
         return productImageList.isEmpty();
+    }
+
+    private void addForeverScaleAction(Actor actor) {
+        float scaleDelta = 0.15f;
+        float duration = 0.4f;
+        actor.addAction(Actions.forever(
+            Actions.sequence(
+                Actions.scaleBy(scaleDelta, scaleDelta, duration, Interpolation.sine),
+                Actions.scaleBy(-scaleDelta, -scaleDelta, duration, Interpolation.sine)
+            )
+        ));
     }
 }
