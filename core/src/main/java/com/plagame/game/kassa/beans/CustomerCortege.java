@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.enums.CustomerInfo;
 
 import java.util.LinkedList;
@@ -44,6 +45,14 @@ public class CustomerCortege extends Group {
             float y = startY;
             img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
             img.setPosition(x, y);
+            float scaleDelta = 0.04f;
+            float duration = 1.1f + GameConfig.random.nextFloat();
+            img.addAction(Actions.forever(
+                Actions.sequence(
+                    Actions.scaleBy(scaleDelta, scaleDelta, duration, Interpolation.sine),
+                    Actions.scaleBy(-scaleDelta, -scaleDelta, duration, Interpolation.sine)
+                )
+            ));
             addActor(img);
             prevX = x + img.getWidth();
             customerImageList.add(img);
@@ -71,11 +80,25 @@ public class CustomerCortege extends Group {
     }
 
     private void moveCustomer(Image img) {
-        float deltaX= img.getX() + img.getWidth();
-        img.clearActions();
+        float deltaX= img.getX() + img.getWidth() * 2;
+        float deltaY= img.getHeight() * 0.02f;
+        float duration = 2.8f;
+        float stepDuration = duration / 10;
         img.addAction(
-            Actions.sequence(
-                Actions.moveBy(-deltaX, 0, 0.7f, Interpolation.linear)
+            Actions.parallel(
+                Actions.moveBy(-deltaX, 0, duration, Interpolation.linear),
+                Actions.sequence(
+                    Actions.moveBy(0, deltaY, stepDuration, Interpolation.linear),
+                    Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear),
+                    Actions.delay(stepDuration / 2 + GameConfig.random.nextFloat() * stepDuration / 2),
+                    Actions.moveBy(0, deltaY, stepDuration, Interpolation.linear),
+                    Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear),
+                    Actions.moveBy(0, deltaY, stepDuration, Interpolation.linear),
+                    Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear),
+                    Actions.delay(stepDuration / 2 + GameConfig.random.nextFloat() * stepDuration / 2),
+                    Actions.moveBy(0, deltaY, stepDuration, Interpolation.linear),
+                    Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear)
+                )
             )
         );
 
@@ -84,7 +107,21 @@ public class CustomerCortege extends Group {
     private void moveAllCustomers(float deltaX) {
         for(int i = 0; i < customerImageList.size(); i++) {
             Image img = customerImageList.get(i);
-            img.addAction(Actions.moveBy(-deltaX, 0, 0.7f, Interpolation.linear));
+            float deltaY= img.getHeight() * 0.02f;
+            float duration = 1.2f;
+            float stepDuration = duration / 6;
+            img.addAction(
+                Actions.parallel(
+                    Actions.moveBy(-deltaX, 0, duration, Interpolation.linear),
+                    Actions.sequence(
+                        Actions.moveBy(0, deltaY, stepDuration, Interpolation.linear),
+                        Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear),
+                        Actions.delay(stepDuration / 2 + GameConfig.random.nextFloat() * stepDuration / 2),
+                        Actions.moveBy(0, deltaY, stepDuration, Interpolation.linear),
+                        Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear)
+                    )
+                )
+            );
         }
     }
 
