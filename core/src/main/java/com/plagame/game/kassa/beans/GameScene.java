@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.enums.CustomerInfo;
+import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.AssetUtil;
 
 import java.util.ArrayList;
@@ -28,13 +29,14 @@ public class GameScene extends Group {
         nextDay();
     }
 
-    private void init(List<CustomerInfo> customerList) {
+    private void init(List<CustomerInfo> customerList, List<ProductInfo> productList) {
+        clear();
         setSize(GameApplication.get().screenWidth, GameApplication.get().screenHeight);
         addBackground();
         addCustomerCortege(customerList);
         addConveerLenta();
         addCashRegister();
-        addProductCortege();
+        addProductCortege(productList);
     }
 
     private void addBackground() {
@@ -70,21 +72,21 @@ public class GameScene extends Group {
         addActor(customerCortege);
     }
 
-    private void addProductCortege() {
-        productCortege = new ProductCortege(conveerLenta.getWidth(), conveerLenta.getHeight());
+    private void addProductCortege(List<ProductInfo> productList) {
+        productCortege = new ProductCortege(conveerLenta.getWidth(), conveerLenta.getHeight(), productList);
         productCortege.setPosition(GameApplication.get().screenWidth / 2 - conveerLenta.getWidth() / 2, 0);
-        productCortege.nextProducts();
         addActor(productCortege);
     }
 
     public void nextDay() {
         List<CustomerInfo> customerList = createCustomerList();
-        init(customerList);
+        List<ProductInfo> productList = createProductList();
+        init(customerList, productList);
     }
 
     public void resize() {
         clear();
-        init(customerCortege.customerList);
+        init(customerCortege.customerList, productCortege.productList);
     }
 
     private List<CustomerInfo> createCustomerList() {
@@ -99,5 +101,14 @@ public class GameScene extends Group {
             }
         }
         return new ArrayList<>(set);
+    }
+
+    private List<ProductInfo> createProductList() {
+        List<ProductInfo> productList = new ArrayList<>();
+        for(int i = 0; i < 5; i++) {
+            ProductInfo productInfo = ProductInfo.getRandom();
+            productList.add(productInfo);
+        }
+        return productList;
     }
 }

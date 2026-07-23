@@ -11,7 +11,6 @@ import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.SoundUtil;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,18 +20,21 @@ import java.util.List;
  */
 public class ProductCortege extends Group {
     private final float panelWidth, panelHeight;
-    private final List<ProductInfo> productList = new ArrayList<>();
+    public final LinkedList<ProductInfo> productList = new LinkedList<>();
     private final LinkedList<Image> productImageList = new LinkedList<>();
-    private Image currentProduct;
+    private Image currentProductImage;
 
-    public ProductCortege(float width, float height) {
+    public ProductCortege(float width, float height, List<ProductInfo> newProductList) {
         this.panelWidth = width;
         this.panelHeight = height;
-        init();
+        init(newProductList);
     }
 
-    private void init() {
+    private void init(List<ProductInfo> newProductList) {
         clear();
+        this.productImageList.clear();
+        this.productList.clear();
+        this.productList.addAll(newProductList);
         float width = panelWidth;
         float height = panelHeight;
         float startX;
@@ -66,9 +68,10 @@ public class ProductCortege extends Group {
                             Image first = productImageList.get(0);
                             if(first != null && first == img) {
                                 SoundUtil.playClickSound();
-                                if(img != currentProduct) {
-                                    currentProduct = img;
-                                    productImageList.remove(img);
+                                if(img != currentProductImage) {
+                                    currentProductImage = img;
+                                    productImageList.removeFirst();
+                                    productList.removeFirst();
                                     moveProduct(img);
                                     moveAllProducts();
                                 }
@@ -84,21 +87,20 @@ public class ProductCortege extends Group {
             prevX = x + img.getWidth();
             productImageList.add(img);
         }
-        currentProduct = null;
+        currentProductImage = null;
     }
 
     public void nextProducts() {
-        productImageList.clear();
-        productList.clear();
+        List<ProductInfo> newProductList = new LinkedList<>();
         for(int i = 0; i < 5; i++) {
             ProductInfo productInfo = ProductInfo.getRandom();
-            productList.add(productInfo);
+            newProductList.add(productInfo);
         }
-        init();
+        init(newProductList);
     }
 
     public void resize() {
-        init();
+        init(productList);
     }
 
     private void moveProduct(Image img) {
@@ -120,7 +122,7 @@ public class ProductCortege extends Group {
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        currentProduct = null;
+                        currentProductImage = null;
                     }
                 })
             )
@@ -131,8 +133,8 @@ public class ProductCortege extends Group {
     private void moveAllProducts() {
         for(int i = 0; i < productImageList.size(); i++) {
             Image img = productImageList.get(i);
-            if(currentProduct != null) {
-                img.addAction(Actions.moveBy(-currentProduct.getWidth(), 0, 0.7f, Interpolation.linear));
+            if(currentProductImage != null) {
+                img.addAction(Actions.moveBy(-currentProductImage.getWidth(), 0, 0.7f, Interpolation.linear));
             }
         }
     }
