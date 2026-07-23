@@ -38,7 +38,7 @@ public class CustomerCortege extends Group {
         for(int i = 0; i < customerList.size(); i++) {
             CustomerInfo customerInfo = customerList.get(i);
             Image img = new Image(customerInfo.getTextureRegion());
-            if(img.getHeight() > maxH) { // если товар больше чем лента по высоте, то высотут товара нужно уменьшить
+            if(img.getHeight() > maxH) { // если чел больше чем макс высота, то нужно уменьшить
                 float w = img.getWidth() * maxH / img.getHeight();
                 img.setSize(w, maxH);
             }

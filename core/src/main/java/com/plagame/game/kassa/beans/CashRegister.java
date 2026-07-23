@@ -49,8 +49,15 @@ public class CashRegister extends Group {
         Group kassaGroup = new Group();
         Image imageKassa = new Image(ATLAS_1.findRegion("kassa"));
 
-        float kassaHeight = GameApplication.get().isPortrait() ? GameApplication.get().screenHeight * 0.69f : GameApplication.get().screenHeight * 0.85f;
-        float kassaWidth = imageKassa.getWidth() * kassaHeight / imageKassa.getHeight();
+        float kassaHeight;
+        float kassaWidth;
+        if (GameApplication.get().isPortrait()) {
+            kassaHeight = GameApplication.get().screenHeight * 0.69f;
+            kassaWidth = imageKassa.getWidth() * kassaHeight / imageKassa.getHeight();
+        } else {
+            kassaWidth = GameApplication.get().screenWidth * 0.25f;
+            kassaHeight = imageKassa.getHeight() * kassaWidth / imageKassa.getWidth();
+        }
         imageKassa.setSize(kassaWidth, kassaHeight);
         kassaGroup.setSize(kassaWidth, kassaHeight);
         kassaGroup.addActor(imageKassa);
