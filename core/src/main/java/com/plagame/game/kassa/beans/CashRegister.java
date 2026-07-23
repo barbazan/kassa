@@ -162,10 +162,14 @@ public class CashRegister extends Group {
         btnOk.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                SoundUtil.playClickSound();
-                terminalValue = "";
-                GameApplication.get().getGameScreen().gameScene.productCortege.nextCustomer();//todo remove
-                super.tap(event, x, y, count, button);
+                if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
+                    SoundUtil.playClickSound();
+                    terminalValue = "";
+                    GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
+                    super.tap(event, x, y, count, button);
+                } else {
+                    //todo wrong sound
+                }
             }
         });
         btnTable.add(btnOk).size(btnOk.getWidth(), btnOk.getHeight()).colspan(3).align(Align.center).padTop(btnPad).padBottom(btnSize * 0.67f);

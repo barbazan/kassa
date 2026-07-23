@@ -74,6 +74,7 @@ public class GameScene extends Group {
     private void addProductCortege() {
         productCortege = new ProductCortege(conveerLenta.getWidth(), conveerLenta.getHeight());
         productCortege.setPosition(GameApplication.get().screenWidth / 2 - conveerLenta.getWidth() / 2, 0);
+        productCortege.nextProducts();
         addActor(productCortege);
     }
 

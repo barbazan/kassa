@@ -87,7 +87,7 @@ public class ProductCortege extends Group {
         currentProduct = null;
     }
 
-    public void nextCustomer() {
+    public void nextProducts() {
         productImageList.clear();
         productList.clear();
         for(int i = 0; i < 5; i++) {
@@ -135,5 +135,9 @@ public class ProductCortege extends Group {
                 img.addAction(Actions.moveBy(-currentProduct.getWidth(), 0, 0.7f, Interpolation.linear));
             }
         }
+    }
+
+    public boolean isEmpty() {
+        return productImageList.isEmpty();
     }
 }

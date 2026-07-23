@@ -18,7 +18,6 @@ public class CustomerCortege extends Group {
 
     public List<CustomerInfo> customerList;
     private final LinkedList<Image> customerImageList = new LinkedList<>();
-    private Image currentCustomer;
 
     public CustomerCortege(List<CustomerInfo> customerList) {
         this.customerList = customerList;
@@ -49,7 +48,6 @@ public class CustomerCortege extends Group {
             prevX = x + img.getWidth();
             customerImageList.add(img);
         }
-        currentCustomer = customerImageList.get(0);
     }
 
     public void nextCustomer() {
@@ -58,7 +56,10 @@ public class CustomerCortege extends Group {
             if(first != null) {
                 customerImageList.removeFirst();
                 moveCustomer(first);
-                moveAllCustomers();
+                moveAllCustomers(first.getWidth());
+                if(!customerImageList.isEmpty()) {
+                    GameApplication.get().getGameScreen().gameScene.productCortege.nextProducts();
+                }
             }
         }
     }
@@ -68,38 +69,20 @@ public class CustomerCortege extends Group {
     }
 
     private void moveCustomer(Image img) {
-        Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
-        float deltaX;
-        if(GameApplication.get().isPortrait()) {
-            deltaX = img.getParent().getX() + img.getX();
-        } else {
-            deltaX = img.getX() - terminal.getX() + img.getWidth() / 2;
-        }
+        float deltaX= img.getX() + img.getWidth();
         img.clearActions();
         img.addAction(
             Actions.sequence(
-                Actions.moveBy(-deltaX, 0, 0.7f, Interpolation.elasticOut),
-                Actions.parallel(
-                    Actions.sizeTo(0, 0, 0.4f, Interpolation.linear),
-                    Actions.moveTo(0, 0, 0.4f, Interpolation.linear)
-                ),
-                Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentCustomer = null;
-                    }
-                })
+                Actions.moveBy(-deltaX, 0, 0.7f, Interpolation.linear)
             )
         );
 
     }
 
-    private void moveAllCustomers() {
+    private void moveAllCustomers(float deltaX) {
         for(int i = 0; i < customerImageList.size(); i++) {
             Image img = customerImageList.get(i);
-            if(currentCustomer != null) {
-                img.addAction(Actions.moveBy(-currentCustomer.getWidth(), 0, 0.7f, Interpolation.linear));
-            }
+            img.addAction(Actions.moveBy(-deltaX, 0, 0.7f, Interpolation.linear));
         }
     }
 
