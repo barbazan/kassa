@@ -28,6 +28,7 @@ public class ProductCortege extends Group {
     public ProductCortege(float width, float height, List<ProductInfo> newProductList) {
         this.panelWidth = width;
         this.panelHeight = height;
+        System.out.println("------------------------------newProductList = " + newProductList);
         init(newProductList);
     }
 
@@ -89,7 +90,9 @@ public class ProductCortege extends Group {
             productImageList.add(img);
         }
         currentProductImage = null;
-        addForeverScaleAction(productImageList.getFirst());
+        if(!productImageList.isEmpty()) {
+            addForeverScaleAction(productImageList.getFirst());
+        }
     }
 
     public void nextProducts() {
