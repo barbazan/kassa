@@ -29,8 +29,9 @@ public class CashRegister extends Group {
     private static final int MAX_PRICE_LENGTH = 8;
     public float terminalWidth, terminalHeight;
     public String terminalValue = "";
-    public Group terminal;
+    public Group kassa, terminal;
     public float totalCost;
+    public float kassaHeight, kassaWidth;
 
     public CashRegister(float totalCost, String terminalValue) {
         init(totalCost, terminalValue);
@@ -44,22 +45,20 @@ public class CashRegister extends Group {
     private void init(float totalCost, String terminalValue) {
         this.totalCost = totalCost;
         this.terminalValue = terminalValue;
-        Group kassaGroup = createKassa();
-        addActor(kassaGroup);
+        kassa = createKassa();
+        addActor(kassa);
 
-        terminal = createTerminal(kassaGroup.getHeight() * 0.58f);
-        terminal.setPosition(kassaGroup.getWidth(), kassaGroup.getHeight() - terminalHeight);
+        terminal = createTerminal(kassa.getHeight() * 0.58f);
+        terminal.setPosition(kassa.getWidth(), kassa.getHeight() - terminalHeight);
         addActor(terminal);
 
-        setSize(kassaGroup.getWidth() + terminal.getWidth(), kassaGroup.getHeight());
+        setSize(kassa.getWidth() + terminal.getWidth(), kassa.getHeight());
     }
 
     private Group createKassa() {  // Кассовый аппарат
         Group kassaGroup = new Group();
         Image imageKassa = new Image(ATLAS_1.findRegion("kassa"));
 
-        float kassaHeight;
-        float kassaWidth;
         if (GameApplication.get().isPortrait()) {
             kassaHeight = GameApplication.get().screenHeight * 0.69f;
             kassaWidth = imageKassa.getWidth() * kassaHeight / imageKassa.getHeight();

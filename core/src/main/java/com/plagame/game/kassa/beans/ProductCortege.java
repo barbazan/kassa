@@ -76,7 +76,7 @@ public class ProductCortege extends Group {
                                 }
                             }
                             if(productList.isEmpty()) {
-                                moveCameraSlowly(true);
+                                moveCameraSlowly(GameConfig.random.nextBoolean()); //todo
                             }
                         }
                     } catch (Exception e) {
@@ -187,7 +187,7 @@ public class ProductCortege extends Group {
     public void moveCameraSlowly(boolean isCard) {
         if(isCard) {
             Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
-            float targetZoom = terminal.getHeight() / GameApplication.get().screenHeight;;
+            float targetZoom = terminal.getHeight() / GameApplication.get().screenHeight;
             float targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2;
             float targetY= terminal.getParent().getY() + terminal.getY() + terminal.getHeight() / 2;
             getParent().addAction(
@@ -197,7 +197,21 @@ public class ProductCortege extends Group {
                 )
             );
         } else {
-            //todo
+            CashRegister cashRegister = GameApplication.get().getGameScreen().gameScene.cashRegister;
+            float targetZoom;
+            if(GameApplication.get().isPortrait()) {
+                targetZoom = cashRegister.kassaWidth / GameApplication.get().screenWidth;
+            } else {
+                targetZoom = cashRegister.kassaHeight / GameApplication.get().screenHeight;
+            }
+            float targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassaWidth / 2;
+            float targetY= cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() / 2;
+            getParent().addAction(
+                Actions.sequence(
+                    Actions.delay(1.0f),
+                    new CameraAction(GameApplication.get().camera, targetX, targetY, targetZoom, 0.5f)
+                )
+            );
         }
     }
 }
