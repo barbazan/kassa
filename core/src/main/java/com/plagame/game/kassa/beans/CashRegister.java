@@ -4,6 +4,7 @@ import static com.plagame.game.kassa.GameApplication.FONT_DEFAULT;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -29,6 +30,8 @@ public class CashRegister extends Group {
     private static final int MAX_PRICE_LENGTH = 8;
     public float terminalWidth, terminalHeight;
     public float totalCost;  // это стоимость продуктов, которую должен оплатить покупатель
+    public float payedSum;  // сколько дали налички
+    public float giving;  // сколько я даю сдачи
     public String terminalValue = ""; // это число то что ввели кнопками на терминале
     public Group kassa, terminal;
 
@@ -81,12 +84,12 @@ public class CashRegister extends Group {
         tableRight.setSize(kassaWidth * 0.75f, kassaHeight);
 
 
-        Label totalLabel = new Label("TOTAL", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK));
+        Label totalLabel = new Label("TOTAL", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
         totalLabel.setAlignment(Align.center);
         tableRight.add(totalLabel).align(Align.center).pad(btnPad).colspan(3).fill();
         tableRight.row();
 
-        Label totalCostLabel = new ModelLabel("--.--", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK)) {
+        Label totalCostLabel = new ModelLabel("--.--", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE)) {
             @Override
             protected String getValue() {
                 return formatTotalCost(totalCost);
@@ -97,8 +100,40 @@ public class CashRegister extends Group {
         tableRight.add(totalCostLabel).align(Align.center).pad(btnPad).colspan(3).fill();
         tableRight.row();
 
-        tableRight.add().colspan(3).expand();
+        Label changeTextLabel = new Label("CHANGE", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        changeTextLabel.setAlignment(Align.left);
+        tableRight.add(changeTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 6).fill();
+
+        Label changeLabel = new ModelLabel("", new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW)) {
+            @Override
+            protected String getValue() {
+                return formatTotalCost(payedSum - totalCost);
+            }
+        };
+        changeLabel.setAlignment(Align.right);
+        changeLabel.setHeight(btnSize);
+        tableRight.add(changeLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 6).colspan(2).expandX().fill();
         tableRight.row();
+
+        Label givingTextLabel = new Label("GIVING", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        givingTextLabel.setAlignment(Align.left);
+        tableRight.add(givingTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 7).fill();
+
+        Label givingLabel = new ModelLabel("", new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW)) {
+            @Override
+            protected String getValue() {
+                return formatTotalCost(giving);
+            }
+        };
+        givingLabel.setAlignment(Align.right);
+        givingLabel.setHeight(btnSize);
+        tableRight.add(givingLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 7).colspan(2).expandX().fill();
+        tableRight.row();
+
+        Table cashTable = createKassaCashBox(tableRight.getWidth());
+        tableRight.add(cashTable).pad(btnPad).expandY().fill().colspan(3);
+//        tableRight.add().colspan(3).expand();
+//        tableRight.row();
 
 
 
@@ -298,4 +333,20 @@ public class CashRegister extends Group {
         );
     }
 
+    private Table createKassaCashBox(float width) {
+        Table cashTable = new Table();
+        TextureRegion textureRegion = ATLAS_1.findRegion("kassa_slot");
+        float w = (width / 5);
+        float h = w * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
+        cashTable.setSize(width, h * 2);
+        for(int i = 0; i < 10; i++) {
+            Image slotImage = new Image(textureRegion);
+            slotImage.setSize(w * 0.9f, h * 0.9f);
+            cashTable.add(slotImage).size(slotImage.getWidth(), slotImage.getHeight()).align(Align.center);
+            if(i == 4) {
+                cashTable.row();
+            }
+        }
+        return cashTable;
+    }
 }

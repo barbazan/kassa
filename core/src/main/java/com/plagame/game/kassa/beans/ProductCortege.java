@@ -185,7 +185,7 @@ public class ProductCortege extends Group {
     }
 
     public void moveCameraSlowly(boolean isCard) {
-        if(isCard) {
+        if(isCard) { // карта
             Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
             float targetZoom = terminal.getHeight() / GameApplication.get().screenHeight;
             float targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2;
@@ -196,16 +196,20 @@ public class ProductCortege extends Group {
                     new CameraAction(GameApplication.get().camera, targetX, targetY, targetZoom, 0.5f)
                 )
             );
-        } else {
+        } else {  // наличка
             CashRegister cashRegister = GameApplication.get().getGameScreen().gameScene.cashRegister;
             float targetZoom;
+            float targetX;
+            float targetY;
             if(GameApplication.get().isPortrait()) {
                 targetZoom = cashRegister.kassa.getWidth() / GameApplication.get().screenWidth;
+                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() / 2;
+                targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.kassa.getHeight() * 0.6f;
             } else {
                 targetZoom = cashRegister.kassa.getHeight() / GameApplication.get().screenHeight;
+                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth();
+                targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() * 0.6f;
             }
-            float targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() / 2;
-            float targetY= cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() / 2;
             getParent().addAction(
                 Actions.sequence(
                     Actions.delay(1.0f),
