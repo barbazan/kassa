@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.components.ModelLabel;
+import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 /**
@@ -27,14 +28,22 @@ public class CashRegister extends Group {
 
     private static final int MAX_PRICE_LENGTH = 8;
     public float terminalWidth, terminalHeight;
-    private String terminalValue = "";
+    public String terminalValue = "";
     public Group terminal;
+    public float totalCost;
 
-    public CashRegister() {
-        init();
+    public CashRegister(float totalCost, String terminalValue) {
+        init(totalCost, terminalValue);
     }
 
-    private void init() {
+    public void checkProduct(ProductInfo productInfo) { // пробить продукт на кассе
+        totalCost += productInfo.cost;
+        SoundUtil.playClickSound(); //todo звук пробития на кассе
+    }
+
+    private void init(float totalCost, String terminalValue) {
+        this.totalCost = totalCost;
+        this.terminalValue = terminalValue;
         Group kassaGroup = createKassa();
         addActor(kassaGroup);
 
@@ -79,7 +88,16 @@ public class CashRegister extends Group {
         btnTable.pad(btnPad * 2.9f).padTop(0);
 //        btnTable.setDebug(true);
         btnTable.setSize(terminalWidth, terminalHeight);
-        btnTable.add().colspan(3).expand();
+
+        Label totalCostLabel = new ModelLabel("--.--", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK)) {
+            @Override
+            protected String getValue() {
+                return formatTotalCost(totalCost);
+            }
+        };
+        totalCostLabel.setAlignment(Align.center);
+        totalCostLabel.setHeight(btnSize);
+        btnTable.add(totalCostLabel).align(Align.center).pad(btnPad * 2).colspan(3).expand().fill();
         btnTable.row();
 
         Label costLabel = new ModelLabel(terminalValue, new Label.LabelStyle(FONT_DEFAULT, Color.BLACK)) {
@@ -162,7 +180,13 @@ public class CashRegister extends Group {
         Button btnOk = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
-        );
+        ) {
+            @Override
+            public void act(float delta) {
+                setDisabled(!GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty());
+                super.act(delta);
+            }
+        };
         float h = btnSize * 0.91f;
         float w = btnOk.getWidth() * h / btnOk.getHeight();
         btnOk.setSize(w, h);
@@ -170,13 +194,18 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
-                    SoundUtil.playClickSound();
-                    terminalValue = "";
-                    GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
-                    super.tap(event, x, y, count, button);
-                } else {
-                    //todo wrong sound
+                    String totalCostStr = formatTotalCost(totalCost);
+                    if(totalCost > 0 && totalCostStr.equals(terminalValue)) {
+                        SoundUtil.playClickSound();
+                        totalCost = 0;
+                        terminalValue = "";
+                        //todo прибавлять юзеру деньги
+                        GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
+                    } else {
+                        //todo wrong sound
+                    }
                 }
+                super.tap(event, x, y, count, button);
             }
         });
         btnTable.add(btnOk).size(btnOk.getWidth(), btnOk.getHeight()).colspan(3).align(Align.center).padTop(btnPad).padBottom(btnSize * 0.67f);
@@ -192,5 +221,20 @@ public class CashRegister extends Group {
         );
         btn.setSize(btnSize, btnSize);
         return btn;
+    }
+
+    private String formatTotalCost(float cost) {
+        if(cost == 0) {
+            return "--.--";
+        }
+        String strCost = String.valueOf(cost);
+        if (cost == (int)cost) {
+            try {
+                return strCost.substring(0, strCost.indexOf("."));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return strCost;
     }
 }

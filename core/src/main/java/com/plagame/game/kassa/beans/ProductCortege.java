@@ -71,7 +71,7 @@ public class ProductCortege extends Group {
                                     currentProductImage = img;
                                     productImageList.removeFirst();
                                     productList.removeFirst();
-                                    moveProduct(img);
+                                    moveProduct(img, productInfo);
                                     moveAllProducts();
                                 }
                             }
@@ -121,7 +121,7 @@ public class ProductCortege extends Group {
         init(productList);
     }
 
-    private void moveProduct(Image img) {
+    private void moveProduct(Image img, ProductInfo productInfo) {
         Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
         float deltaX;
         if(GameApplication.get().isPortrait()) {
@@ -133,6 +133,12 @@ public class ProductCortege extends Group {
         img.addAction(
             Actions.sequence(
                 Actions.moveBy(-deltaX, 0, 0.7f, Interpolation.elasticOut),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        GameApplication.get().getGameScreen().gameScene.cashRegister.checkProduct(productInfo);
+                    }
+                }),
                 Actions.parallel(
                     Actions.sizeTo(0, 0, 0.4f, Interpolation.linear),
                     Actions.moveTo(0, 0, 0.4f, Interpolation.linear)

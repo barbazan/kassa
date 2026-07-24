@@ -10,33 +10,35 @@ import com.plagame.game.kassa.GameConfig;
  * Email: dmitry.malyshev@gmail.com
  */
 public enum ProductInfo {
-    PRODUCT_INFO_1(1),
-    PRODUCT_INFO_2(2),
-    PRODUCT_INFO_3(3),
-    PRODUCT_INFO_4(4),
-    PRODUCT_INFO_5(5),
-    PRODUCT_INFO_6(6),
-    PRODUCT_INFO_7(7),
-    PRODUCT_INFO_8(8),
-    PRODUCT_INFO_9(9),
-    PRODUCT_INFO_10(10),
-    PRODUCT_INFO_11(11),
-    PRODUCT_INFO_12(12),
-    PRODUCT_INFO_13(13),
-    PRODUCT_INFO_14(14),
-    PRODUCT_INFO_15(15),
-    PRODUCT_INFO_16(16),
-    PRODUCT_INFO_17(17),
-    PRODUCT_INFO_18(18),
-    PRODUCT_INFO_19(19),
-    PRODUCT_INFO_20(20),
+    PRODUCT_INFO_1(1, 4),
+    PRODUCT_INFO_2(2, 4.5f),
+    PRODUCT_INFO_3(3, 5),
+    PRODUCT_INFO_4(4, 6),
+    PRODUCT_INFO_5(5, 1.75f),
+    PRODUCT_INFO_6(6, 2),
+    PRODUCT_INFO_7(7, 2.5f),
+    PRODUCT_INFO_8(8, 3),
+    PRODUCT_INFO_9(9, 4.5f),
+    PRODUCT_INFO_10(10, 6.5f),
+    PRODUCT_INFO_11(11, 11.5f),
+    PRODUCT_INFO_12(12, 4.5f),
+    PRODUCT_INFO_13(13, 6.5f),
+    PRODUCT_INFO_14(14, 5.5f),
+    PRODUCT_INFO_15(15, 15),
+    PRODUCT_INFO_16(16, 35),
+    PRODUCT_INFO_17(17, 25),
+    PRODUCT_INFO_18(18, 6.75f),
+    PRODUCT_INFO_19(19, 12.5f),
+    PRODUCT_INFO_20(20, 22.75f),
     ;
 
     public final int type;
+    public final float cost;
     private TextureRegion textureRegion;
 
-    ProductInfo(int type) {
+    ProductInfo(int type, float cost) {
         this.type = type;
+        this.cost = cost;
         ENUM_MAPS.PRODUCT_INFO_MAP.put(type, this);
     }
 

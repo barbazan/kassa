@@ -57,7 +57,11 @@ public class GameScene extends Group {
     }
 
     private void addCashRegister() {
-        cashRegister = new CashRegister();
+        if(cashRegister != null) {
+            cashRegister = new CashRegister(cashRegister.totalCost, cashRegister.terminalValue);
+        } else {
+            cashRegister = new CashRegister(0, "");
+        }
         if(GameApplication.get().isPortrait()) {
             cashRegister.setPosition(- cashRegister.getWidth() + cashRegister.terminalWidth * 1.1f, -cashRegister.getHeight() + cashRegister.terminalHeight * 1.15f);
         } else {
