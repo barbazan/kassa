@@ -28,10 +28,9 @@ public class CashRegister extends Group {
 
     private static final int MAX_PRICE_LENGTH = 8;
     public float terminalWidth, terminalHeight;
-    public String terminalValue = "";
+    public float totalCost;  // это стоимость продуктов, которую должен оплатить покупатель
+    public String terminalValue = ""; // это число то что ввели кнопками на терминале
     public Group kassa, terminal;
-    public float totalCost;
-    public float kassaHeight, kassaWidth;
 
     public CashRegister(float totalCost, String terminalValue) {
         init(totalCost, terminalValue);
@@ -59,6 +58,7 @@ public class CashRegister extends Group {
         Group kassaGroup = new Group();
         Image imageKassa = new Image(ATLAS_1.findRegion("kassa"));
 
+        float kassaWidth, kassaHeight;
         if (GameApplication.get().isPortrait()) {
             kassaHeight = GameApplication.get().screenHeight * 0.69f;
             kassaWidth = imageKassa.getWidth() * kassaHeight / imageKassa.getHeight();
@@ -69,6 +69,42 @@ public class CashRegister extends Group {
         imageKassa.setSize(kassaWidth, kassaHeight);
         kassaGroup.setSize(kassaWidth, kassaHeight);
         kassaGroup.addActor(imageKassa);
+
+        float btnSize = kassaWidth * 0.22f;
+        float btnPad = btnSize / 10;
+
+        Table kassaTable = new Table();
+        kassaTable.setSize(kassaWidth, kassaHeight);
+        Table tableLeft = new Table();
+        tableLeft.setSize(kassaWidth * 0.25f, kassaHeight);
+        Table tableRight = new Table();
+        tableRight.setSize(kassaWidth * 0.75f, kassaHeight);
+
+
+        Label totalLabel = new Label("TOTAL", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK));
+        totalLabel.setAlignment(Align.center);
+        tableRight.add(totalLabel).align(Align.center).pad(btnPad).colspan(3).fill();
+        tableRight.row();
+
+        Label totalCostLabel = new ModelLabel("--.--", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK)) {
+            @Override
+            protected String getValue() {
+                return formatTotalCost(totalCost);
+            }
+        };
+        totalCostLabel.setAlignment(Align.center);
+        totalCostLabel.setHeight(btnSize);
+        tableRight.add(totalCostLabel).align(Align.center).pad(btnPad).colspan(3).fill();
+        tableRight.row();
+
+        tableRight.add().colspan(3).expand();
+        tableRight.row();
+
+
+
+        kassaTable.add(tableLeft).size(tableLeft.getWidth(), tableLeft.getHeight());
+        kassaTable.add(tableRight).size(tableRight.getWidth(), tableRight.getHeight());
+        kassaGroup.addActor(kassaTable);
         return kassaGroup;
     }
 
@@ -88,6 +124,11 @@ public class CashRegister extends Group {
 //        btnTable.setDebug(true);
         btnTable.setSize(terminalWidth, terminalHeight);
 
+        Label totalLabel = new Label("TOTAL", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK));
+        totalLabel.setAlignment(Align.center);
+        btnTable.add(totalLabel).align(Align.center).pad(btnPad).colspan(3).fill();
+        btnTable.row();
+
         Label totalCostLabel = new ModelLabel("--.--", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK)) {
             @Override
             protected String getValue() {
@@ -96,13 +137,20 @@ public class CashRegister extends Group {
         };
         totalCostLabel.setAlignment(Align.center);
         totalCostLabel.setHeight(btnSize);
-        btnTable.add(totalCostLabel).align(Align.center).pad(btnPad * 2).colspan(3).expand().fill();
+        btnTable.add(totalCostLabel).align(Align.center).pad(btnPad * 2).colspan(3).fill();
+        btnTable.row();
+
+        btnTable.add().colspan(3).expand();
         btnTable.row();
 
         Label costLabel = new ModelLabel(terminalValue, new Label.LabelStyle(FONT_DEFAULT, Color.BLACK)) {
             @Override
             protected String getValue() {
-                return terminalValue;
+                if(terminalValue.length() > 0) {
+                    return "$" + terminalValue;
+                } else {
+                    return "";
+                }
             }
         };
         costLabel.setAlignment(Align.center);
@@ -194,7 +242,7 @@ public class CashRegister extends Group {
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
                     String totalCostStr = formatTotalCost(totalCost);
-                    if(totalCost > 0 && totalCostStr.equals(terminalValue)) {
+                    if(totalCost > 0 && totalCostStr.equals("$" + terminalValue)) {
                         SoundUtil.playClickSound();
                         totalCost = 0;
                         terminalValue = "";
@@ -203,6 +251,9 @@ public class CashRegister extends Group {
                         moveCameraSlowlyBack();
                     } else {
                         //todo wrong sound
+                        if(GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) {
+                            GameApplication.get().getGameScreen().gameScene.nextDay(); //todo remove
+                        }
                     }
                 }
                 super.tap(event, x, y, count, button);
@@ -230,12 +281,12 @@ public class CashRegister extends Group {
         String strCost = String.valueOf(cost);
         if (cost == (int)cost) {
             try {
-                return strCost.substring(0, strCost.indexOf("."));
+                strCost = strCost.substring(0, strCost.indexOf("."));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return strCost;
+        return "$" + strCost;
     }
 
     private void moveCameraSlowlyBack() {

@@ -200,11 +200,11 @@ public class ProductCortege extends Group {
             CashRegister cashRegister = GameApplication.get().getGameScreen().gameScene.cashRegister;
             float targetZoom;
             if(GameApplication.get().isPortrait()) {
-                targetZoom = cashRegister.kassaWidth / GameApplication.get().screenWidth;
+                targetZoom = cashRegister.kassa.getWidth() / GameApplication.get().screenWidth;
             } else {
-                targetZoom = cashRegister.kassaHeight / GameApplication.get().screenHeight;
+                targetZoom = cashRegister.kassa.getHeight() / GameApplication.get().screenHeight;
             }
-            float targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassaWidth / 2;
+            float targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() / 2;
             float targetY= cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() / 2;
             getParent().addAction(
                 Actions.sequence(

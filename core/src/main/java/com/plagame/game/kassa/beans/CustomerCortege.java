@@ -87,7 +87,7 @@ public class CustomerCortege extends Group {
     }
 
     private void moveCustomer(Image img) {
-        float deltaX= img.getX() + img.getWidth() * 2;
+        float deltaX= img.getX() + img.getWidth() * 3;
         float deltaY= img.getHeight() * 0.02f;
         float duration = 2.8f;
         float stepDuration = duration / 10;
