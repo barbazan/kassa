@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.plagame.game.net.kassa.KassaNetworkWebSocketClient;
@@ -27,6 +28,8 @@ import com.plagame.game.kassa.utils.FontGenerator;
  * Email: dmitry.malyshev@gmail.com
  */
 public class GameApplication extends Game {
+    public static Vector3 DEFAULT_CAMERA_POSITION;
+    public static float DEFAULT_CAMERA_ZOOM;
     public final static float WORLD_WIDTH = 1080;
     public final static float WORLD_HEIGHT = 1920;
     private static GameApplication instance;
@@ -143,15 +146,21 @@ public class GameApplication extends Game {
     }
 
     public void initCam() {
+        DEFAULT_CAMERA_ZOOM = 1.0f;
+        DEFAULT_CAMERA_POSITION = new Vector3(screenWidth / 2f, screenHeight / 2f, 0);
         camera = new OrthographicCamera(screenWidth, screenHeight);
-        camera.position.set(screenWidth / 2f, screenHeight / 2f, 0);
-        camera.zoom = 1.0f;
+        camera.position.set(DEFAULT_CAMERA_POSITION);
+        camera.zoom = DEFAULT_CAMERA_ZOOM;
         camera.update();
         viewport = new StretchViewport(screenWidth, screenHeight, camera);
     }
 
     public void onResize(int width, int height) {
         initScreenSize(width, height);
+        DEFAULT_CAMERA_POSITION = new Vector3(screenWidth / 2f, screenHeight / 2f, 0);
+        camera.position.set(DEFAULT_CAMERA_POSITION);
+        camera.zoom = DEFAULT_CAMERA_ZOOM;
+        camera.update();
         viewport.setWorldSize(width, height);
         viewport.update(width, height,true);
         initFonts();

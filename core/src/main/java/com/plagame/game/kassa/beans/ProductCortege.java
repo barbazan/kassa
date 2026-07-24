@@ -75,6 +75,9 @@ public class ProductCortege extends Group {
                                     moveAllProducts();
                                 }
                             }
+                            if(productList.isEmpty()) {
+                                moveCameraSlowly(true);
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -179,5 +182,32 @@ public class ProductCortege extends Group {
                 Actions.scaleBy(-scaleDelta, -scaleDelta, duration, Interpolation.sine)
             )
         ));
+    }
+
+    private void moveCameraSlowly(boolean isCard) {
+        if(isCard) {
+            Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
+            float targetZoom;
+            float targetX;
+            float targetY;
+
+            if(GameApplication.get().isPortrait()) {
+                targetZoom = GameApplication.get().DEFAULT_CAMERA_ZOOM * 0.5f;
+                targetX = GameApplication.get().DEFAULT_CAMERA_POSITION.x - (terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2);
+                targetY = GameApplication.get().DEFAULT_CAMERA_POSITION.y - terminal.getHeight() / 2;
+            } else {
+                targetZoom = GameApplication.get().DEFAULT_CAMERA_ZOOM * 0.55f;
+                targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2;
+                targetY = GameApplication.get().DEFAULT_CAMERA_POSITION.y - terminal.getHeight() * 0.3f;
+            }
+            getParent().addAction(
+                Actions.sequence(
+                    Actions.delay(1.0f),
+                    new CameraAction(GameApplication.get().camera, targetX, targetY, targetZoom, 0.5f)
+                )
+            );
+        } else {
+            //todo
+        }
     }
 }

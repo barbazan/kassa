@@ -201,6 +201,7 @@ public class CashRegister extends Group {
                         terminalValue = "";
                         //todo прибавлять юзеру деньги
                         GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
+                        moveCameraSlowlyBack();
                     } else {
                         //todo wrong sound
                     }
@@ -237,4 +238,14 @@ public class CashRegister extends Group {
         }
         return strCost;
     }
+
+    private void moveCameraSlowlyBack() {
+        float targetZoom = GameApplication.get().DEFAULT_CAMERA_ZOOM;
+        float targetX = GameApplication.get().DEFAULT_CAMERA_POSITION.x;
+        float targetY = GameApplication.get().DEFAULT_CAMERA_POSITION.y;
+        getParent().addAction(
+            new CameraAction(GameApplication.get().camera, targetX, targetY, targetZoom, 0.5f)
+        );
+    }
+
 }
