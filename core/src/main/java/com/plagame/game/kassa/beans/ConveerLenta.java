@@ -22,6 +22,7 @@ public class ConveerLenta extends Group {
     private void init() {
         clear();
         addBackground();
+        addBackground2();
 
         float height = background.getHeight();
         float width = background.getWidth();
@@ -42,6 +43,20 @@ public class ConveerLenta extends Group {
         float scale = Math.max(scaleX, scaleY);
         background.setSize(textureRegion.getRegionWidth() * scale, textureRegion.getRegionHeight() * scale);
         background.setPosition(0, 0);
+        addActor(background);
+    }
+
+    private void addBackground2() {
+        float lentaHeight = GameApplication.get().screenHeight * 0.30f;
+        TextureRegion textureRegion = new TextureRegion(ATLAS_1.findRegion("lenta"));
+        background = new Image(textureRegion);
+        float scaleX = GameApplication.get().screenWidth / textureRegion.getRegionWidth();
+        float scaleY = lentaHeight / textureRegion.getRegionHeight();
+        float scale = Math.max(scaleX, scaleY);
+        float w = textureRegion.getRegionWidth() * scale;
+        float h = textureRegion.getRegionHeight() * scale;
+        background.setSize(w, h);
+        background.setPosition(0, -h);
         addActor(background);
     }
 

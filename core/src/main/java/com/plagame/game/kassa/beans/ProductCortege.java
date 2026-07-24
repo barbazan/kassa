@@ -187,9 +187,16 @@ public class ProductCortege extends Group {
     public void moveCameraSlowly(boolean isCard) {
         if(isCard) { // карта
             Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
-            float targetZoom = terminal.getHeight() / GameApplication.get().screenHeight;
-            float targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2;
-            float targetY= terminal.getParent().getY() + terminal.getY() + terminal.getHeight() / 2;
+            float targetZoom;
+            float targetX;
+            if(GameApplication.get().isPortrait()) {
+                targetZoom = (terminal.getHeight() / GameApplication.get().screenHeight) * 1.2f;
+                targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2;
+            } else {
+                targetZoom = (terminal.getHeight() / GameApplication.get().screenHeight);
+                targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth();
+            }
+            float targetY = terminal.getParent().getY() + terminal.getY() + terminal.getHeight() / 2;
             getParent().addAction(
                 Actions.sequence(
                     Actions.delay(1.0f),
@@ -206,9 +213,9 @@ public class ProductCortege extends Group {
                 targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() / 2;
                 targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.kassa.getHeight() * 0.6f;
             } else {
-                targetZoom = cashRegister.kassa.getHeight() / GameApplication.get().screenHeight;
-                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth();
-                targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() * 0.6f;
+                targetZoom = cashRegister.kassa.getHeight() * 0.9f / GameApplication.get().screenHeight;
+                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() * 1.3f;
+                targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() * 0.55f;
             }
             getParent().addAction(
                 Actions.sequence(
