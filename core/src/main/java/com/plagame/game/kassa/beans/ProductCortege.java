@@ -55,7 +55,7 @@ public class ProductCortege extends Group {
                 float w = img.getWidth() * maxH / img.getHeight();
                 img.setSize(w, maxH);
             }
-            float x = prevX + img.getWidth() * 0.01f;
+            float x = prevX + img.getWidth() * 0.1f;
             float mult = GameConfig.random.nextFloat();
             float y = startY + (GameConfig.random.nextBoolean() ? -heightDelta : heightDelta) * mult;
 
@@ -184,22 +184,12 @@ public class ProductCortege extends Group {
         ));
     }
 
-    private void moveCameraSlowly(boolean isCard) {
+    public void moveCameraSlowly(boolean isCard) {
         if(isCard) {
             Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
-            float targetZoom;
-            float targetX;
-            float targetY;
-
-            if(GameApplication.get().isPortrait()) {
-                targetZoom = GameApplication.get().DEFAULT_CAMERA_ZOOM * 0.5f;
-                targetX = GameApplication.get().DEFAULT_CAMERA_POSITION.x - (terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2);
-                targetY = GameApplication.get().DEFAULT_CAMERA_POSITION.y - terminal.getHeight() / 2;
-            } else {
-                targetZoom = GameApplication.get().DEFAULT_CAMERA_ZOOM * 0.55f;
-                targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2;
-                targetY = GameApplication.get().DEFAULT_CAMERA_POSITION.y - terminal.getHeight() * 0.3f;
-            }
+            float targetZoom = terminal.getHeight() / GameApplication.get().screenHeight;;
+            float targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2;
+            float targetY= terminal.getParent().getY() + terminal.getY() + terminal.getHeight() / 2;
             getParent().addAction(
                 Actions.sequence(
                     Actions.delay(1.0f),
