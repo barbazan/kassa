@@ -397,14 +397,25 @@ public class CashRegister extends Group {
             coinPackImage.setPosition(slotGroup.getWidth() / 2 - coinPackImage.getWidth() / 2, slotGroup.getHeight() / 2 - coinPackImage.getHeight() / 2);
             slotGroup.addActor(coinPackImage);
 
+            int finalI = i;
             slotGroup.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    Image img = new Image(ATLAS_1.findRegion(GameConfig.random.nextBoolean() ? "coin_1" : "coin_2"));
+                    Image img = new Image(ATLAS_1.findRegion(finalI == 1 ? "coin_1" : "coin_2"));
+                    float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
+                    float globalY = kassa.getY() + tableRight.getY() + cashTable.getY() + slotGroup.getY() + slotGroup.getHeight() / 2;
+                    img.setPosition(globalX, globalY);
+                    img.setSize(dw * 0.5f, dw * 0.5f);
+                    img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
+                    float dx = GameConfig.random.nextFloat() * slotGroup.getWidth() / 2;
+                    float targetX = kassa.getX() + kassa.getWidth() * 0.10f + (GameConfig.random.nextBoolean() ? -dx : dx);
+                    float dy = GameConfig.random.nextFloat() * slotGroup.getHeight() * 0.3f;
+                    float targetY = kassa.getY() + kassa.getHeight() * 0.65f + (GameConfig.random.nextBoolean() ? -dy: dy);
                     img.addAction(Actions.parallel(
-                        Actions.moveTo(kassa.getX() + kassa.getWidth() * 0.1f, kassa.getY() + kassa.getHeight() * 0.8f),
-                        Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat())
+                        Actions.moveTo(targetX, targetY, 0.6f),
+                        Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
                     ));
+                    addActor(img);
                 }
             });
 
