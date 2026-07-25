@@ -1,12 +1,18 @@
 package com.plagame.game.kassa.beans;
 
+import static com.plagame.game.kassa.Resources.ATLAS_1;
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.enums.CustomerInfo;
+import com.plagame.game.kassa.utils.SoundUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +24,8 @@ import java.util.List;
 public class CustomerCortege extends Group {
 
     public LinkedList<CustomerInfo> customerList = new LinkedList<>();
-    private final LinkedList<Image> customerImageList = new LinkedList<>();
+    public final LinkedList<Image> customerImageList = new LinkedList<>();
+    private Image cardImage, cashImage;
 
     public CustomerCortege(List<CustomerInfo> customerList) {
         this.customerList.clear();
@@ -145,6 +152,88 @@ public class CustomerCortege extends Group {
             return getHeight() * 0.07f;
         } else {
             return 0;
+        }
+    }
+
+    public void startPayment() {
+//        boolean isCard = GameConfig.random.nextBoolean();
+        boolean isCard = true;
+        if(isCard) {
+            int cardType = 1 + GameConfig.random.nextInt(5);
+            TextureRegion textureRegion = ATLAS_1.findRegion("card_" + cardType);
+            cardImage = new Image(textureRegion);
+            float cardW = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal.getWidth();
+            float cardH = cardW * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
+            cardImage.setSize(cardW, cardH);
+            cardImage.setOrigin(cardW / 2, cardH / 2);
+            cardImage.setRotation(-20);
+            CustomerCortege customerCortege = GameApplication.get().getGameScreen().gameScene.customerCortege;
+            LinkedList<Image> customerImageList = customerCortege.customerImageList;
+            if(!customerImageList.isEmpty()) {
+                Image targetImage = customerImageList.getFirst();
+                float x1 = getStartX() + cardImage.getWidth() / 2;
+                float y1 = getStartY() + targetImage.getHeight() * 0.5f;
+                cardImage.setPosition(x1, y1);
+//                                        cardImage.addAction(Actions.moveBy(2000, 0, 5));
+            }
+            cardImage.addListener(new ActorGestureListener() {
+                @Override
+                public void tap(InputEvent event, float x, float y, int count, int button) {
+                    SoundUtil.playClickSound();
+                    cardImage.setVisible(false);
+                    moveCameraSlowly(isCard);
+                }
+            });
+            cardImage.addAction(
+                Actions.forever(
+                    Actions.sequence(
+                        Actions.rotateBy(40, 0.8f),
+                        Actions.rotateBy(-40, 0.8f)
+                    )
+                ));
+            addActor(cardImage);
+        }
+    }
+
+    public void moveCameraSlowly(boolean isCard) {
+        if(isCard) { // карта
+            Group terminal = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal;
+            float targetZoom;
+            float targetX;
+            if(GameApplication.get().isPortrait()) {
+                targetZoom = (terminal.getHeight() / GameApplication.get().screenHeight) * 1.2f;
+                targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth() / 2;
+            } else {
+                targetZoom = (terminal.getHeight() / GameApplication.get().screenHeight);
+                targetX = terminal.getParent().getX() + terminal.getX() + terminal.getWidth();
+            }
+            float targetY = terminal.getParent().getY() + terminal.getY() + terminal.getHeight() / 2;
+            getParent().addAction(
+                Actions.sequence(
+//                    Actions.delay(1.0f),
+                    new CameraAction(GameApplication.get().camera, targetX, targetY, targetZoom, 0.5f)
+                )
+            );
+        } else {  // наличка
+            CashRegister cashRegister = GameApplication.get().getGameScreen().gameScene.cashRegister;
+            float targetZoom;
+            float targetX;
+            float targetY;
+            if(GameApplication.get().isPortrait()) {
+                targetZoom = cashRegister.kassa.getWidth() / GameApplication.get().screenWidth;
+                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() / 2;
+                targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.kassa.getHeight() * 0.6f;
+            } else {
+                targetZoom = cashRegister.kassa.getHeight() * 0.9f / GameApplication.get().screenHeight;
+                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() * 1.3f;
+                targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() * 0.55f;
+            }
+            getParent().addAction(
+                Actions.sequence(
+//                    Actions.delay(1.0f),
+                    new CameraAction(GameApplication.get().camera, targetX, targetY, targetZoom, 0.5f)
+                )
+            );
         }
     }
 
