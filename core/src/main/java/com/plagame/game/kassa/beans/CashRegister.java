@@ -367,6 +367,7 @@ public class CashRegister extends Group {
                     img.setPosition(globalX, globalY);
                     img.setSize(dw * 0.6f, dh * 0.6f);
                     img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
+                    img.setScale(getScaleForDollarsPack(finalI));
                     float targetX = kassa.getX() + kassa.getWidth() * 0.1f;
                     float dy = GameConfig.random.nextFloat() * dh * 0.3f;
                     float targetY = kassa.getY() + kassa.getHeight() * 0.60f + (GameConfig.random.nextBoolean() ? -dy: dy);
@@ -427,7 +428,7 @@ public class CashRegister extends Group {
     }
 
     private Color getColorForDollarsPack(int i) {
-        Color color = new Color(0x00ff00ff);;
+        Color color = new Color(0x00ff00ff);
         if(i == 1) {
             color = new Color(0xaaffaaff);
         } else if(i == 2) {
@@ -440,5 +441,21 @@ public class CashRegister extends Group {
             color = new Color(0x00ff00ff);
         }
         return color;
+    }
+
+    private float getScaleForDollarsPack(int i) {
+        float scale = 1;
+        if(i == 1) {
+            scale = 1;
+        } else if(i == 2) {
+            scale = 1.05f;
+        } else if(i == 3) {
+            scale = 1.05f;
+        } else if(i == 4) {
+            scale = 1.1f;
+        } else if(i == 5) {
+            scale = 1.15f;
+        }
+        return scale;
     }
 }
