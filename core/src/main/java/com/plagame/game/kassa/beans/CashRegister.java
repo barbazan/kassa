@@ -21,6 +21,9 @@ import com.plagame.game.kassa.components.ModelLabel;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.SoundUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Дмитрий Малышев on 21.07.2026.
  * Email: dmitry.malyshev@gmail.com
@@ -37,6 +40,7 @@ public class CashRegister extends Group {
     public String terminalValue = ""; // это число то что ввели кнопками на терминале
     public Group kassa, terminal;
     private Table tableRight;
+    private Map<Integer, Image> cardImageMap = new HashMap<>();
 
     public CashRegister(float totalCost, String terminalValue) {
         init(totalCost, terminalValue);
@@ -58,6 +62,7 @@ public class CashRegister extends Group {
         addActor(terminal);
 
         setSize(kassa.getWidth() + terminal.getWidth(), kassa.getHeight());
+        initCards();
     }
 
     private Group createKassa() {  // Кассовый аппарат
@@ -290,6 +295,7 @@ public class CashRegister extends Group {
                         }
                     }
                 }
+                hideCard();
                 super.tap(event, x, y, count, button);
             }
         });
@@ -297,6 +303,19 @@ public class CashRegister extends Group {
 
         terminalGroup.addActor(btnTable);
         return terminalGroup;
+    }
+
+    public void showCard(int cardType) {
+        Image cardImage = cardImageMap.get(cardType);
+        if(cardImage != null) {
+            cardImage.setVisible(true);
+        }
+    }
+
+    public void hideCard() {
+        for(Image image : cardImageMap.values()) {
+            image.setVisible(false);
+        }
     }
 
     private Button createBtn(String btnNum, float btnSize) {
@@ -457,5 +476,21 @@ public class CashRegister extends Group {
             scale = 1.15f;
         }
         return scale;
+    }
+
+    private void initCards() {
+        for(int i = 1; i <= 5; i++) {
+            TextureRegion textureRegion = ATLAS_1.findRegion("card_" + i);
+            Image cardImage = new Image(textureRegion);
+            float cardW = terminal.getWidth();
+            float cardH = cardW * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
+            cardImage.setSize(cardW, cardH);
+            cardImage.setOrigin(cardW / 2, cardH / 2);
+            cardImage.setRotation(-90);
+            cardImage.setPosition(terminal.getParent().getX() + terminal.getX() + terminalWidth / 2 - cardW / 2, terminal.getY() - cardH);
+            addActor(cardImage);
+            cardImage.setVisible(false);
+            cardImageMap.put(i, cardImage);
+        }
     }
 }

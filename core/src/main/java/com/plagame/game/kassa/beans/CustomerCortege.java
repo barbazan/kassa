@@ -157,7 +157,7 @@ public class CustomerCortege extends Group {
 
     public void startPayment() {
 //        boolean isCard = GameConfig.random.nextBoolean();
-        boolean isCard = false;
+        boolean isCard = true;
         if(isCard) {
             int cardType = 1 + GameConfig.random.nextInt(5);
             TextureRegion textureRegion = ATLAS_1.findRegion("card_" + cardType);
@@ -179,6 +179,7 @@ public class CustomerCortege extends Group {
                     SoundUtil.playClickSound();
                     cardImage.setVisible(false);
                     moveCameraSlowly(isCard);
+                    GameApplication.get().getGameScreen().gameScene.cashRegister.showCard(cardType);
                 }
             });
             cardImage.addAction(
