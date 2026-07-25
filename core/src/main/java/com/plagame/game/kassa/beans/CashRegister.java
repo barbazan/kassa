@@ -19,6 +19,7 @@ import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.components.ModelLabel;
 import com.plagame.game.kassa.enums.ProductInfo;
+import com.plagame.game.kassa.utils.CashPaymentGenerator;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 import java.util.HashMap;
@@ -316,6 +317,10 @@ public class CashRegister extends Group {
         for(Image image : cardImageMap.values()) {
             image.setVisible(false);
         }
+    }
+
+    public void payCash() {
+        payedSum = CashPaymentGenerator.generatePaidAmount(totalCost);
     }
 
     private Button createBtn(String btnNum, float btnSize) {

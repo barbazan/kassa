@@ -178,8 +178,8 @@ public class CustomerCortege extends Group {
                 public void tap(InputEvent event, float x, float y, int count, int button) {
                     SoundUtil.playClickSound();
                     cardImage.setVisible(false);
-                    moveCameraSlowly(isCard);
                     GameApplication.get().getGameScreen().gameScene.cashRegister.showCard(cardType);
+                    moveCameraSlowly(isCard);
                 }
             });
             cardImage.addAction(
@@ -219,6 +219,7 @@ public class CustomerCortege extends Group {
                 public void tap(InputEvent event, float x, float y, int count, int button) {
                     SoundUtil.playClickSound();
                     cashGroup.setVisible(false);
+                    GameApplication.get().getGameScreen().gameScene.cashRegister.payCash();
                     moveCameraSlowly(isCard);
                 }
             });
