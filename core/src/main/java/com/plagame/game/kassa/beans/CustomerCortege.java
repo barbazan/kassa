@@ -2,6 +2,7 @@ package com.plagame.game.kassa.beans;
 
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -25,7 +26,6 @@ public class CustomerCortege extends Group {
 
     public LinkedList<CustomerInfo> customerList = new LinkedList<>();
     public final LinkedList<Image> customerImageList = new LinkedList<>();
-    private Image cardImage, cashImage;
 
     public CustomerCortege(List<CustomerInfo> customerList) {
         this.customerList.clear();
@@ -157,24 +157,21 @@ public class CustomerCortege extends Group {
 
     public void startPayment() {
 //        boolean isCard = GameConfig.random.nextBoolean();
-        boolean isCard = true;
+        boolean isCard = false;
         if(isCard) {
             int cardType = 1 + GameConfig.random.nextInt(5);
             TextureRegion textureRegion = ATLAS_1.findRegion("card_" + cardType);
-            cardImage = new Image(textureRegion);
+            Image cardImage = new Image(textureRegion);
             float cardW = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal.getWidth();
             float cardH = cardW * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
             cardImage.setSize(cardW, cardH);
             cardImage.setOrigin(cardW / 2, cardH / 2);
             cardImage.setRotation(-20);
-            CustomerCortege customerCortege = GameApplication.get().getGameScreen().gameScene.customerCortege;
-            LinkedList<Image> customerImageList = customerCortege.customerImageList;
             if(!customerImageList.isEmpty()) {
                 Image targetImage = customerImageList.getFirst();
                 float x1 = getStartX() + cardImage.getWidth() / 2;
                 float y1 = getStartY() + targetImage.getHeight() * 0.5f;
                 cardImage.setPosition(x1, y1);
-//                                        cardImage.addAction(Actions.moveBy(2000, 0, 5));
             }
             cardImage.addListener(new ActorGestureListener() {
                 @Override
@@ -192,6 +189,46 @@ public class CustomerCortege extends Group {
                     )
                 ));
             addActor(cardImage);
+        } else { //наличка
+            Group cashGroup = new Group();
+            float dolW = 0, dolH = 0;
+            for(int i = 1; i <= 3; i++) {
+                int cashType = 1 + GameConfig.random.nextInt(5);
+                TextureRegion textureRegion = ATLAS_1.findRegion("dollar_" + cashType);
+                Image dollarImage = new Image(textureRegion);
+                dolW = GameApplication.get().getGameScreen().gameScene.cashRegister.terminal.getWidth() * 0.35f;
+                dolH = dolW * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
+                dollarImage.setColor(new Color(0xaaffaaff));
+                dollarImage.setSize(dolW, dolH);
+                dollarImage.setOrigin(dolW / 2, dolH / 2);
+                dollarImage.setRotation(80);
+                dollarImage.setRotation(dollarImage.getRotation() + (GameConfig.random.nextBoolean()  ? -GameConfig.random.nextInt(20) : GameConfig.random.nextInt(20)));
+                cashGroup.addActor(dollarImage);
+            }
+            cashGroup.setSize(dolW, dolH);
+            cashGroup.setOrigin(dolW / 2, dolH / 2);
+            if(!customerImageList.isEmpty()) {
+                Image targetImage = customerImageList.getFirst();
+                float x1 = getStartX() + customerImageList.getFirst().getWidth() / 2;
+                float y1 = getStartY() + targetImage.getHeight() * 0.5f;
+                cashGroup.setPosition(x1, y1);
+            }
+            cashGroup.addListener(new ActorGestureListener() {
+                @Override
+                public void tap(InputEvent event, float x, float y, int count, int button) {
+                    SoundUtil.playClickSound();
+                    cashGroup.setVisible(false);
+                    moveCameraSlowly(isCard);
+                }
+            });
+            cashGroup.addAction(
+                Actions.forever(
+                    Actions.sequence(
+                        Actions.rotateBy(40, 0.8f),
+                        Actions.rotateBy(-40, 0.8f)
+                    )
+                ));
+            addActor(cashGroup);
         }
     }
 
