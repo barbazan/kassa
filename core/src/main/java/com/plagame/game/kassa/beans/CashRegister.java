@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.components.ModelLabel;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.SoundUtil;
@@ -34,6 +36,7 @@ public class CashRegister extends Group {
     public float giving;  // сколько я даю сдачи
     public String terminalValue = ""; // это число то что ввели кнопками на терминале
     public Group kassa, terminal;
+    private Table tableRight;
 
     public CashRegister(float totalCost, String terminalValue) {
         init(totalCost, terminalValue);
@@ -80,7 +83,7 @@ public class CashRegister extends Group {
         kassaTable.setSize(kassaWidth, kassaHeight);
         Table tableLeft = new Table();
         tableLeft.setSize(kassaWidth * 0.25f, kassaHeight);
-        Table tableRight = new Table();
+        tableRight = new Table();
         tableRight.setSize(kassaWidth * 0.75f, kassaHeight);
 
 
@@ -131,11 +134,7 @@ public class CashRegister extends Group {
         tableRight.row();
 
         Table cashTable = createKassaCashBox(tableRight.getWidth());
-        tableRight.add(cashTable).pad(btnPad).expandY().fill().colspan(3);
-//        tableRight.add().colspan(3).expand();
-//        tableRight.row();
-
-
+        tableRight.add(cashTable).pad(btnPad).padTop(btnPad * 3).expandY().fill().colspan(3);
 
         kassaTable.add(tableLeft).size(tableLeft.getWidth(), tableLeft.getHeight());
         kassaTable.add(tableRight).size(tableRight.getWidth(), tableRight.getHeight());
@@ -338,15 +337,95 @@ public class CashRegister extends Group {
         TextureRegion textureRegion = ATLAS_1.findRegion("kassa_slot");
         float w = (width / 5);
         float h = w * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
+        w = w * 0.9f;
+        h = h * 0.9f;
         cashTable.setSize(width, h * 2);
-        for(int i = 0; i < 10; i++) {
+        for(int i = 1; i <= 5; i++) {
+            Group slotGroup = new Group();
+            slotGroup.setSize(w, h);
+
             Image slotImage = new Image(textureRegion);
-            slotImage.setSize(w * 0.9f, h * 0.9f);
-            cashTable.add(slotImage).size(slotImage.getWidth(), slotImage.getHeight()).align(Align.center);
-            if(i == 4) {
-                cashTable.row();
-            }
+            slotImage.setSize(w, h);
+            slotGroup.addActor(slotImage);
+
+            Image dollarPackImage = new Image(ATLAS_1.findRegion("dollar_pack_" + i));
+            dollarPackImage.setColor(getColorForDollarsPack(i));
+            float dw = w * 0.999f;
+            float dh = dw * h / w;
+            dollarPackImage.setSize(dw, dh);
+            dollarPackImage.setPosition(slotGroup.getWidth() / 2 - dollarPackImage.getWidth() / 2, slotGroup.getHeight() / 2 - dollarPackImage.getHeight() / 2);
+            slotGroup.addActor(dollarPackImage);
+
+            slotGroup.addListener(new ActorGestureListener() {
+                @Override
+                public void tap(InputEvent event, float x, float y, int count, int button) {
+                    Image img = new Image(ATLAS_1.findRegion(GameConfig.random.nextBoolean() ? "dollar_1" : "dollar_2"));
+                    float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
+                    float globalY = kassa.getY() + tableRight.getY() + cashTable.getY() + slotGroup.getY() + slotGroup.getHeight() / 2;
+                    img.setPosition(globalX, globalY);
+                    img.setSize(dw * 0.6f, dh * 0.6f);
+                    img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
+                    float targetX = kassa.getX() + kassa.getWidth() * 0.1f;
+                    float dy = GameConfig.random.nextFloat() * dh * 0.3f;
+                    float targetY = kassa.getY() + kassa.getHeight() * 0.60f + (GameConfig.random.nextBoolean() ? -dy: dy);
+                    img.addAction(Actions.parallel(
+                        Actions.moveTo(targetX, targetY, 0.6f),
+                        Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
+                    ));
+                    addActor(img);
+                }
+            });
+
+            cashTable.add(slotGroup).size(w, h).align(Align.center);
+        }
+
+        cashTable.row();
+
+        for(int i = 1; i <= 5; i++) {
+            Group slotGroup = new Group();
+            slotGroup.setSize(w, h);
+
+            Image slotImage = new Image(textureRegion);
+            slotImage.setSize(w, h);
+            slotGroup.addActor(slotImage);
+
+            TextureRegion coinTextureRegion = ATLAS_1.findRegion("coin_pack_" + i);
+            Image coinPackImage = new Image(coinTextureRegion);
+            float dw = w * 0.75f;
+            float dh = dw * coinTextureRegion.getRegionHeight() / coinTextureRegion.getRegionWidth();
+            coinPackImage.setSize(dw, dh);
+            coinPackImage.setPosition(slotGroup.getWidth() / 2 - coinPackImage.getWidth() / 2, slotGroup.getHeight() / 2 - coinPackImage.getHeight() / 2);
+            slotGroup.addActor(coinPackImage);
+
+            slotGroup.addListener(new ActorGestureListener() {
+                @Override
+                public void tap(InputEvent event, float x, float y, int count, int button) {
+                    Image img = new Image(ATLAS_1.findRegion(GameConfig.random.nextBoolean() ? "coin_1" : "coin_2"));
+                    img.addAction(Actions.parallel(
+                        Actions.moveTo(kassa.getX() + kassa.getWidth() * 0.1f, kassa.getY() + kassa.getHeight() * 0.8f),
+                        Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat())
+                    ));
+                }
+            });
+
+            cashTable.add(slotGroup).size(w, h).align(Align.center);
         }
         return cashTable;
+    }
+
+    private Color getColorForDollarsPack(int i) {
+        Color color = new Color(0x00ff00ff);;
+        if(i == 1) {
+            color = new Color(0xaaffaaff);
+        } else if(i == 2) {
+            color = new Color(0xaaffaaff);
+        } else if(i == 3) {
+            color = new Color(0x88ff88ff);
+        } else if(i == 4) {
+            color = new Color(0x44ff44ff);
+        } else if(i == 5) {
+            color = new Color(0x00ff00ff);
+        }
+        return color;
     }
 }
