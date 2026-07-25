@@ -134,7 +134,7 @@ public class CashRegister extends Group {
         tableRight.row();
 
         Table cashTable = createKassaCashBox(tableRight.getWidth());
-        tableRight.add(cashTable).pad(btnPad).padTop(btnPad * 3).expandY().fill().colspan(3);
+        tableRight.add(cashTable).align(Align.center).pad(btnPad).padTop(btnPad * 3).expandY().fill().colspan(3);
 
         kassaTable.add(tableLeft).size(tableLeft.getWidth(), tableLeft.getHeight());
         kassaTable.add(tableRight).size(tableRight.getWidth(), tableRight.getHeight());
@@ -356,10 +356,12 @@ public class CashRegister extends Group {
             dollarPackImage.setPosition(slotGroup.getWidth() / 2 - dollarPackImage.getWidth() / 2, slotGroup.getHeight() / 2 - dollarPackImage.getHeight() / 2);
             slotGroup.addActor(dollarPackImage);
 
+            int finalI = i;
             slotGroup.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    Image img = new Image(ATLAS_1.findRegion(GameConfig.random.nextBoolean() ? "dollar_1" : "dollar_2"));
+                    Image img = new Image(ATLAS_1.findRegion("dollar_" + finalI));
+                    img.setColor(getColorForDollarsPack(finalI));
                     float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
                     float globalY = kassa.getY() + tableRight.getY() + cashTable.getY() + slotGroup.getY() + slotGroup.getHeight() / 2;
                     img.setPosition(globalX, globalY);
