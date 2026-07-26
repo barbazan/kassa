@@ -23,6 +23,7 @@ import com.plagame.game.kassa.utils.CashPaymentGenerator;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -35,13 +36,16 @@ public class CashRegister extends Group {
 
     private static final int MAX_PRICE_LENGTH = 8;
     public float terminalWidth, terminalHeight;
-    public float totalCost;  // это стоимость продуктов, которую должен оплатить покупатель
+    public float totalCost; // это стоимость продуктов, которую должен оплатить покупатель
     public float payedSum;  // сколько дали налички
-    public float giving;  // сколько я даю сдачи
+    public float givingSum; // сколько я даю сдачи
     public String terminalValue = ""; // это число то что ввели кнопками на терминале
     public Group kassa, terminal;
     private Table tableRight;
     private Map<Integer, Image> cardImageMap = new HashMap<>();
+    private Button terminalBtnOk;
+    private Button kassaBtnOk, kassaBtnReturn;
+    private LinkedList<Image> dollarsImagesList = new LinkedList<>();
 
     public CashRegister(float totalCost, String terminalValue) {
         init(totalCost, terminalValue);
@@ -64,6 +68,7 @@ public class CashRegister extends Group {
 
         setSize(kassa.getWidth() + terminal.getWidth(), kassa.getHeight());
         initCards();
+        createKassaButtons();
     }
 
     private Group createKassa() {  // Кассовый аппарат
@@ -131,7 +136,7 @@ public class CashRegister extends Group {
         Label givingLabel = new ModelLabel("", new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW)) {
             @Override
             protected String getValue() {
-                return formatTotalCost(giving);
+                return formatTotalCost(givingSum);
             }
         };
         givingLabel.setAlignment(Align.right);
@@ -146,6 +151,13 @@ public class CashRegister extends Group {
         kassaTable.add(tableRight).size(tableRight.getWidth(), tableRight.getHeight());
         kassaGroup.addActor(kassaTable);
         return kassaGroup;
+    }
+
+    public void createKassaButtons() {
+        kassaBtnOk = createKassaOkBtn();
+        kassa.addActor(kassaBtnOk);
+        kassaBtnReturn = createKassaReturnBtn();
+        kassa.addActor(kassaBtnReturn);
     }
 
     private Group createTerminal(float height) { // Терминал
@@ -264,43 +276,48 @@ public class CashRegister extends Group {
 
         btnTable.row();
 
-        Button btnOk = new Button(
+        terminalBtnOk = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
         ) {
             @Override
             public void act(float delta) {
-                setDisabled(!GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty());
+                if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
+                    setDisabled(false);
+                    terminalBtnOk.setColor(Color.WHITE);
+                } else {
+                    setDisabled(true);
+                    terminalBtnOk.setColor(Color.DARK_GRAY);
+                }
                 super.act(delta);
             }
         };
         float h = btnSize * 0.91f;
-        float w = btnOk.getWidth() * h / btnOk.getHeight();
-        btnOk.setSize(w, h);
-        btnOk.addListener(new ActorGestureListener() {
+        float w = terminalBtnOk.getWidth() * h / terminalBtnOk.getHeight();
+        terminalBtnOk.setSize(w, h);
+        terminalBtnOk.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
                     String totalCostStr = formatTotalCost(totalCost);
                     if(totalCost > 0 && totalCostStr.equals("$" + terminalValue)) {
                         SoundUtil.playClickSound();
-                        totalCost = 0;
-                        terminalValue = "";
+                        finishPayment();
                         //todo прибавлять юзеру деньги
                         GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
                         moveCameraSlowlyBack();
                     } else {
                         //todo wrong sound
-                        if(GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) {
-                            GameApplication.get().getGameScreen().gameScene.nextDay(); //todo remove
-                        }
+//                        if(GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) { //todo remove
+//                            GameApplication.get().getGameScreen().gameScene.nextDay(); //todo remove
+//                        }
                     }
                 }
                 hideCard();
                 super.tap(event, x, y, count, button);
             }
         });
-        btnTable.add(btnOk).size(btnOk.getWidth(), btnOk.getHeight()).colspan(3).align(Align.center).padTop(btnPad).padBottom(btnSize * 0.67f);
+        btnTable.add(terminalBtnOk).size(terminalBtnOk.getWidth(), terminalBtnOk.getHeight()).colspan(3).align(Align.center).padTop(btnPad).padBottom(btnSize * 0.67f);
 
         terminalGroup.addActor(btnTable);
         return terminalGroup;
@@ -400,6 +417,8 @@ public class CashRegister extends Group {
                         Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
                     ));
                     addActor(img);
+                    givingSum += getDollarValue(finalI);
+                    dollarsImagesList.add(img);
                 }
             });
 
@@ -443,6 +462,8 @@ public class CashRegister extends Group {
                         Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
                     ));
                     addActor(img);
+                    givingSum += getCoinValue(finalI);
+                    dollarsImagesList.add(img);
                 }
             });
 
@@ -483,6 +504,38 @@ public class CashRegister extends Group {
         return scale;
     }
 
+    private float getDollarValue(int i) {
+        int value = 1;
+        if(i == 1) {
+            value = 1;
+        } else if(i == 2) {
+            value = 5;
+        } else if(i == 3) {
+            value = 10;
+        } else if(i == 4) {
+            value = 20;
+        } else if(i == 5) {
+            value = 50;
+        }
+        return value;
+    }
+
+    private float getCoinValue(int i) {
+        float value = 0.01f;
+        if(i == 1) {
+            value = 0.01f;
+        } else if(i == 2) {
+            value = 0.05f;
+        } else if(i == 3) {
+            value = 0.10f;
+        } else if(i == 4) {
+            value = 0.20f;
+        } else if(i == 5) {
+            value = 0.50f;
+        }
+        return value;
+    }
+
     private void initCards() {
         for(int i = 1; i <= 5; i++) {
             TextureRegion textureRegion = ATLAS_1.findRegion("card_" + i);
@@ -497,5 +550,102 @@ public class CashRegister extends Group {
             cardImage.setVisible(false);
             cardImageMap.put(i, cardImage);
         }
+    }
+
+    private Button createKassaOkBtn() {
+        float btnHeight = kassa.getWidth() * 0.15f;
+
+        final Button btnOk = new Button(
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
+        ) {
+            @Override
+            public void act(float delta) {
+                if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
+                    setDisabled(false);
+                    kassaBtnOk.setColor(Color.WHITE);
+                } else {
+                    setDisabled(true);
+                    kassaBtnOk.setColor(Color.DARK_GRAY);
+                }
+                float x = kassa.getX() + kassa.getWidth() / 2 + 10;
+                if(x != kassaBtnOk.getX()) {
+                    kassaBtnOk.setPosition(x, 0);
+                }
+                super.act(delta);
+            }
+        };
+        float h = btnHeight;
+        float w = btnOk.getWidth() * h / btnOk.getHeight();
+        btnOk.setSize(w, h);
+        btnOk.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
+                    float change = payedSum - totalCost; //сдачи сколько нужно
+                    if(givingSum >= change) {
+                        SoundUtil.playClickSound();
+                        //todo списать с игрока givingSum
+                        //todo начислить игроку payedSum
+                        //todo звук
+                        finishPayment();
+                        GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
+                        moveCameraSlowlyBack();
+                    } else {
+                        //todo wrong sound
+                    }
+                }
+                super.tap(event, x, y, count, button);
+            }
+        });
+
+        return btnOk;
+    }
+
+    private Button createKassaReturnBtn() {
+        float btnHeight = kassa.getWidth() * 0.15f;
+
+        final Button btnReturn = new Button(
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_return")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_return"))
+        ) {
+            @Override
+            public void act(float delta) {
+                float x = kassa.getX() + kassa.getWidth() / 2 - kassaBtnReturn.getWidth() - 10;
+                if(x != kassaBtnReturn.getX()) {
+                    kassaBtnReturn.setPosition(x, 0);
+                }
+            }
+        };
+        float h = btnHeight;
+        float w = btnReturn.getWidth() * h / btnReturn.getHeight();
+        btnReturn.setSize(w, h);
+        btnReturn.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                givingSum = 0;
+                clearCash();
+                super.tap(event, x, y, count, button);
+            }
+        });
+
+        return btnReturn;
+    }
+
+    private void finishPayment() {
+        totalCost = 0;
+        payedSum = 0;
+        givingSum = 0;
+        terminalValue = "";
+        clearCash();
+    }
+
+    private void clearCash() {
+        for(Image image : dollarsImagesList) {
+            image.setVisible(false);
+            removeActor(image);
+        }
+        dollarsImagesList.clear();
     }
 }

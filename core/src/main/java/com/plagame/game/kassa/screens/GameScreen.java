@@ -62,7 +62,7 @@ public class GameScreen extends BaseScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
         gameScene.resize();
-//        gameScene.productCortege.moveCameraSlowly(false);
+//        gameScene.customerCortege.moveCameraSlowly(false);
     }
 
 //    private void checkConnect() {

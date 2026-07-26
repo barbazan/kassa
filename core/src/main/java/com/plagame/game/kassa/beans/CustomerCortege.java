@@ -157,7 +157,7 @@ public class CustomerCortege extends Group {
 
     public void startPayment() {
 //        boolean isCard = GameConfig.random.nextBoolean();
-        boolean isCard = true;
+        boolean isCard = false;
         if(isCard) {
             int cardType = 1 + GameConfig.random.nextInt(5);
             TextureRegion textureRegion = ATLAS_1.findRegion("card_" + cardType);
