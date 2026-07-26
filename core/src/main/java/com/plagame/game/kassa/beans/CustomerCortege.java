@@ -26,6 +26,7 @@ public class CustomerCortege extends Group {
 
     public LinkedList<CustomerInfo> customerList = new LinkedList<>();
     public final LinkedList<Image> customerImageList = new LinkedList<>();
+    public boolean isPaymentStarted;
 
     public CustomerCortege(List<CustomerInfo> customerList) {
         this.customerList.clear();
@@ -73,6 +74,7 @@ public class CustomerCortege extends Group {
     }
 
     public void nextCustomer() {
+        isPaymentStarted = false;
         if(!customerImageList.isEmpty()) {
             Image first = customerImageList.get(0);
             if(first != null) {
@@ -156,6 +158,7 @@ public class CustomerCortege extends Group {
     }
 
     public void startPayment() {
+        isPaymentStarted = true;
         boolean isCard = GameConfig.random.nextBoolean();
         if(isCard) {
             int cardType = 1 + GameConfig.random.nextInt(5);

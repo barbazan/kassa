@@ -89,10 +89,13 @@ public class GameScene extends Group {
     }
 
     public void resize() {
+        boolean isPayment = cashRegister.isProcessPayment || customerCortege.isPaymentStarted;
         clear();
         init(customerCortege.customerList, productCortege.productList);
-        if(GameApplication.get().getGameScreen().gameScene.cashRegister.isProcessPayment) {
-            GameApplication.get().getGameScreen().gameScene.customerCortege.moveCameraSlowly(GameApplication.get().getGameScreen().gameScene.cashRegister.cardType > 0);
+        cashRegister.isProcessPayment = isPayment;
+
+        if(isPayment) {
+            customerCortege.startPayment();
         }
     }
 

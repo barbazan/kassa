@@ -80,7 +80,7 @@ public class HeaderPanel extends Table {
         });
         innerTable.add(settingsImage).size(settingsImage.getWidth(), settingsImage.getHeight()).align(Align.center).fill();
 
-        add(innerTable).align(Align.topRight).pad(pad).expandX().fill();
+        add(innerTable).align(Align.topRight).pad(pad).padTop(0).expandX().fill();
 
         row();
     }
