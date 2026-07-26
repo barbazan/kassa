@@ -58,9 +58,9 @@ public class GameScene extends Group {
 
     private void addCashRegister() {
         if(cashRegister != null) {
-            cashRegister = new CashRegister(cashRegister.totalCost, cashRegister.terminalValue);
+            cashRegister = new CashRegister(cashRegister);
         } else {
-            cashRegister = new CashRegister(0, "");
+            cashRegister = new CashRegister();
         }
         if(GameApplication.get().isPortrait()) {
             cashRegister.setPosition(- cashRegister.getWidth() + cashRegister.terminalWidth * 1.1f, -cashRegister.getHeight() + cashRegister.terminalHeight * 1.15f);
@@ -91,6 +91,9 @@ public class GameScene extends Group {
     public void resize() {
         clear();
         init(customerCortege.customerList, productCortege.productList);
+        if(GameApplication.get().getGameScreen().gameScene.cashRegister.isProcessPayment) {
+            GameApplication.get().getGameScreen().gameScene.customerCortege.moveCameraSlowly(GameApplication.get().getGameScreen().gameScene.cashRegister.cardType > 0);
+        }
     }
 
     private List<CustomerInfo> createCustomerList() {

@@ -46,9 +46,15 @@ public class CashRegister extends Group {
     private Button terminalBtnOk;
     private Button kassaBtnOk, kassaBtnReturn;
     private LinkedList<Image> dollarsImagesList = new LinkedList<>();
+    public boolean isProcessPayment;
+    public int cardType;
 
-    public CashRegister(float totalCost, String terminalValue) {
-        init(totalCost, terminalValue);
+    public CashRegister() {
+        this(null);
+    }
+
+    public CashRegister(CashRegister cashRegister) {
+        init(cashRegister);
     }
 
     public void checkProduct(ProductInfo productInfo) { // пробить продукт на кассе
@@ -56,9 +62,7 @@ public class CashRegister extends Group {
         SoundUtil.playClickSound(); //todo звук пробития на кассе
     }
 
-    private void init(float totalCost, String terminalValue) {
-        this.totalCost = totalCost;
-        this.terminalValue = terminalValue;
+    private void init(CashRegister cashRegister) {
         kassa = createKassa();
         addActor(kassa);
 
@@ -69,6 +73,13 @@ public class CashRegister extends Group {
         setSize(kassa.getWidth() + terminal.getWidth(), kassa.getHeight());
         initCards();
         createKassaButtons();
+        if(cashRegister != null) {
+            this.isProcessPayment = cashRegister.isProcessPayment;
+            this.cardType = cashRegister.cardType;
+            this.totalCost = cashRegister.totalCost;
+            this.terminalValue = cashRegister.terminalValue;
+            this.payedSum = cashRegister.payedSum;
+        }
     }
 
     private Group createKassa() {  // Кассовый аппарат
@@ -331,11 +342,13 @@ public class CashRegister extends Group {
         return terminalGroup;
     }
 
-    public void showCard(int cardType) {
+    public void showCard() {
         Image cardImage = cardImageMap.get(cardType);
         if(cardImage != null) {
             cardImage.setVisible(true);
         }
+        this.isProcessPayment = true;
+        this.cardType = cardType;
     }
 
     public void hideCard() {
@@ -345,7 +358,8 @@ public class CashRegister extends Group {
     }
 
     public void payCash() {
-        payedSum = CashPaymentGenerator.generatePaidAmount(totalCost);
+        this.payedSum = CashPaymentGenerator.generatePaidAmount(totalCost);
+        this.isProcessPayment = true;
     }
 
     private Button createBtn(String btnNum, float btnSize) {
@@ -647,6 +661,7 @@ public class CashRegister extends Group {
         givingSum = 0;
         terminalValue = "";
         clearCash();
+        isProcessPayment = false;
     }
 
     private void clearCash() {
