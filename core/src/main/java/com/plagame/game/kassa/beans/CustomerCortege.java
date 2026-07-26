@@ -156,8 +156,7 @@ public class CustomerCortege extends Group {
     }
 
     public void startPayment() {
-//        boolean isCard = GameConfig.random.nextBoolean();
-        boolean isCard = false;
+        boolean isCard = GameConfig.random.nextBoolean();
         if(isCard) {
             int cardType = 1 + GameConfig.random.nextInt(5);
             TextureRegion textureRegion = ATLAS_1.findRegion("card_" + cardType);
@@ -263,9 +262,9 @@ public class CustomerCortege extends Group {
                 targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() / 2;
                 targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.kassa.getHeight() * 0.6f;
             } else {
-                targetZoom = cashRegister.kassa.getHeight() * 0.9f / GameApplication.get().screenHeight;
-                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() * 1.3f;
-                targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() * 0.55f;
+                targetZoom = cashRegister.kassa.getHeight() / GameApplication.get().screenHeight;
+                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() * 1.75f;
+                targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() * 0.50f;
             }
             getParent().addAction(
                 Actions.sequence(

@@ -174,8 +174,15 @@ public class CashRegister extends Group {
 
     public void createKassaButtons() {
         kassaBtnOk = createKassaOkBtn();
+        Group p = kassa.getParent();
+        float x = p.getX() + kassa.getX() + kassa.getWidth() / 2 + 10;
+        float y = 0;
+        kassaBtnOk.setPosition(x, y);
         kassa.addActor(kassaBtnOk);
+
         kassaBtnReturn = createKassaReturnBtn();
+        x = p.getX() + kassa.getX() + kassa.getWidth() / 2 - kassaBtnReturn.getWidth() - 10;
+        kassaBtnReturn.setPosition(x, y);
         kassa.addActor(kassaBtnReturn);
     }
 
@@ -327,9 +334,9 @@ public class CashRegister extends Group {
                         moveCameraSlowlyBack();
                     } else {
                         //todo wrong sound
-//                        if(GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) { //todo remove
-//                            GameApplication.get().getGameScreen().gameScene.nextDay(); //todo remove
-//                        }
+                        if(GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) { //todo remove
+                            GameApplication.get().getGameScreen().gameScene.nextDay(); //todo remove
+                        }
                     }
                 }
                 hideCard();
@@ -590,10 +597,6 @@ public class CashRegister extends Group {
                     setDisabled(true);
                     kassaBtnOk.setColor(Color.DARK_GRAY);
                 }
-                float x = kassa.getX() + kassa.getWidth() / 2 + 10;
-                if(x != kassaBtnOk.getX()) {
-                    kassaBtnOk.setPosition(x, 0);
-                }
                 super.act(delta);
             }
         };
@@ -630,15 +633,7 @@ public class CashRegister extends Group {
         final Button btnReturn = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_return")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_return"))
-        ) {
-            @Override
-            public void act(float delta) {
-                float x = kassa.getX() + kassa.getWidth() / 2 - kassaBtnReturn.getWidth() - 10;
-                if(x != kassaBtnReturn.getX()) {
-                    kassaBtnReturn.setPosition(x, 0);
-                }
-            }
-        };
+        );
         float h = btnHeight;
         float w = btnReturn.getWidth() * h / btnReturn.getHeight();
         btnReturn.setSize(w, h);
