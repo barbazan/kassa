@@ -136,6 +136,14 @@ public class CashRegister extends Group {
         Label givingLabel = new ModelLabel("", new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW)) {
             @Override
             protected String getValue() {
+                float change = payedSum - totalCost; //сдачи сколько нужно
+                if(givingSum == change) {
+                    setColor(Color.GREEN);
+                } else if(givingSum > totalCost) {
+                    setColor(Color.YELLOW);
+                } else {
+                    setColor(Color.YELLOW);
+                }
                 return formatTotalCost(givingSum);
             }
         };
