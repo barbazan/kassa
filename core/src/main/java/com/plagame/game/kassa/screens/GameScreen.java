@@ -15,7 +15,7 @@ import com.plagame.game.kassa.utils.FPSRate;
  */
 public class GameScreen extends BaseScreen {
 
-    public final UIStage uiStage;
+    public UIStage uiStage;
     private FPSRate fpsRate;
     public GameScene gameScene;
 
@@ -62,6 +62,8 @@ public class GameScreen extends BaseScreen {
     public void resize(int width, int height) {
         super.resize(width, height);
         gameScene.resize();
+        uiStage.clear();
+        uiStage = new UIStage();
 //        gameScene.customerCortege.moveCameraSlowly(false);
     }
 

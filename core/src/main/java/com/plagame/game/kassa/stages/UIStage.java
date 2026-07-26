@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
+import com.plagame.game.kassa.components.HeaderPanel;
 import com.plagame.game.kassa.components.RatingDialog;
 import com.plagame.game.kassa.components.ShopGoldDialog;
 import com.plagame.game.kassa.utils.SoundUtil;
@@ -32,22 +33,26 @@ public class UIStage extends BaseStage {
     private Image noAdsIcon;
     private final List<Rectangle> buttonsRectangleList = new ArrayList<>();
     private boolean isPurchasesChecked;
+    public HeaderPanel headerPanel;
 
     public UIStage() {
         super();
+        init();
+    }
+
+    private void init() {
         initHeaderPanel();
-        initFooterPanel();
         initButtons();
     }
 
-    private void initHeaderPanel() {
-//        headerPanel = new HeaderPanel();
-//        addActor(headerPanel);
+    public void resize() {
+        clear();
+        init();
     }
 
-    private void initFooterPanel() {
-//        footerPanel = new FooterPanel();
-//        addActor(footerPanel);
+    private void initHeaderPanel() {
+        headerPanel = new HeaderPanel();
+        addActor(headerPanel);
     }
 
     private void initButtons() {
