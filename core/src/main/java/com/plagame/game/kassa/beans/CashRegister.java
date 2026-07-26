@@ -132,7 +132,11 @@ public class CashRegister extends Group {
         Label changeLabel = new ModelLabel("", new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW)) {
             @Override
             protected String getValue() {
-                return formatTotalCost(payedSum - totalCost);
+                if(isProcessPayment && cardType == 0) {
+                    return formatTotalCost(payedSum - totalCost);
+                } else {
+                    return "--.--";
+                }
             }
         };
         changeLabel.setAlignment(Align.right);
@@ -242,10 +246,12 @@ public class CashRegister extends Group {
             btn.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    SoundUtil.playClickSound();
-                    if(terminalValue.length() < MAX_PRICE_LENGTH) {
-                        if(!terminalValue.contains(".") || terminalValue.substring(terminalValue.indexOf(".")).length() <= 2) {
-                            terminalValue = terminalValue + btnValue;
+                    if(isProcessPayment && cardType > 0) {
+                        SoundUtil.playClickSound();
+                        if(terminalValue.length() < MAX_PRICE_LENGTH) {
+                            if(!terminalValue.contains(".") || terminalValue.substring(terminalValue.indexOf(".")).length() <= 2) {
+                                terminalValue = terminalValue + btnValue;
+                            }
                         }
                     }
                 }
@@ -265,11 +271,13 @@ public class CashRegister extends Group {
         btnBack.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                SoundUtil.playClickSound();
-                if(!terminalValue.isEmpty()) {
-                    terminalValue = terminalValue.substring(0, terminalValue.length() - 1);
+                if(isProcessPayment && cardType > 0) {
+                    SoundUtil.playClickSound();
+                    if(!terminalValue.isEmpty()) {
+                        terminalValue = terminalValue.substring(0, terminalValue.length() - 1);
+                    }
+                    super.tap(event, x, y, count, button);
                 }
-                super.tap(event, x, y, count, button);
             }
         });
         btnTable.add(btnBack).size(btnSize, btnSize).padLeft(0).padTop(btnPad);
@@ -278,11 +286,13 @@ public class CashRegister extends Group {
         btnZero.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                SoundUtil.playClickSound();
-                if(terminalValue.length() < MAX_PRICE_LENGTH) {
-                    terminalValue = terminalValue + "0";
+                if(isProcessPayment && cardType > 0) {
+                    SoundUtil.playClickSound();
+                    if(terminalValue.length() < MAX_PRICE_LENGTH) {
+                        terminalValue = terminalValue + "0";
+                    }
+                    super.tap(event, x, y, count, button);
                 }
-                super.tap(event, x, y, count, button);
             }
         });
         btnTable.add(btnZero).size(btnSize, btnSize).padLeft(btnPad / 2).padTop(btnPad);
@@ -291,11 +301,13 @@ public class CashRegister extends Group {
         btnDot.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                SoundUtil.playClickSound();
-                if(terminalValue.length() < MAX_PRICE_LENGTH && !terminalValue.isEmpty() && !terminalValue.contains(".")) {
-                    terminalValue = terminalValue + ".";
+                if(isProcessPayment && cardType > 0) {
+                    SoundUtil.playClickSound();
+                    if(terminalValue.length() < MAX_PRICE_LENGTH && !terminalValue.isEmpty() && !terminalValue.contains(".")) {
+                        terminalValue = terminalValue + ".";
+                    }
+                    super.tap(event, x, y, count, button);
                 }
-                super.tap(event, x, y, count, button);
             }
         });
         btnTable.add(btnDot).size(btnSize, btnSize).padLeft(btnPad / 2).padTop(btnPad);
@@ -308,6 +320,7 @@ public class CashRegister extends Group {
         ) {
             @Override
             public void act(float delta) {
+//                if(isProcessPayment && cardType > 0) {
                 if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
                     setDisabled(false);
                     terminalBtnOk.setColor(Color.WHITE);
@@ -325,22 +338,26 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
-                    String totalCostStr = formatTotalCost(totalCost);
-                    if(totalCost > 0 && totalCostStr.equals("$" + terminalValue)) {
-                        SoundUtil.playClickSound();
-                        finishPayment();
-                        //todo прибавлять юзеру деньги
-                        GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
-                        moveCameraSlowlyBack();
+                    if(isProcessPayment && cardType > 0) {
+                        String totalCostStr = formatTotalCost(totalCost);
+                        if(totalCost > 0 && totalCostStr.equals("$" + terminalValue)) {
+                            SoundUtil.playClickSound();
+                            finishPayment();
+                            //todo прибавлять юзеру деньги
+                            GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
+                            moveCameraSlowlyBack();
+                            hideCard();
+                        }
                     } else {
                         //todo wrong sound
                         if(GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) { //todo remove
+                            moveCameraSlowlyBack();
+                            hideCard();
                             GameApplication.get().getGameScreen().gameScene.nextDay(); //todo remove
                         }
-                    }
+                     }
+                    super.tap(event, x, y, count, button);
                 }
-                hideCard();
-                super.tap(event, x, y, count, button);
             }
         });
         btnTable.add(terminalBtnOk).size(terminalBtnOk.getWidth(), terminalBtnOk.getHeight()).colspan(3).align(Align.center).padTop(btnPad).padBottom(btnSize * 0.67f);
@@ -349,24 +366,25 @@ public class CashRegister extends Group {
         return terminalGroup;
     }
 
-    public void showCard() {
-        Image cardImage = cardImageMap.get(cardType);
-        if(cardImage != null) {
-            cardImage.setVisible(true);
-        }
-        this.isProcessPayment = true;
-        this.cardType = cardType;
-    }
-
     public void hideCard() {
         for(Image image : cardImageMap.values()) {
             image.setVisible(false);
         }
     }
 
+    public void payCard(int cardType) {
+        this.cardType = cardType;
+        Image cardImage = cardImageMap.get(cardType);
+        if(cardImage != null) {
+            cardImage.setVisible(true);
+        }
+        this.isProcessPayment = true;
+    }
+
     public void payCash() {
         this.payedSum = CashPaymentGenerator.generatePaidAmount(totalCost);
         this.isProcessPayment = true;
+        this.cardType = 0;
     }
 
     private Button createBtn(String btnNum, float btnSize) {
@@ -430,24 +448,27 @@ public class CashRegister extends Group {
             slotGroup.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    Image img = new Image(ATLAS_1.findRegion("dollar_" + finalI));
-                    img.setColor(getColorForDollarsPack(finalI));
-                    float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
-                    float globalY = kassa.getY() + tableRight.getY() + cashTable.getY() + slotGroup.getY() + slotGroup.getHeight() / 2;
-                    img.setPosition(globalX, globalY);
-                    img.setSize(dw * 0.6f, dh * 0.6f);
-                    img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
-                    img.setScale(getScaleForDollarsPack(finalI));
-                    float targetX = kassa.getX() + kassa.getWidth() * 0.1f;
-                    float dy = GameConfig.random.nextFloat() * dh * 0.3f;
-                    float targetY = kassa.getY() + kassa.getHeight() * 0.60f + (GameConfig.random.nextBoolean() ? -dy: dy);
-                    img.addAction(Actions.parallel(
-                        Actions.moveTo(targetX, targetY, 0.6f),
-                        Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
-                    ));
-                    addActor(img);
-                    givingSum += getDollarValue(finalI);
-                    dollarsImagesList.add(img);
+                    if(isProcessPayment && cardType == 0) {
+                        SoundUtil.playClickSound(); //todo
+                        Image img = new Image(ATLAS_1.findRegion("dollar_" + finalI));
+                        img.setColor(getColorForDollarsPack(finalI));
+                        float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
+                        float globalY = kassa.getY() + tableRight.getY() + cashTable.getY() + slotGroup.getY() + slotGroup.getHeight() / 2;
+                        img.setPosition(globalX, globalY);
+                        img.setSize(dw * 0.6f, dh * 0.6f);
+                        img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
+                        img.setScale(getScaleForDollarsPack(finalI));
+                        float targetX = kassa.getX() + kassa.getWidth() * 0.1f;
+                        float dy = GameConfig.random.nextFloat() * dh * 0.3f;
+                        float targetY = kassa.getY() + kassa.getHeight() * 0.60f + (GameConfig.random.nextBoolean() ? -dy: dy);
+                        img.addAction(Actions.parallel(
+                            Actions.moveTo(targetX, targetY, 0.6f),
+                            Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
+                        ));
+                        addActor(img);
+                        givingSum += getDollarValue(finalI);
+                        dollarsImagesList.add(img);
+                    }
                 }
             });
 
@@ -476,23 +497,26 @@ public class CashRegister extends Group {
             slotGroup.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    Image img = new Image(ATLAS_1.findRegion(finalI == 1 ? "coin_1" : "coin_2"));
-                    float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
-                    float globalY = kassa.getY() + tableRight.getY() + cashTable.getY() + slotGroup.getY() + slotGroup.getHeight() / 2;
-                    img.setPosition(globalX, globalY);
-                    img.setSize(dw * 0.5f, dw * 0.5f);
-                    img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
-                    float dx = GameConfig.random.nextFloat() * slotGroup.getWidth() / 2;
-                    float targetX = kassa.getX() + kassa.getWidth() * 0.10f + (GameConfig.random.nextBoolean() ? -dx : dx);
-                    float dy = GameConfig.random.nextFloat() * slotGroup.getHeight() * 0.3f;
-                    float targetY = kassa.getY() + kassa.getHeight() * 0.65f + (GameConfig.random.nextBoolean() ? -dy: dy);
-                    img.addAction(Actions.parallel(
-                        Actions.moveTo(targetX, targetY, 0.6f),
-                        Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
-                    ));
-                    addActor(img);
-                    givingSum += getCoinValue(finalI);
-                    dollarsImagesList.add(img);
+                    if(isProcessPayment && cardType == 0) {
+                        SoundUtil.playClickSound(); //todo
+                        Image img = new Image(ATLAS_1.findRegion(finalI == 1 ? "coin_1" : "coin_2"));
+                        float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
+                        float globalY = kassa.getY() + tableRight.getY() + cashTable.getY() + slotGroup.getY() + slotGroup.getHeight() / 2;
+                        img.setPosition(globalX, globalY);
+                        img.setSize(dw * 0.5f, dw * 0.5f);
+                        img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
+                        float dx = GameConfig.random.nextFloat() * slotGroup.getWidth() / 2;
+                        float targetX = kassa.getX() + kassa.getWidth() * 0.10f + (GameConfig.random.nextBoolean() ? -dx : dx);
+                        float dy = GameConfig.random.nextFloat() * slotGroup.getHeight() * 0.3f;
+                        float targetY = kassa.getY() + kassa.getHeight() * 0.65f + (GameConfig.random.nextBoolean() ? -dy: dy);
+                        img.addAction(Actions.parallel(
+                            Actions.moveTo(targetX, targetY, 0.6f),
+                            Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
+                        ));
+                        addActor(img);
+                        givingSum += getCoinValue(finalI);
+                        dollarsImagesList.add(img);
+                    }
                 }
             });
 
@@ -590,7 +614,7 @@ public class CashRegister extends Group {
         ) {
             @Override
             public void act(float delta) {
-                if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
+                if(isProcessPayment && cardType == 0 && givingSum >= (payedSum - totalCost)) {
                     setDisabled(false);
                     kassaBtnOk.setColor(Color.WHITE);
                 } else {
@@ -606,7 +630,7 @@ public class CashRegister extends Group {
         btnOk.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                if(GameApplication.get().getGameScreen().gameScene.productCortege.isEmpty()) {
+                if(isProcessPayment && cardType == 0) {
                     float change = payedSum - totalCost; //сдачи сколько нужно
                     if(givingSum >= change) {
                         SoundUtil.playClickSound();
@@ -633,17 +657,31 @@ public class CashRegister extends Group {
         final Button btnReturn = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_return")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_return"))
-        );
+        ) {
+            @Override
+            public void act(float delta) {
+                if(isProcessPayment && cardType == 0 && givingSum > 0) {
+                    setDisabled(false);
+                    kassaBtnReturn.setColor(Color.WHITE);
+                } else {
+                    setDisabled(true);
+                    kassaBtnReturn.setColor(Color.DARK_GRAY);
+                }
+                super.act(delta);
+            }
+        };
         float h = btnHeight;
         float w = btnReturn.getWidth() * h / btnReturn.getHeight();
         btnReturn.setSize(w, h);
         btnReturn.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                SoundUtil.playClickSound();
-                givingSum = 0;
-                clearCash();
-                super.tap(event, x, y, count, button);
+                if(isProcessPayment && cardType == 0 && givingSum > 0) {
+                    SoundUtil.playClickSound();
+                    givingSum = 0;
+                    clearCash();
+                    super.tap(event, x, y, count, button);
+                }
             }
         });
 
