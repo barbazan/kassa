@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.plagame.game.kassa.screens.DayCompleteScreen;
 import com.plagame.game.net.kassa.KassaNetworkWebSocketClient;
 import com.plagame.game.integration.platform.service.api.PlatformServices;
 import com.plagame.game.integration.platform.service.api.model.DefaultPurchaseListener;
@@ -43,6 +44,7 @@ public class GameApplication extends Game {
     public PolygonSpriteBatch batch;
     public LoadingScreen loadingScreen;
     private GameScreen gameScreen;
+    private DayCompleteScreen dayCompleteScreen;
     private SettingsScreen settingsScreen;
     public static BitmapFont FONT_DEFAULT, FONT_HEADER, FONT_DIALOG_HEADER, FONT_DIALOG_BUTTON, FONT_RATING, FONT_BIG, FONT_VERY_BIG, FONT_SMALL, FONT_VERY_SMALL;
     public int exceptionCount;
@@ -87,6 +89,7 @@ public class GameApplication extends Game {
         try {
             super.render();
         } catch (Exception e) {
+            e.printStackTrace();
             exceptionCount++;
             if(exceptionCount >= 3) {
                 //todo send to server
@@ -107,6 +110,15 @@ public class GameApplication extends Game {
         gameScreen = new GameScreen();
         setScreen(gameScreen);
         setInputProcessor(gameScreen.getInputProcessor());
+    }
+
+    public void setDayCompleteScreen() {
+        if(dayCompleteScreen != null) {
+            dayCompleteScreen.dispose();
+        }
+        dayCompleteScreen = new DayCompleteScreen();
+        setScreen(dayCompleteScreen);
+        setInputProcessor(dayCompleteScreen.getInputProcessor());
     }
 
     public void setSettingsScreen() {
@@ -135,12 +147,12 @@ public class GameApplication extends Game {
     public void initFonts() {
         FontGenerator fontGenerator = new FontGenerator();
         FONT_DEFAULT = fontGenerator.generateDefaultBitmapFont(1, Color.WHITE);
-        FONT_HEADER = FONT_DEFAULT;
+        FONT_HEADER = fontGenerator.generateHeaderBitmapFont(1, Color.WHITE);
         FONT_DIALOG_HEADER = FONT_DEFAULT;
         FONT_BIG = FONT_DIALOG_HEADER;
         FONT_DIALOG_BUTTON = FONT_DEFAULT;
         FONT_RATING = FONT_DEFAULT;
-        FONT_VERY_BIG = FONT_DEFAULT;
+        FONT_VERY_BIG = fontGenerator.generateVeryBigBitmapFont(1, Color.WHITE);
         FONT_SMALL = FONT_DEFAULT;
         FONT_VERY_SMALL = FONT_DEFAULT;
     }

@@ -56,18 +56,18 @@ public class HeaderPanel extends Table {
                 super.touchDown(event, x, y, pointer, button);
             }
         });
-        innerTable.add(dollarsGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.right).padLeft(pad * 3).fill();
+        innerTable.add(dollarsGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.left).pad(pad).fill();
 
-        Group goldGroup = createGoldPanel();
-        goldGroup.addListener(new ActorGestureListener() {
-            @Override
-            public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                SoundUtil.playClickSound();
-                GameApplication.get().getGameScreen().uiStage.showShopGoldDialog();
-                super.touchDown(event, x, y, pointer, button);
-            }
-        });
-        innerTable.add(goldGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.right).padLeft(iconSize);
+//        Group goldGroup = createGoldPanel();
+//        goldGroup.addListener(new ActorGestureListener() {
+//            @Override
+//            public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
+//                SoundUtil.playClickSound();
+//                GameApplication.get().getGameScreen().uiStage.showShopGoldDialog();
+//                super.touchDown(event, x, y, pointer, button);
+//            }
+//        });
+//        innerTable.add(goldGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.right).padLeft(iconSize);
 
         Image settingsImage = new Image(ATLAS_1.findRegion("icon_settings"));
         settingsImage.setSize(iconSize, iconSize);

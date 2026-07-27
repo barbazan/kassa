@@ -87,7 +87,7 @@ public class CustomerCortege extends Group {
                 }
             }
         } else {
-            GameApplication.get().getGameScreen().gameScene.nextDay();
+            GameApplication.get().setDayCompleteScreen(); //todo remove это админская кнопка
         }
     }
 
@@ -96,7 +96,7 @@ public class CustomerCortege extends Group {
     }
 
     private void moveCustomer(Image img) {
-        float deltaX= img.getX() + img.getWidth() * 3;
+        float deltaX= img.getX() + img.getWidth() * 1.2f;
         float deltaY= img.getHeight() * 0.02f;
         float duration = 2.8f;
         float stepDuration = duration / 10;
@@ -113,7 +113,15 @@ public class CustomerCortege extends Group {
                     Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear),
                     Actions.delay(stepDuration / 2 + GameConfig.random.nextFloat() * stepDuration / 2),
                     Actions.moveBy(0, deltaY, stepDuration, Interpolation.linear),
-                    Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear)
+                    Actions.moveBy(0, -deltaY, stepDuration, Interpolation.linear),
+                    Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(customerList.isEmpty()) {
+                                GameApplication.get().setDayCompleteScreen();
+                            }
+                        }
+                    })
                 )
             )
         );

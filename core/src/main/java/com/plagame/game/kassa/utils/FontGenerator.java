@@ -22,6 +22,23 @@ public class FontGenerator {
         return generateBitmapFont(scale, color, fontFilename);
     }
 
+    public BitmapFont generateHeaderBitmapFont(float scale, Color color) {
+        int fontSize = getHeaderFontSize();
+        System.out.println("------generateHeaderBitmapFont----------fontSize = " + fontSize);
+        return generateBitmapFont(scale, color, fontSize);
+    }
+
+    public BitmapFont generateVeryBigBitmapFont(float scale, Color color) {
+        int fontSize = 64;
+        return generateBitmapFont(scale, color, fontSize);
+    }
+
+   public BitmapFont generateBitmapFont(float scale, Color color, int fontSize) {
+        String fontFilename = "fonts/Montserrat-SemiBold_" + fontSize + ".fnt";
+        System.out.println("------generateBitmapFont-------------fontFilename = " + fontFilename);
+        return generateBitmapFont(scale, color, fontFilename);
+    }
+
     public BitmapFont generateBitmapFont(float scale, Color color, String fontFilename) {
         BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal(fontFilename), false);
         bitmapFont.setColor(color);
@@ -48,6 +65,28 @@ public class FontGenerator {
             return 36;
         } else {
             return 36;
+        }
+    }
+
+    private int getHeaderFontSize() {
+        float minSize = GameApplication.get().minScreenSize;
+        System.out.println("--------getHeaderFontSize-------minScreenSize = " + minSize);
+        if(minSize <= 300) {
+            return 18;
+        } if(minSize <= 400) {
+            return 20;
+        } else if(minSize <= 720) {
+            return 28;
+        } else if(minSize <= 1080) {
+            return 48;
+        } else if(minSize <= 1280) {
+            return 48;
+        } else if(minSize <= 1600) {
+            return 64;
+        } else if(minSize <= 1790) {
+            return 64;
+        } else {
+            return 96;
         }
     }
 }
