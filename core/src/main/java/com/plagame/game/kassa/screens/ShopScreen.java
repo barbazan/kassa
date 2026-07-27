@@ -19,12 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
-import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.NumberFormat;
-import com.plagame.game.kassa.utils.SoundUtil;
-
-import java.util.Vector;
 
 /**
  * Created by Дмитрий Малышев on 27.07.2026.
@@ -39,13 +35,13 @@ public class ShopScreen extends BaseScreen {
     }
 
     private void init() {
-        float width = GameApplication.get().minScreenSize * 0.95f;
-        float height = GameApplication.get().screenHeight * 0.95f;
+        float width = GameApplication.get().minScreenSize * 0.99f;
+        float height = GameApplication.get().screenHeight * 0.99f;
         float pad = width / 20;
         dialogTable = new Table();
 //        dialogTable.setDebug(true);
         dialogTable.setSize(width, height);
-        dialogTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("dialog_bg")));
+//        dialogTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("dialog_bg")));
         dialogTable.padBottom(pad * 4);
 
         Label totalLabel = new Label("SHOP", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
@@ -65,7 +61,7 @@ public class ShopScreen extends BaseScreen {
         dialogTable.row();
 
         for(int i = 0; i < 20; i++) {
-            Table goodTable = createGoodsTable(width * 0.9f);
+            Table goodTable = createGoodsTable(width * 0.96f);
             dialogTable.add(goodTable).size(goodTable.getWidth(), goodTable.getHeight()).align(Align.top).expandX().fill();
             dialogTable.row();
         }
@@ -96,22 +92,23 @@ public class ShopScreen extends BaseScreen {
         stage.dispose();
     }
 
-    private Table createGoodsTable(float width) {
-        float height = width / 2.7f;
-        float iconHeight = height * 0.75f;
-        float pad = iconHeight / 8;
-        float groupWidth = (width - pad * 5) / 5;
+    private Table createGoodsTable(float tableWidth) {
+        float tableHeight = tableWidth / 2.7f;
+        float imageHeight = tableHeight * 0.9f;
+        float pad = imageHeight / 8;
+        float groupWidth = (tableWidth - pad * 5) / 4;
         Table productsTable = new Table();
-        productsTable.setSize(width, height);
+        productsTable.setSize(tableWidth, tableHeight);
 //        productsTable.setDebug(true);
         productsTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("panel_goods_bg")));
 
+        Group group = new Group();
         for(int i = 0; i < 4; i++) {
             ProductInfo productInfo = ProductInfo.getRandom();
             TextureRegion textureRegion = productInfo.getTextureRegion();
-            Vector2 vector2 = calcImageSize(textureRegion, height);
-            Group group = new Group();
-            group.setSize(groupWidth, height);
+            Vector2 vector2 = calcImageSize(textureRegion, imageHeight);
+            group = new Group();
+            group.setSize(vector2.x, tableHeight);
 
             Table costTable = new Table();
             Label costLabel = new Label(NumberFormat.formatCost(productInfo.cost), new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW));
@@ -128,17 +125,19 @@ public class ShopScreen extends BaseScreen {
             costTable.add(costImg).padRight(pad / 2).align(Align.right);
             costTable.add(costLabel).align(Align.left);
 
-            costTable.setPosition(group.getWidth() / 2 - costTable.getWidth() / 2, pad);
+            costTable.setPosition(group.getWidth() / 2 - costTable.getWidth() / 2, pad * 0.75f);
             group.addActor(costTable);
 
             Image image = new Image(productInfo.getTextureRegion());
             image.setSize(vector2.x, vector2.y);
-            image.setPosition(group.getWidth() / 2 - image.getWidth() / 2, costLabel.getHeight() + pad);
+            image.setPosition(group.getWidth() / 2 - image.getWidth() / 2, costLabel.getHeight() + (group.getHeight() - costLabel.getHeight()) / 2 - image.getHeight() / 2 + pad * 0.5f);
             group.addActor(image);
 
-
-            productsTable.add(group).size(group.getWidth(), group.getHeight()).align(Align.top).expandX().fill();
+            productsTable.add(group).align(Align.top).expandX().fill();
         }
+
+//        Button buyBtn = createBuyBtn(100, tableHeight * 0.7f);
+//        productsTable.add(buyBtn).size(buyBtn.getWidth(), buyBtn.getHeight()).align(Align.topRight).padTop(pad).padRight(pad).fill();
 
         return productsTable;
     }
@@ -157,7 +156,6 @@ public class ShopScreen extends BaseScreen {
 
     private Button createStartBtn(float width) {
         float btnHeight = width * 0.15f;
-
         final Button startBtn = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
@@ -169,6 +167,25 @@ public class ShopScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 GameApplication.get().setGameScreen();
+                super.tap(event, x, y, count, button);
+            }
+        });
+        return startBtn;
+    }
+
+    private Button createBuyBtn(int cost, float groupHeight) {
+        float btnHeight = groupHeight * 0.75f;
+        final Button startBtn = new Button(
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
+        );
+        float h = btnHeight;
+        float w = btnHeight;
+        startBtn.setSize(w, h);
+        startBtn.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                //todo
                 super.tap(event, x, y, count, button);
             }
         });
