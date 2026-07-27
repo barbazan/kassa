@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.plagame.game.kassa.screens.DayCompleteScreen;
+import com.plagame.game.kassa.screens.ShopScreen;
 import com.plagame.game.net.kassa.KassaNetworkWebSocketClient;
 import com.plagame.game.integration.platform.service.api.PlatformServices;
 import com.plagame.game.integration.platform.service.api.model.DefaultPurchaseListener;
@@ -44,6 +45,7 @@ public class GameApplication extends Game {
     public PolygonSpriteBatch batch;
     public LoadingScreen loadingScreen;
     private GameScreen gameScreen;
+    private ShopScreen shopScreen;
     private DayCompleteScreen dayCompleteScreen;
     private SettingsScreen settingsScreen;
     public static BitmapFont FONT_DEFAULT, FONT_HEADER, FONT_DIALOG_HEADER, FONT_DIALOG_BUTTON, FONT_RATING, FONT_BIG, FONT_VERY_BIG, FONT_SMALL, FONT_VERY_SMALL;
@@ -100,6 +102,7 @@ public class GameApplication extends Game {
 
     private void goToFirstScreen() {
 //        setSettingsScreen();
+//        setShopScreen();
         setGameScreen();
     }
 
@@ -110,6 +113,15 @@ public class GameApplication extends Game {
         gameScreen = new GameScreen();
         setScreen(gameScreen);
         setInputProcessor(gameScreen.getInputProcessor());
+    }
+
+    public void setShopScreen() {
+        if(shopScreen != null) {
+            shopScreen.dispose();
+        }
+        shopScreen = new ShopScreen();
+        setScreen(shopScreen);
+        setInputProcessor(shopScreen.getInputProcessor());
     }
 
     public void setDayCompleteScreen() {

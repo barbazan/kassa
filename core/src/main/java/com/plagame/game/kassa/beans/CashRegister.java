@@ -401,12 +401,14 @@ public class CashRegister extends Group {
             return "--.--";
         }
         String strCost = String.valueOf(cost);
-        if (cost == (int)cost) {
-            try {
+        try {
+            if (cost == (int) cost) {
                 strCost = strCost.substring(0, strCost.indexOf("."));
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else {
+                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 2));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return "$" + strCost;
     }

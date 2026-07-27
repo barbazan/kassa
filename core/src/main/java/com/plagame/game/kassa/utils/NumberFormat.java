@@ -10,6 +10,23 @@ public class NumberFormat {
         ' ', 'K', 'M', 'B', 'T', 'Q', 'W', 'E', 'R', 'Y', 'U'
     };
 
+    public static String formatCost(float cost) {
+        if (cost == 0) {
+            return "--.--";
+        }
+        String strCost = String.valueOf(cost);
+        try {
+            if (cost == (int) cost) {
+                strCost = strCost.substring(0, strCost.indexOf("."));
+            } else {
+                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 2));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return strCost;
+    }
+
     public static String format(long value) {
         if (value < 1000) return String.valueOf(value);
 
