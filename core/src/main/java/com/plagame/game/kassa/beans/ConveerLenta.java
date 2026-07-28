@@ -22,7 +22,7 @@ public class ConveerLenta extends Group {
     private void init() {
         clear();
         addBackground();
-        addBackground2();
+//        addBackground2();
 
         float height = background.getHeight();
         float width = background.getWidth();
