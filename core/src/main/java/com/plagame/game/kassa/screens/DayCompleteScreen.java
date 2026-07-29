@@ -24,6 +24,7 @@ public class DayCompleteScreen extends BaseScreen {
     }
 
     private void init() {
+        stage.clear();
         Label label = new Label("DAY COMPLETE", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
         System.out.println("label = " + label);
         label.setAlignment(Align.center);
@@ -39,6 +40,12 @@ public class DayCompleteScreen extends BaseScreen {
                 GameApplication.get().setGameScreen();
             }
         });
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        init();
     }
 
     @Override

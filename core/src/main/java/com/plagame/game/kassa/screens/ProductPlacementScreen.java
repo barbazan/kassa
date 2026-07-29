@@ -66,9 +66,14 @@ public class ProductPlacementScreen extends BaseScreen {
         emptyProductImageMap.clear();
         selectTableCellList.clear();
         currentCell = null;
-        polkaHeight = GameApplication.get().screenHeight * 0.2f;
+        if(GameApplication.get().isPortrait()) {
+            polkaHeight = GameApplication.get().screenHeight * 0.2f;
+        } else {
+            polkaHeight = GameApplication.get().screenHeight * 0.24f;
+        }
         float pad = polkaHeight / 25;
         Table productTable = new Table();
+//        productTable.setDebug(true);
         productTable.setSize(GameApplication.get().screenWidth, GameApplication.get().screenHeight);
         productTable.align(Align.top);
         Set<ProductInfo> set = ProductInfo.getRandomSet(3);
@@ -84,7 +89,12 @@ public class ProductPlacementScreen extends BaseScreen {
                 Vector2 vector2 = calcImageSize(textureRegion, polkaHeight, maxIconWidth);
                 Image productImage = new Image(textureRegion);
                 productImage.setSize(vector2.x, vector2.y);
-                float padTop = polkaHeight - productImage.getHeight() + row * polkaHeight * 0.045f;
+                float padTop;
+                if(GameApplication.get().isPortrait()) {
+                    padTop = polkaHeight - productImage.getHeight() + row * polkaHeight * 0.045f;
+                } else {
+                    padTop = polkaHeight - productImage.getHeight() + row * polkaHeight * 0.045f;
+                }
                 productTable.add(productImage).size(productImage.getWidth(), productImage.getHeight()).align(Align.bottom).pad(padTop, pad, 0, pad);
 
                 emptyProductImageList.add(productImage);
@@ -142,7 +152,7 @@ public class ProductPlacementScreen extends BaseScreen {
 
         // ЭТО ВНИЗУ ТОВАРЫ ДЛЯ РАСКЛАДКИ
         Table selectTable = createSelectProductTable();
-        productTable.add(selectTable).align(Align.bottom).padBottom(pad * 4).colspan(countOnRow).expand();
+        productTable.add(selectTable).align(Align.center).padBottom(pad * 2).colspan(countOnRow).expand();
         productTable.row();
 
         stage.addActor(productTable);
