@@ -1,6 +1,6 @@
 package com.plagame.game.kassa.screens;
 
-import static com.plagame.game.kassa.GameApplication.FONT_DEFAULT;
+import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_COLOR;
@@ -120,7 +120,7 @@ public class ShopScreen extends BaseScreen {
             group.setSize(tableHeight * 0.49f, tableHeight);
 
             Table costPanel = createCostPanel(productInfo);
-            costPanel.setPosition(group.getWidth() / 2 - costPanel.getWidth() / 2, pad / 2);
+            costPanel.setPosition(group.getWidth() / 2 - costPanel.getWidth() / 2, pad);
             group.addActor(costPanel);
 
             Image productImage = new Image(productInfo.getTextureRegion());
@@ -204,7 +204,7 @@ public class ShopScreen extends BaseScreen {
 
     private Table createCostPanel(float cost) {
         Table costTable = new Table();
-        Label costLabel = new Label(NumberFormat.formatCost(cost), new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        Label costLabel = new Label(NumberFormat.formatCost(cost), new Label.LabelStyle(FONT_HEADER, Color.WHITE));
         costLabel.setAlignment(Align.center);
 
         Image costImg = new Image(ATLAS_1.findRegion("icon_dollar"));
