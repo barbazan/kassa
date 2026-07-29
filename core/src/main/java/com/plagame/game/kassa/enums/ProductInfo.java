@@ -5,6 +5,9 @@ import static com.plagame.game.kassa.Resources.ATLAS_1;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.plagame.game.kassa.GameConfig;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by Дмитрий Малышев on 22.07.2026.
  * Email: dmitry.malyshev@gmail.com
@@ -49,6 +52,15 @@ public enum ProductInfo {
     public static ProductInfo getRandom() {
         int rndType = 1 + GameConfig.random.nextInt(values().length);
         return ENUM_MAPS.PRODUCT_INFO_MAP.get(rndType);
+    }
+
+    public static Set<ProductInfo> getRandomSet(int count) {
+        count = Math.min(count, values().length);
+        Set<ProductInfo> set = new HashSet<>();
+        while (set.size() < count) {
+            set.add(getRandom());
+        }
+        return set;
     }
 
     public TextureRegion getTextureRegion() {
