@@ -3,6 +3,7 @@ package com.plagame.game.kassa.screens;
 import static com.plagame.game.kassa.GameApplication.FONT_DEFAULT;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
+import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_COLOR;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -19,7 +20,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.enums.ProductInfo;
+import com.plagame.game.kassa.utils.AssetUtil;
 import com.plagame.game.kassa.utils.NumberFormat;
 
 /**
@@ -35,6 +38,7 @@ public class ShopScreen extends BaseScreen {
     }
 
     private void init() {
+        stage.clear();
         float width = GameApplication.get().minScreenSize * 0.99f;
         float height = GameApplication.get().screenHeight * 0.99f;
         float pad = width / 20;
@@ -44,7 +48,7 @@ public class ShopScreen extends BaseScreen {
 //        dialogTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("dialog_bg")));
         dialogTable.padBottom(pad * 4);
 
-        Label totalLabel = new Label("SHOP", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
+        Label totalLabel = new Label("ТОВАРЫ", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
         totalLabel.setAlignment(Align.center);
         dialogTable.add(totalLabel).align(Align.center).padTop(pad * 2).fill();
         dialogTable.row();
@@ -62,10 +66,9 @@ public class ShopScreen extends BaseScreen {
 
         for(int i = 0; i < 20; i++) {
             Table goodTable = createGoodsTable(width * 0.96f);
-            dialogTable.add(goodTable).size(goodTable.getWidth(), goodTable.getHeight()).align(Align.top).expandX().fill();
+            dialogTable.add(goodTable).size(goodTable.getWidth(), goodTable.getHeight()).align(Align.center).expandX().fill();
             dialogTable.row();
         }
-
 
         dialogTable.setPosition(GameApplication.get().screenWidth / 2 - width / 2, GameApplication.get().screenHeight / 2 - height / 2);
 
@@ -83,6 +86,12 @@ public class ShopScreen extends BaseScreen {
     }
 
     @Override
+    public void render(float delta) {
+        AssetUtil.clearScreen(LOADING_SCREEN_BG_COLOR.color);
+        super.render(delta);
+    }
+
+    @Override
     protected InputProcessor initInputProcessor() {
         return stage;
     }
@@ -93,62 +102,57 @@ public class ShopScreen extends BaseScreen {
     }
 
     private Table createGoodsTable(float tableWidth) {
-        float tableHeight = tableWidth / 2.7f;
+        float tableHeight = tableWidth / 2.90f;
         float imageHeight = tableHeight * 0.9f;
-        float pad = imageHeight / 8;
-        float groupWidth = (tableWidth - pad * 5) / 4;
+        float pad = imageHeight / 10;
+        float maxWidth = tableWidth / 4;
         Table productsTable = new Table();
         productsTable.setSize(tableWidth, tableHeight);
 //        productsTable.setDebug(true);
         productsTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("panel_goods_bg")));
+        productsTable.pad(pad / 2);
 
-        Group group = new Group();
+        productsTable.add().expandX();
+
         for(int i = 0; i < 4; i++) {
             ProductInfo productInfo = ProductInfo.getRandom();
             TextureRegion textureRegion = productInfo.getTextureRegion();
             Vector2 vector2 = calcImageSize(textureRegion, imageHeight);
-            group = new Group();
-            group.setSize(vector2.x, tableHeight);
+            Group group = new Group();
+            group.setSize(tableHeight * 0.49f, tableHeight);
 
-            Table costTable = new Table();
-            Label costLabel = new Label(NumberFormat.formatCost(productInfo.cost), new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW));
-            costLabel.setAlignment(Align.center);
+            Table costPanel = createCostPanel(productInfo);
+            costPanel.setPosition(group.getWidth() / 2 - costPanel.getWidth() / 2, pad / 2);
+            group.addActor(costPanel);
 
-            Image costImg = new Image(ATLAS_1.findRegion("icon_dollar"));
-            costImg.setSize(costLabel.getHeight() * 1.0f, costLabel.getHeight() * 1.0f);
-//            costImg.setPosition(costLabel.getX() - costImg.getWidth() - 5, costLabel.getY());
-//            group.addActor(costImg);
+            Image productImage = new Image(productInfo.getTextureRegion());
+            productImage.setSize(vector2.x, vector2.y);
+//            productImage.setScale(1.05f);
+//            productImage.setScale(1.5f);
+            productImage.setPosition(group.getWidth() / 2 - productImage.getWidth() / 2, costPanel.getHeight() + (group.getHeight() - costPanel.getHeight()) / 2 - productImage.getHeight() / 2);
+            group.addActor(productImage);
 
-//            costLabel.setPosition(group.getWidth() / 2 - costLabel.getWidth() / 2, pad);
-//            group.addActor(costLabel);
-            costTable.setSize(costImg.getWidth() + costLabel.getWidth() + pad / 2, costImg.getHeight());
-            costTable.add(costImg).padRight(pad / 2).align(Align.right);
-            costTable.add(costLabel).align(Align.left);
-
-            costTable.setPosition(group.getWidth() / 2 - costTable.getWidth() / 2, pad * 0.75f);
-            group.addActor(costTable);
-
-            Image image = new Image(productInfo.getTextureRegion());
-            image.setSize(vector2.x, vector2.y);
-            image.setPosition(group.getWidth() / 2 - image.getWidth() / 2, costLabel.getHeight() + (group.getHeight() - costLabel.getHeight()) / 2 - image.getHeight() / 2 + pad * 0.5f);
-            group.addActor(image);
-
-            productsTable.add(group).align(Align.top).expandX().fill();
+            float padLeft = i == 0 ? pad * 3 : 0;
+            productsTable.add(group).align(Align.center).pad(0, padLeft, pad / 2, pad / 2).expandX().fill();
         }
 
-//        Button buyBtn = createBuyBtn(100, tableHeight * 0.7f);
-//        productsTable.add(buyBtn).size(buyBtn.getWidth(), buyBtn.getHeight()).align(Align.topRight).padTop(pad).padRight(pad).fill();
+        productsTable.add().size(imageHeight).expandX();
+
+        Button buyBtn = createBuyBtn(100, tableHeight * 0.65f);
+        buyBtn.setPosition(productsTable.getWidth() - buyBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - buyBtn.getHeight() - pad);
+        productsTable.addActor(buyBtn);
+//        productsTable.add(buyBtn).size(buyBtn.getWidth(), buyBtn.getHeight()).align(Align.topRight).padTop(pad).padRight(pad / 2).expandX().fill();
 
         return productsTable;
     }
 
     private Vector2 calcImageSize(TextureRegion textureRegion, float parentHeight) {
         float iconHeight, iconWidth;
-        if(textureRegion.getRegionHeight() > textureRegion.getRegionWidth()) {
-            iconHeight = parentHeight * 0.75f;
+        if(textureRegion.getRegionHeight() >= (textureRegion.getRegionWidth() + 10)) {
+            iconHeight = parentHeight * 0.65f;
             iconWidth = iconHeight * textureRegion.getRegionWidth() / textureRegion.getRegionHeight();
         } else {
-            iconWidth = parentHeight * 0.75f;
+            iconWidth = parentHeight * 0.65f;
             iconHeight = iconWidth * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
         }
         return new Vector2(iconWidth, iconHeight);
@@ -174,15 +178,15 @@ public class ShopScreen extends BaseScreen {
     }
 
     private Button createBuyBtn(int cost, float groupHeight) {
-        float btnHeight = groupHeight * 0.75f;
-        final Button startBtn = new Button(
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
+        float btnHeight = groupHeight * 0.95f;
+        final Button buyBtn = new Button(
+            new TextureRegionDrawable(ATLAS_1.findRegion("button_green")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("button_green"))
         );
         float h = btnHeight;
         float w = btnHeight;
-        startBtn.setSize(w, h);
-        startBtn.addListener(new ActorGestureListener() {
+        buyBtn.setSize(w, h);
+        buyBtn.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 //todo
@@ -190,6 +194,33 @@ public class ShopScreen extends BaseScreen {
             }
         });
 
-        return startBtn;
+        Table costpanel = createCostPanel(100 + 50 * GameConfig.random.nextInt(20)); //todo
+        buyBtn.add(costpanel).align(Align.center).fill();
+
+        return buyBtn;
+    }
+
+    private Table createCostPanel(ProductInfo productInfo) {
+        return createCostPanel(productInfo.cost);
+    }
+
+    private Table createCostPanel(float cost) {
+        Table costTable = new Table();
+        Label costLabel = new Label(NumberFormat.formatCost(cost), new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        costLabel.setAlignment(Align.center);
+
+        Image costImg = new Image(ATLAS_1.findRegion("icon_dollar"));
+        costImg.setSize(costLabel.getHeight() * 1.0f, costLabel.getHeight() * 1.0f);
+        costTable.add(costImg).size(costImg.getWidth(), costImg.getHeight()).padRight(10).align(Align.right);
+        costTable.add(costLabel).size(costLabel.getWidth(), costLabel.getHeight()).align(Align.left);
+
+        costTable.setSize(costImg.getWidth() + costLabel.getWidth(), costImg.getHeight());
+        return costTable;
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        init();
     }
 }
