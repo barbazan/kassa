@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.plagame.game.kassa.screens.DayCompleteScreen;
+import com.plagame.game.kassa.screens.NextDayScreen;
 import com.plagame.game.kassa.screens.ProductPlacementScreen;
 import com.plagame.game.kassa.screens.ShopScreen;
 import com.plagame.game.net.kassa.KassaNetworkWebSocketClient;
@@ -49,6 +50,7 @@ public class GameApplication extends Game {
     private ShopScreen shopScreen;
     private ProductPlacementScreen productPlacementScreen;
     private DayCompleteScreen dayCompleteScreen;
+    private NextDayScreen nextDayScreen;
     private SettingsScreen settingsScreen;
     public static BitmapFont FONT_DEFAULT, FONT_HEADER, FONT_DIALOG_HEADER, FONT_DIALOG_BUTTON, FONT_RATING, FONT_BIG, FONT_VERY_BIG, FONT_SMALL, FONT_VERY_SMALL;
     public int exceptionCount;
@@ -142,6 +144,15 @@ public class GameApplication extends Game {
         dayCompleteScreen = new DayCompleteScreen();
         setScreen(dayCompleteScreen);
         setInputProcessor(dayCompleteScreen.getInputProcessor());
+    }
+
+    public void setNextDayScreen() {
+        if(nextDayScreen != null) {
+            nextDayScreen.dispose();
+        }
+        nextDayScreen = new NextDayScreen();
+        setScreen(nextDayScreen);
+        setInputProcessor(nextDayScreen.getInputProcessor());
     }
 
     public void setSettingsScreen() {

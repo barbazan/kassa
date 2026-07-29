@@ -28,13 +28,11 @@ import java.util.Set;
  * Email: dmitry.malyshev@gmail.com
  */
 public class ProductPlacementScreen extends BaseScreen {
-    private Image background;
-    private Map<Integer, List<Image>> emptyProductImageMap = new HashMap<>(); // пустые товары чтобы сравнивать можно дропнуть при перетаскивании
-    private float polkaHeight;
-    private DragAndDrop dragAndDrop = new DragAndDrop();
-    private List<Cell<Image>> selectTableCellList = new ArrayList<>(3); // это ячейки таблицы(чтобы картинки менять в ячейках), где лежат картинки продуктов, которые нужно разложить
+    private final Map<Integer, List<Image>> emptyProductImageMap = new HashMap<>(); // пустые товары чтобы сравнивать можно дропнуть при перетаскивании
+    private final DragAndDrop dragAndDrop = new DragAndDrop();
+    private final List<Cell<Image>> selectTableCellList = new ArrayList<>(3); // это ячейки таблицы(чтобы картинки менять в ячейках), где лежат картинки продуктов, которые нужно разложить
     private Cell<Image> currentCell; // текущая ячейка, из которой тащат картинку
-    private LinkedList<GoodProduct> selectProductList = new LinkedList<>(); // список енумов и картинок товаров, которые нужно расставить
+    private final LinkedList<GoodProduct> selectProductList = new LinkedList<>(); // список енумов и картинок товаров, которые нужно расставить
     private int emptyCount; // сколько пустых слотов продуктов
     private int completeCount; // сколько расставил на полки
 
@@ -49,7 +47,7 @@ public class ProductPlacementScreen extends BaseScreen {
 
     private void addBackground() {
         TextureRegion textureRegion = new TextureRegion(AssetUtil.getTexture("images/game_bg.jpg"));
-        background = new Image(textureRegion);
+        Image background = new Image(textureRegion);
         float scaleX = GameApplication.get().screenWidth / textureRegion.getRegionWidth();
         float scaleY = GameApplication.get().screenHeight / textureRegion.getRegionHeight();
         float scale = Math.max(scaleX, scaleY);
@@ -66,6 +64,7 @@ public class ProductPlacementScreen extends BaseScreen {
         emptyProductImageMap.clear();
         selectTableCellList.clear();
         currentCell = null;
+        float polkaHeight;
         if(GameApplication.get().isPortrait()) {
             polkaHeight = GameApplication.get().screenHeight * 0.2f;
         } else {
@@ -82,7 +81,6 @@ public class ProductPlacementScreen extends BaseScreen {
 
         float maxIconWidth = GameApplication.get().screenWidth / countOnRow;
         for(ProductInfo productInfo : set) {
-            List<Boolean> productList = new ArrayList<>(countOnRow);
             List<Image> emptyProductImageList = new ArrayList<>();
             for(int i = 1; i <= countOnRow; i++) {
                 TextureRegion textureRegion = productInfo.getTextureRegion();
@@ -99,7 +97,6 @@ public class ProductPlacementScreen extends BaseScreen {
 
                 emptyProductImageList.add(productImage);
                 boolean isEmpty = i >= (countOnRow / 2) - 1 && i <= (countOnRow / 2) + 2;
-                productList.add(isEmpty);
                 if(isEmpty) {
                     emptyCount++;
                     productImage.setColor(Color.BLACK); // пустой продукт красим в черный
@@ -119,8 +116,7 @@ public class ProductPlacementScreen extends BaseScreen {
                         Image targetImage = (Image) payload.getObject();
                         ProductInfo targetProductInfo = (ProductInfo)(targetImage.getUserObject());
                         int type = getEmptyProductType(emptySlotImage);
-                        boolean result = targetProductInfo.type == type;
-                        return result;
+                        return targetProductInfo.type == type;
                     }
 
                     @Override
@@ -152,7 +148,7 @@ public class ProductPlacementScreen extends BaseScreen {
 
         // ЭТО ВНИЗУ ТОВАРЫ ДЛЯ РАСКЛАДКИ
         Table selectTable = createSelectProductTable();
-        productTable.add(selectTable).align(Align.center).padBottom(pad * 2).colspan(countOnRow).expand();
+        productTable.add(selectTable).align(Align.center).padBottom(pad * 2).colspan(countOnRow).expand().fill();
         productTable.row();
 
         stage.addActor(productTable);

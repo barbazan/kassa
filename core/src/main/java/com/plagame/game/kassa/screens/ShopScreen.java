@@ -31,8 +31,6 @@ import com.plagame.game.kassa.utils.NumberFormat;
  */
 public class ShopScreen extends BaseScreen {
 
-    private Table dialogTable;
-
     public ShopScreen() {
         init();
     }
@@ -42,7 +40,7 @@ public class ShopScreen extends BaseScreen {
         float width = GameApplication.get().minScreenSize * 0.99f;
         float height = GameApplication.get().screenHeight * 0.99f;
         float pad = width / 20;
-        dialogTable = new Table();
+        Table dialogTable = new Table();
 //        dialogTable.setDebug(true);
         dialogTable.setSize(width, height);
 //        dialogTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("dialog_bg")));
@@ -170,7 +168,7 @@ public class ShopScreen extends BaseScreen {
         startBtn.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                GameApplication.get().setGameScreen();
+                GameApplication.get().setNextDayScreen();
                 super.tap(event, x, y, count, button);
             }
         });
