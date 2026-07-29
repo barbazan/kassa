@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -29,14 +30,13 @@ import java.util.Set;
 public class ProductPlacementScreen extends BaseScreen {
     private Image background;
     private Map<Integer, List<Image>> emptyProductImageMap = new HashMap<>(); // пустые товары чтобы сравнивать можно дропнуть при перетаскивании
-//    private Map<Integer, Vector2> productSizeMap = new HashMap<>();
-//    private Map<Integer, Integer> selectProductMap = new HashMap<>(); // мапа продуктов, которые нужно расставлять, тип на количество
     private float polkaHeight;
     private DragAndDrop dragAndDrop = new DragAndDrop();
     private List<Cell<Image>> selectTableCellList = new ArrayList<>(3); // это ячейки таблицы(чтобы картинки менять в ячейках), где лежат картинки продуктов, которые нужно разложить
     private Cell<Image> currentCell; // текущая ячейка, из которой тащат картинку
-//    private LinkedList<Image> selectImageList = new LinkedList<>(); // список картинок товаров, которые нужно расставить
     private LinkedList<GoodProduct> selectProductList = new LinkedList<>(); // список енумов и картинок товаров, которые нужно расставить
+    private int emptyCount; // сколько пустых слотов продуктов
+    private int completeCount; // сколько расставил на полки
 
     public ProductPlacementScreen() {
         init();
@@ -60,8 +60,8 @@ public class ProductPlacementScreen extends BaseScreen {
 
     private void addProducts() {
         // ЭТО ПОЛКИ
-//        selectProductMap.clear();
-//        selectImageList.clear();
+        emptyCount = 0;
+        completeCount = 0;
         selectProductList.clear();
         emptyProductImageMap.clear();
         selectTableCellList.clear();
@@ -78,7 +78,6 @@ public class ProductPlacementScreen extends BaseScreen {
         float maxIconWidth = GameApplication.get().screenWidth / countOnRow;
         for(ProductInfo productInfo : set) {
             List<Boolean> productList = new ArrayList<>(countOnRow);
-//            float cellWidth = (productTable.getWidth() - pad * (countOnRow + 1)) / countOnRow;
             List<Image> emptyProductImageList = new ArrayList<>();
             for(int i = 1; i <= countOnRow; i++) {
                 TextureRegion textureRegion = productInfo.getTextureRegion();
@@ -87,18 +86,17 @@ public class ProductPlacementScreen extends BaseScreen {
                 productImage.setSize(vector2.x, vector2.y);
                 float padTop = polkaHeight - productImage.getHeight() + row * polkaHeight * 0.045f;
                 productTable.add(productImage).size(productImage.getWidth(), productImage.getHeight()).align(Align.bottom).pad(padTop, pad, 0, pad);
-//                productSizeMap.put(productInfo.type, vector2);
 
                 emptyProductImageList.add(productImage);
                 boolean isEmpty = i >= (countOnRow / 2) - 1 && i <= (countOnRow / 2) + 2;
                 productList.add(isEmpty);
                 if(isEmpty) {
+                    emptyCount++;
                     productImage.setColor(Color.BLACK); // пустой продукт красим в черный
                     // сколько пустых продуктов столько и добавляем картинок в очередь на расстановку
                     Image selectImage = createProductImage(productInfo.type, productImage); // создаем такую же картинку и помещаем её в список из которого потом будем расставлять
                     GoodProduct selectProduct = new GoodProduct(productInfo, selectImage);
                     selectProductList.add(selectProduct);
-//                    selectProductMap.merge(productInfo.type, 1, Integer::sum);
                 }
             }
             emptyProductImageMap.put(productInfo.type, emptyProductImageList);
@@ -108,12 +106,9 @@ public class ProductPlacementScreen extends BaseScreen {
                 dragAndDrop.addTarget(new DragAndDrop.Target(emptySlotImage) {
                     @Override
                     public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-//                        System.out.println(" ------------------ drag ");
                         Image targetImage = (Image) payload.getObject();
                         ProductInfo targetProductInfo = (ProductInfo)(targetImage.getUserObject());
-//                        System.out.println("---------targetProductInfo.type = " + targetProductInfo.type);
                         int type = getEmptyProductType(emptySlotImage);
-//                        System.out.println("type = " + type);
                         boolean result = targetProductInfo.type == type;
                         return result;
                     }
@@ -124,13 +119,8 @@ public class ProductPlacementScreen extends BaseScreen {
                         target.setColor(Color.WHITE);
                         Image sourceImage = (Image)payload.getObject();
                         sourceImage.setUserObject(null);
-//                        ProductInfo productInfo = (ProductInfo)sourceImage.getUserObject();
-//                        Integer count = selectProductMap.get(productInfo.type);
-//                        if(count == null) {
-//                            selectProductMap.remove(productInfo.type);
-//                        } else {
-//                            selectProductMap.put(productInfo.type,count - 1);
-//                        }
+
+                        // следующий продукт показываем внизу если он есть
                         GoodProduct nextProduct = getNextProduct();
                         if(nextProduct != null) { // значит есть еще пустые слоты
                             addDrugAndDrop(nextProduct);
@@ -138,18 +128,8 @@ public class ProductPlacementScreen extends BaseScreen {
                             currentCell.size(nextProduct.image.getWidth(), nextProduct.image.getHeight());
                             currentCell.setActor(nextProduct.image);
                         }
-//                        int productType = selectRandomProductType();
-//                        System.out.println("---------------productType = " + productType);
-//                        if(productType > 0) { // значит есть еще пустые слоты
-////                            Image image = createProductImage(productType);
-//                            Image image = getNextProductImage();
-//                            if(image != null) {
-//                                addDrugAndDrop(image, productType);
-//                                System.out.println("currentCell = " + currentCell);
-//                                currentCell.size(image.getWidth(), image.getHeight());
-//                                currentCell.setActor(image);
-//                            }
-//                        }
+                        completeCount++;
+                        checkDayComplete();
                     }
                 });
             }
@@ -178,14 +158,6 @@ public class ProductPlacementScreen extends BaseScreen {
                 Cell<Image> cell = selectTable.add(image).size(image.getWidth(), image.getHeight()).padRight(image.getWidth() / 2).align(Align.bottom);
                 selectTableCellList.add(cell);
             }
-
-//            int productType = selectRandomProductType();
-//            if(productType > 0) {
-//                Image image = createProductImage(productType);
-//                addDrugAndDrop(image, productType);
-//                Cell<Image> cell = selectTable.add(image).size(image.getWidth(), image.getHeight()).padRight(image.getWidth() / 2).align(Align.bottom);
-//                selectTableCellList.add(cell);
-//            }
         }
         return selectTable;
     }
@@ -230,24 +202,6 @@ public class ProductPlacementScreen extends BaseScreen {
         }
         return 0;
     }
-
-//    private int selectRandomProductType() {
-//        int type = 0;
-//        System.out.println("selectProductMap.isEmpty() = " + selectProductMap.isEmpty());
-//        if(!selectProductMap.isEmpty()) {
-//            int rnd = GameConfig.random.nextInt(selectProductMap.size());
-//            Integer key = new ArrayList<>(selectProductMap.keySet()).get(rnd);
-//            System.out.println("rnd key = " + key + ", count = " + selectProductMap.get(key));
-//            if(key != null && selectProductMap.get(key) > 0) {
-//                type = key;
-//            } else if() {
-//                System.out.println(" selectProductMap.remove(key) key = " + key);
-//                selectProductMap.remove(key);
-//                type = selectRandomProductType();
-//            }
-//        }
-//        return type;
-//    }
 
     private void addDrugAndDrop(GoodProduct product) {
         addDrugAndDrop(product.image, product.productInfo.type);
@@ -309,12 +263,21 @@ public class ProductPlacementScreen extends BaseScreen {
         stage.dispose();
     }
 
-//    private Image getNextProductImage() {
-//        if(!selectImageList.isEmpty()) {
-//            return selectImageList.removeFirst();
-//        }
-//        return null;
-//    }
+    private void checkDayComplete() {
+        if(selectProductList.isEmpty() && completeCount >= emptyCount) {
+            stage.addAction(Actions.sequence(
+                Actions.delay(0.9f),
+                Actions.hide(),
+                Actions.delay(0.3f),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        GameApplication.get().setDayCompleteScreen();
+                    }
+                })
+            ));
+        }
+    }
 
     private GoodProduct getNextProduct() {
         if(!selectProductList.isEmpty()) {

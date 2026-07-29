@@ -118,7 +118,7 @@ public class CustomerCortege extends Group {
                         @Override
                         public void run() {
                             if(customerList.isEmpty()) {
-                                GameApplication.get().setDayCompleteScreen();
+                                GameApplication.get().setProductPlacementScreen();
                             }
                         }
                     })
