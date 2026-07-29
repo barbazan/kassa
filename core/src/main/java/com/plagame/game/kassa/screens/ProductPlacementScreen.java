@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
@@ -28,11 +29,14 @@ import java.util.Set;
 public class ProductPlacementScreen extends BaseScreen {
     private Image background;
     private Map<Integer, List<Image>> emptyProductImageMap = new HashMap<>(); // пустые товары чтобы сравнивать можно дропнуть при перетаскивании
-    private Map<Integer, Vector2> productSizeMap = new HashMap<>();
-    private LinkedList<ProductInfo> selectProductList = new LinkedList<>(); // список продуктов, которые нужно разложить
+//    private Map<Integer, Vector2> productSizeMap = new HashMap<>();
+//    private Map<Integer, Integer> selectProductMap = new HashMap<>(); // мапа продуктов, которые нужно расставлять, тип на количество
     private float polkaHeight;
-    private int emptyCount;
     private DragAndDrop dragAndDrop = new DragAndDrop();
+    private List<Cell<Image>> selectTableCellList = new ArrayList<>(3); // это ячейки таблицы(чтобы картинки менять в ячейках), где лежат картинки продуктов, которые нужно разложить
+    private Cell<Image> currentCell; // текущая ячейка, из которой тащат картинку
+//    private LinkedList<Image> selectImageList = new LinkedList<>(); // список картинок товаров, которые нужно расставить
+    private LinkedList<GoodProduct> selectProductList = new LinkedList<>(); // список енумов и картинок товаров, которые нужно расставить
 
     public ProductPlacementScreen() {
         init();
@@ -56,7 +60,12 @@ public class ProductPlacementScreen extends BaseScreen {
 
     private void addProducts() {
         // ЭТО ПОЛКИ
+//        selectProductMap.clear();
+//        selectImageList.clear();
         selectProductList.clear();
+        emptyProductImageMap.clear();
+        selectTableCellList.clear();
+        currentCell = null;
         polkaHeight = GameApplication.get().screenHeight * 0.2f;
         float pad = polkaHeight / 25;
         Table productTable = new Table();
@@ -69,24 +78,27 @@ public class ProductPlacementScreen extends BaseScreen {
         float maxIconWidth = GameApplication.get().screenWidth / countOnRow;
         for(ProductInfo productInfo : set) {
             List<Boolean> productList = new ArrayList<>(countOnRow);
-            float cellWidth = (productTable.getWidth() - pad * (countOnRow + 1)) / countOnRow;
+//            float cellWidth = (productTable.getWidth() - pad * (countOnRow + 1)) / countOnRow;
             List<Image> emptyProductImageList = new ArrayList<>();
             for(int i = 1; i <= countOnRow; i++) {
                 TextureRegion textureRegion = productInfo.getTextureRegion();
                 Vector2 vector2 = calcImageSize(textureRegion, polkaHeight, maxIconWidth);
-                Image image = new Image(textureRegion);
-                image.setSize(vector2.x, vector2.y);
-                float padTop = polkaHeight - image.getHeight() + row * polkaHeight * 0.045f;
-                productTable.add(image).size(image.getWidth(), image.getHeight()).align(Align.bottom).pad(padTop, pad, 0, pad);
-                productSizeMap.put(productInfo.type, vector2);
+                Image productImage = new Image(textureRegion);
+                productImage.setSize(vector2.x, vector2.y);
+                float padTop = polkaHeight - productImage.getHeight() + row * polkaHeight * 0.045f;
+                productTable.add(productImage).size(productImage.getWidth(), productImage.getHeight()).align(Align.bottom).pad(padTop, pad, 0, pad);
+//                productSizeMap.put(productInfo.type, vector2);
 
-                emptyProductImageList.add(image);
+                emptyProductImageList.add(productImage);
                 boolean isEmpty = i >= (countOnRow / 2) - 1 && i <= (countOnRow / 2) + 2;
                 productList.add(isEmpty);
                 if(isEmpty) {
-                    image.setColor(Color.BLACK);
-                    System.out.println("------------selectProductList.add------productInfo.type = " + productInfo.type);
-                    selectProductList.add(productInfo);
+                    productImage.setColor(Color.BLACK); // пустой продукт красим в черный
+                    // сколько пустых продуктов столько и добавляем картинок в очередь на расстановку
+                    Image selectImage = createProductImage(productInfo.type, productImage); // создаем такую же картинку и помещаем её в список из которого потом будем расставлять
+                    GoodProduct selectProduct = new GoodProduct(productInfo, selectImage);
+                    selectProductList.add(selectProduct);
+//                    selectProductMap.merge(productInfo.type, 1, Integer::sum);
                 }
             }
             emptyProductImageMap.put(productInfo.type, emptyProductImageList);
@@ -96,18 +108,48 @@ public class ProductPlacementScreen extends BaseScreen {
                 dragAndDrop.addTarget(new DragAndDrop.Target(emptySlotImage) {
                     @Override
                     public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+//                        System.out.println(" ------------------ drag ");
                         Image targetImage = (Image) payload.getObject();
-                        int type = getProductType(emptySlotImage);
-                        boolean result = ((ProductInfo)(targetImage.getUserObject())).type == type;
-                        System.out.println("result = " + result);
+                        ProductInfo targetProductInfo = (ProductInfo)(targetImage.getUserObject());
+//                        System.out.println("---------targetProductInfo.type = " + targetProductInfo.type);
+                        int type = getEmptyProductType(emptySlotImage);
+//                        System.out.println("type = " + type);
+                        boolean result = targetProductInfo.type == type;
                         return result;
                     }
 
                     @Override
                     public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                        System.out.println(" ============= drop ============= ");
                         Image target = (Image) getActor();
                         target.setColor(Color.WHITE);
+                        Image sourceImage = (Image)payload.getObject();
+                        sourceImage.setUserObject(null);
+//                        ProductInfo productInfo = (ProductInfo)sourceImage.getUserObject();
+//                        Integer count = selectProductMap.get(productInfo.type);
+//                        if(count == null) {
+//                            selectProductMap.remove(productInfo.type);
+//                        } else {
+//                            selectProductMap.put(productInfo.type,count - 1);
+//                        }
+                        GoodProduct nextProduct = getNextProduct();
+                        if(nextProduct != null) { // значит есть еще пустые слоты
+                            addDrugAndDrop(nextProduct);
+                            System.out.println("currentCell = " + currentCell);
+                            currentCell.size(nextProduct.image.getWidth(), nextProduct.image.getHeight());
+                            currentCell.setActor(nextProduct.image);
+                        }
+//                        int productType = selectRandomProductType();
+//                        System.out.println("---------------productType = " + productType);
+//                        if(productType > 0) { // значит есть еще пустые слоты
+////                            Image image = createProductImage(productType);
+//                            Image image = getNextProductImage();
+//                            if(image != null) {
+//                                addDrugAndDrop(image, productType);
+//                                System.out.println("currentCell = " + currentCell);
+//                                currentCell.size(image.getWidth(), image.getHeight());
+//                                currentCell.setActor(image);
+//                            }
+//                        }
                     }
                 });
             }
@@ -117,70 +159,44 @@ public class ProductPlacementScreen extends BaseScreen {
         }
 
         Collections.shuffle(selectProductList);
-        emptyCount = selectProductList.size();
 
         // ЭТО ВНИЗУ ТОВАРЫ ДЛЯ РАСКЛАДКИ
-        Table selectTable = new Table();
-        for(int i = 0; i < 3; i++) {
-            ProductInfo productInfo = selectProductList.get(i);
-            TextureRegion textureRegion = productInfo.getTextureRegion();
-            Image image = new Image(textureRegion);
-            Vector2 v2 = productSizeMap.get(productInfo.type);
-            image.setSize(v2.x, v2.y);
-            image.setOrigin(image.getWidth() / 2, image.getHeight() / 2);
-
-            dragAndDrop.addSource(new DragAndDrop.Source(image) {
-                @Override
-                public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
-                    image.setVisible(false);
-                    image.setUserObject(productInfo);
-                    DragAndDrop.Payload payload = new DragAndDrop.Payload();
-                    payload.setObject(image);
-
-                    // Создаем отдельную картинку, а не используем оригинал
-                    Image dragImage = new Image(((Image)getActor()).getDrawable()) {
-                        @Override
-                        public float getY() {
-                            return super.getY() - image.getHeight() * 0.5f;
-                        }
-
-                        @Override
-                        public float getX() {
-                            return super.getX() + image.getWidth() * 0.5f;
-                        }
-                    };
-                    dragImage.setSize(image.getWidth(), image.getHeight());
-                    dragImage.setOrigin(dragImage.getWidth() / 2, dragImage.getHeight() / 2);
-                    dragImage.setScale(1.5f);
-
-                    payload.setDragActor(dragImage);
-
-                    return payload;
-                }
-
-                @Override
-                public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
-                    image.setVisible(true);
-                }
-            });
-
-            selectTable.add(image).size(image.getWidth(), image.getHeight()).pad(20).align(Align.bottom);
-        }
-
-        productTable.add(selectTable).align(Align.center).colspan(countOnRow).expand();
+        Table selectTable = createSelectProductTable();
+        productTable.add(selectTable).align(Align.bottom).padBottom(pad * 4).colspan(countOnRow).expand();
         productTable.row();
 
         stage.addActor(productTable);
     }
 
-    @Override
-    protected InputProcessor initInputProcessor() {
-        return stage;
+    private Table createSelectProductTable() {
+        Table selectTable = new Table();
+        for(int i = 0; i < 3; i++) {
+            GoodProduct nextProduct = getNextProduct();
+            if(nextProduct != null) {
+                addDrugAndDrop(nextProduct);
+                Image image = nextProduct.image;
+                Cell<Image> cell = selectTable.add(image).size(image.getWidth(), image.getHeight()).padRight(image.getWidth() / 2).align(Align.bottom);
+                selectTableCellList.add(cell);
+            }
+
+//            int productType = selectRandomProductType();
+//            if(productType > 0) {
+//                Image image = createProductImage(productType);
+//                addDrugAndDrop(image, productType);
+//                Cell<Image> cell = selectTable.add(image).size(image.getWidth(), image.getHeight()).padRight(image.getWidth() / 2).align(Align.bottom);
+//                selectTableCellList.add(cell);
+//            }
+        }
+        return selectTable;
     }
 
-    @Override
-    public void dispose() {
-        stage.dispose();
+    private Image createProductImage(int productType, Image origImage) {
+        ProductInfo productInfo = ProductInfo.getByType(productType);
+        TextureRegion textureRegion = productInfo.getTextureRegion();
+        Image image = new Image(textureRegion);
+        image.setSize(origImage.getWidth(), origImage.getHeight());
+        image.setOrigin(image.getWidth() / 2, image.getHeight() / 2);
+        return image;
     }
 
     private Vector2 calcImageSize(TextureRegion textureRegion, float parentHeight, float maxWidth) {
@@ -195,15 +211,86 @@ public class ProductPlacementScreen extends BaseScreen {
         return new Vector2(iconWidth, iconHeight);
     }
 
-    private int getProductType(Image image) {
+    private Cell<Image> getSelectProductCell(Image image) {
+        for(Cell<Image> cell : selectTableCellList) {
+            if(cell.getActor() == image) {
+                return cell;
+            }
+        }
+        return null;
+    }
+
+    private int getEmptyProductType(Image image) {
         for(Map.Entry<Integer, List<Image>> entry : emptyProductImageMap.entrySet()) {
             for(Image targetImage : entry.getValue()) {
-                if(targetImage == image) {
+                if(targetImage == image && targetImage.getColor().toIntBits() == Color.BLACK.toIntBits()) {
                     return entry.getKey();
                 }
             }
         }
         return 0;
+    }
+
+//    private int selectRandomProductType() {
+//        int type = 0;
+//        System.out.println("selectProductMap.isEmpty() = " + selectProductMap.isEmpty());
+//        if(!selectProductMap.isEmpty()) {
+//            int rnd = GameConfig.random.nextInt(selectProductMap.size());
+//            Integer key = new ArrayList<>(selectProductMap.keySet()).get(rnd);
+//            System.out.println("rnd key = " + key + ", count = " + selectProductMap.get(key));
+//            if(key != null && selectProductMap.get(key) > 0) {
+//                type = key;
+//            } else if() {
+//                System.out.println(" selectProductMap.remove(key) key = " + key);
+//                selectProductMap.remove(key);
+//                type = selectRandomProductType();
+//            }
+//        }
+//        return type;
+//    }
+
+    private void addDrugAndDrop(GoodProduct product) {
+        addDrugAndDrop(product.image, product.productInfo.type);
+    }
+
+    private void addDrugAndDrop(Image image, int productType) {
+        dragAndDrop.addSource(new DragAndDrop.Source(image) {
+            @Override
+            public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
+                image.setVisible(false);
+                image.setUserObject(ProductInfo.getByType(productType));
+                DragAndDrop.Payload payload = new DragAndDrop.Payload();
+                payload.setObject(image);
+
+                // Создаем отдельную картинку, а не используем оригинал
+                Image dragImage = new Image(((Image)getActor()).getDrawable()) {
+                    @Override
+                    public float getY() {
+                        return super.getY() - image.getHeight() * 0.5f;
+                    }
+
+                    @Override
+                    public float getX() {
+                        return super.getX() + image.getWidth() * 0.5f;
+                    }
+                };
+                dragImage.setSize(image.getWidth(), image.getHeight());
+                dragImage.setOrigin(dragImage.getWidth() / 2, dragImage.getHeight() / 2);
+                dragImage.setScale(1.5f);
+
+                payload.setDragActor(dragImage);
+
+                currentCell = getSelectProductCell(image);
+                return payload;
+            }
+
+            @Override
+            public void dragStop(InputEvent event, float x, float y, int pointer, DragAndDrop.Payload payload, DragAndDrop.Target target) {
+                if(image.getUserObject() != null) { // если этот объект все еще присутсвует, значит при перетаскивании не попали в таргет
+                    image.setVisible(true);
+                }
+            }
+        });
     }
 
     @Override
@@ -212,59 +299,37 @@ public class ProductPlacementScreen extends BaseScreen {
         init();
     }
 
-}
+    @Override
+    protected InputProcessor initInputProcessor() {
+        return stage;
+    }
 
+    @Override
+    public void dispose() {
+        stage.dispose();
+    }
 
-
-//        if(textureRegion.getRegionHeight() > textureRegion.getRegionWidth()) {
-//            iconHeight = parentHeight * 0.75f;
-//            iconWidth = iconHeight * textureRegion.getRegionWidth() / textureRegion.getRegionHeight();
-//        } else {
-//            iconWidth = parentHeight * 0.75f;
-//            iconHeight = iconWidth * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
+//    private Image getNextProductImage() {
+//        if(!selectImageList.isEmpty()) {
+//            return selectImageList.removeFirst();
 //        }
+//        return null;
+//    }
 
+    private GoodProduct getNextProduct() {
+        if(!selectProductList.isEmpty()) {
+            return selectProductList.removeFirst();
+        }
+        return null;
+    }
 
+    private static class GoodProduct {
+        ProductInfo productInfo;
+        Image image;
 
-
-//            image.addListener(new ActorGestureListener() {
-//                @Override
-//                public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
-//                    dragAndDrop.addSource(new DragAndDrop.Source(image) {
-//                        @Override
-//                        public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
-//                            DragAndDrop.Payload payload = new DragAndDrop.Payload();
-//                            payload.setObject(image);
-//                            // Что отображается во время перетаскивания
-//                            payload.setDragActor(image);
-//                            return payload;
-//                        }
-//                    });
-//                }
-//
-//                @Override
-//                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-//                    dragAndDrop.addTarget(new DragAndDrop.Target(image) {
-//                        @Override
-//                        public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-//                            List<Image> emptyProductList = emptyProductImageMap.get(productType);
-//                            if(emptyProductList != null) {
-//                                for(Image image : emptyProductList) {
-//                                    if(x >= image.getX() && y > image.getY() && x < image.getX() + image.getWidth() && y < image.getY() + image.getHeight()) {
-//                                        return true; // Разрешаем бросить
-//                                    }
-//                                }
-//                            }
-//                            return false;
-//                        }
-//
-//                        @Override
-//                        public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-//                            Image dragged = (Image) payload.getObject();
-//                            // Перемещаем картинку в центр target
-//                            dragged.setPosition(image.getX(), image.getY());
-//                        }
-//                    });
-//                    super.touchUp(event, x, y, pointer, button);
-//                }
-//            });
+        public GoodProduct(ProductInfo productInfo, Image image) {
+            this.productInfo = productInfo;
+            this.image = image;
+        }
+    }
+}
