@@ -4,6 +4,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
@@ -77,26 +78,41 @@ public class ProductPlacementScreen extends BaseScreen {
         productTable.align(Align.top);
         Set<ProductInfo> set = ProductInfo.getRandomSet(3);
         int row = 1;
-        int countOnRow = GameApplication.get().isPortrait() ? 6 : 16;
+        int countOnRow = GameApplication.get().isPortrait() ? 5 : 16;
+        int emptyCountOnRow = GameApplication.get().isPortrait() ? 3 : 5;
 
         float maxIconWidth = GameApplication.get().screenWidth / countOnRow;
         for(ProductInfo productInfo : set) {
             List<Image> emptyProductImageList = new ArrayList<>();
             for(int i = 1; i <= countOnRow; i++) {
                 TextureRegion textureRegion = productInfo.getTextureRegion();
-                Vector2 vector2 = calcImageSize(textureRegion, polkaHeight, maxIconWidth);
+                Vector2 vector2 = calcImageSize(textureRegion, polkaHeight);
                 Image productImage = new Image(textureRegion);
                 productImage.setSize(vector2.x, vector2.y);
+                Group group = new Group();
+                group.setSize(polkaHeight * 0.5f, polkaHeight * 0.5f);
+                productImage.setPosition(group.getWidth() / 2 - productImage.getWidth() / 2, 0);
+                group.addActor(productImage);
+
                 float padTop;
                 if(GameApplication.get().isPortrait()) {
-                    padTop = polkaHeight - productImage.getHeight() + row * polkaHeight * 0.045f;
+                    padTop = polkaHeight - group.getHeight() + row * polkaHeight * 0.045f;
                 } else {
-                    padTop = polkaHeight - productImage.getHeight() + row * polkaHeight * 0.045f;
+                    padTop = polkaHeight - group.getHeight() + row * polkaHeight * 0.045f;
+//                    padTop = polkaHeight - productImage.getHeight();
                 }
-                productTable.add(productImage).size(productImage.getWidth(), productImage.getHeight()).align(Align.bottom).pad(padTop, pad, 0, pad);
+                productTable.add(group).size(group.getWidth(), group.getHeight()).align(Align.center).pad(padTop, pad, 0, pad).expandX().fill();
+//                productTable.add(group).align(Align.bottom).pad(pad / 2);
 
                 emptyProductImageList.add(productImage);
-                boolean isEmpty = i >= (countOnRow / 2) - 1 && i <= (countOnRow / 2) + 2;
+
+                boolean isEmpty;
+                if(GameApplication.get().isPortrait()) {
+                    isEmpty = i >= (countOnRow / 2) && i <= (countOnRow / 2) + 2;
+                } else {
+                    isEmpty = i >= (countOnRow / 2) - 1 && i <= (countOnRow / 2) + 2;
+                }
+
                 if(isEmpty) {
                     emptyCount++;
                     productImage.setColor(Color.BLACK); // пустой продукт красим в черный
@@ -144,27 +160,33 @@ public class ProductPlacementScreen extends BaseScreen {
             row++;
         }
 
-        Collections.shuffle(selectProductList);
+        stage.addActor(productTable);
 
         // ЭТО ВНИЗУ ТОВАРЫ ДЛЯ РАСКЛАДКИ
-        Table selectTable = createSelectProductTable();
+        Collections.shuffle(selectProductList);
+        Table selectTable = createSelectProductTable(pad);
         productTable.add(selectTable).align(Align.center).padBottom(pad * 2).colspan(countOnRow).expand().fill();
         productTable.row();
 
-        stage.addActor(productTable);
+        selectTable.setPosition(stage.getWidth() / 2 - selectTable.getWidth() / 2, 20);
+        stage.addActor(selectTable);
     }
 
-    private Table createSelectProductTable() {
+    private Table createSelectProductTable(float pad) {
         Table selectTable = new Table();
+        selectTable.setSize(GameApplication.get().screenWidth, GameApplication.get().screenHeight / 4);
+//        selectTable.setDebug(true);
+        selectTable.add().expandX();
         for(int i = 0; i < 3; i++) {
             GoodProduct nextProduct = getNextProduct();
             if(nextProduct != null) {
                 addDrugAndDrop(nextProduct);
                 Image image = nextProduct.image;
-                Cell<Image> cell = selectTable.add(image).size(image.getWidth(), image.getHeight()).padRight(image.getWidth() / 2).align(Align.bottom);
+                Cell<Image> cell = selectTable.add(image).size(image.getWidth(), image.getHeight()).pad(pad).align(Align.center).fill();
                 selectTableCellList.add(cell);
             }
         }
+        selectTable.add().expandX();
         return selectTable;
     }
 
@@ -177,17 +199,32 @@ public class ProductPlacementScreen extends BaseScreen {
         return image;
     }
 
-    private Vector2 calcImageSize(TextureRegion textureRegion, float parentHeight, float maxWidth) {
+    private Vector2 calcImageSize(TextureRegion textureRegion, float parentHeight) {
         float iconHeight, iconWidth;
-        iconWidth = textureRegion.getRegionWidth() > textureRegion.getRegionHeight() ? parentHeight * 0.8f: GameApplication.get().screenWidth * 0.15f;
-        iconWidth = Math.min(iconWidth, maxWidth);
-        iconHeight = iconWidth * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
-        if(iconHeight > parentHeight) {
-            iconHeight = parentHeight * 0.90f;
+        if(textureRegion.getRegionHeight() >= textureRegion.getRegionWidth() * 3) {
+            iconHeight = parentHeight * 1.19f;
             iconWidth = iconHeight * textureRegion.getRegionWidth() / textureRegion.getRegionHeight();
+        } else if(textureRegion.getRegionHeight() >= textureRegion.getRegionWidth()) {
+            iconHeight = parentHeight * 0.65f;
+            iconWidth = iconHeight * textureRegion.getRegionWidth() / textureRegion.getRegionHeight();
+        } else {
+            iconWidth = parentHeight * 0.65f;
+            iconHeight = iconWidth * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
         }
-        return new Vector2(iconWidth, iconHeight);
+        return new Vector2(iconWidth, Math.min(iconHeight, parentHeight));
     }
+
+//    private Vector2 calcImageSize(TextureRegion textureRegion, float parentHeight, float maxWidth) {
+//        float iconHeight, iconWidth;
+//        iconWidth = textureRegion.getRegionWidth() > textureRegion.getRegionHeight() ? parentHeight * 0.8f: GameApplication.get().screenWidth * 0.15f;
+//        iconWidth = Math.min(iconWidth, maxWidth);
+//        iconHeight = iconWidth * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
+//        if(iconHeight > parentHeight) {
+//            iconHeight = parentHeight * 0.90f;
+//            iconWidth = iconHeight * textureRegion.getRegionWidth() / textureRegion.getRegionHeight();
+//        }
+//        return new Vector2(iconWidth, iconHeight);
+//    }
 
     private Cell<Image> getSelectProductCell(Image image) {
         for(Cell<Image> cell : selectTableCellList) {

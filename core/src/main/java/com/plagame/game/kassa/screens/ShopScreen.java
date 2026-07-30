@@ -115,7 +115,6 @@ public class ShopScreen extends BaseScreen {
         productsTable.add().expandX();
 
         for(int i = index; i < index + 4; i++) {
-            System.out.println("i = " + i);
             ProductInfo productInfo = ProductInfo.getByType(i);
             TextureRegion textureRegion = productInfo.getTextureRegion();
             Vector2 vector2 = calcImageSize(textureRegion, imageHeight);
