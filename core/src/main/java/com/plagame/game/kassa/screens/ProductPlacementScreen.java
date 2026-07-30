@@ -109,6 +109,10 @@ public class ProductPlacementScreen extends BaseScreen {
     private Table createShelfProductTable(ProductInfo productInfo, float polkaHeight, float pad, int row) {
         Table shelfTable = new Table();
         TextureRegion textureBg = ATLAS_1.findRegion("shelf_" + row);
+        Image bgImage = new Image(textureBg);
+        float h = polkaHeight;
+        float w = h * textureBg.getRegionWidth() / textureBg.getRegionHeight();
+        bgImage.setSize(w, h);
         float shelfWidth;
         if(GameApplication.get().isPortrait()) {
             shelfWidth = polkaHeight * textureBg.getRegionWidth() / textureBg.getRegionHeight();
@@ -116,7 +120,8 @@ public class ProductPlacementScreen extends BaseScreen {
             shelfWidth = GameApplication.get().screenWidth;
         }
         shelfTable.setSize(shelfWidth, polkaHeight);
-        shelfTable.setBackground(new TextureRegionDrawable(textureBg));
+        bgImage.setPosition(shelfTable.getWidth() / 2 - bgImage.getWidth() / 2, 0);
+        shelfTable.addActor(bgImage);
 
         int countOnRow = GameApplication.get().isPortrait() ? 5 : 14;
         List<Image> emptyProductImageList = new ArrayList<>();
