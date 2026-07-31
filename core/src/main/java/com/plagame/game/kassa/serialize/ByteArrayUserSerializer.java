@@ -34,8 +34,7 @@ public class ByteArrayUserSerializer {
 
             out.writeInt(user.location);
 
-            out.writeLong(user.gold);
-            out.writeLong(user.dollars);
+            out.writeFloat(user.dollars);
             out.writeLong(user.lastSaveTime);
             out.writeLong(user.lastLoginTime);
 
@@ -45,7 +44,6 @@ public class ByteArrayUserSerializer {
             writeStringSet(out, user.purchasedProducts);
 
             out.writeLong(user.loginDayCount);
-            out.writeLong(user.maxDollars);
             out.writeBoolean(user.isAdHide);
 
             out.flush();
@@ -71,8 +69,7 @@ public class ByteArrayUserSerializer {
 
             user.location = in.readInt();
 
-            user.gold = in.readLong();
-            user.dollars = in.readLong();
+            user.dollars = in.readFloat();
 
             user.lastSaveTime = in.readLong();
             user.lastLoginTime = in.readLong();
@@ -83,7 +80,6 @@ public class ByteArrayUserSerializer {
             user.purchasedProducts = readStringSet(in);
 
             user.loginDayCount = in.readLong();
-            user.maxDollars = in.readLong();
             user.isAdHide = in.readBoolean();
 
             return user;

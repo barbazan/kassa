@@ -19,7 +19,7 @@ public class NumberFormat {
             if (cost == (int) cost) {
                 strCost = strCost.substring(0, strCost.indexOf("."));
             } else {
-                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 2));
+                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 3));
             }
         } catch (Exception e) {
             e.printStackTrace();

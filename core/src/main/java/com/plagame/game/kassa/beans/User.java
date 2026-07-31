@@ -25,17 +25,14 @@ public class User {
     public String secret = "";
     public String login = "";
     public int location = 1; // локация LocationInfo
-    public long gold = 0; // премиум валюта
-    public long dollars = 0; // игровая валюта
+    public float dollars = 0; // игровая валюта
     public long lastSaveTime = System.currentTimeMillis(); // последнее время сохранения, чтобы часто не сохранять
     public long lastLoginTime = System.currentTimeMillis();
     public boolean soundOn = true;
     public boolean musicOn = true;
     public HashSet<String> purchasedProducts = new HashSet<>();
     public long loginDayCount;
-    public long maxDollars; // Максимальное кол-во долларов у игрока (для рейтинга)
     public boolean isAdHide;
-    public boolean needSubmitScore; // флаг нужно ли репортить рейтинг, было ли новый максимум, не сохраняем
     public Map<String, Integer> rankMap = new HashMap<>(); // никуда не сохраняем, живет в рамках одной игровой снессии
 
     public User() {
@@ -64,10 +61,8 @@ public class User {
         this.secret = userData.secret;
         this.login = userData.login;
         this.location = userData.location;
-        this.gold = userData.gold;
         this.dollars = userData.dollars;
         this.lastLoginTime = userData.lastLoginTime;
-        this.maxDollars = userData.maxDollars;
         this.isAdHide = userData.isAdHide;
         this.purchasedProducts = new HashSet<>(userData.purchasedProducts);
         return this;
@@ -85,55 +80,28 @@ public class User {
         return false;
     }
 
-    public boolean canPayGold(long amount) {
-        return gold >= amount;
+    public void changeGold(int amount) { // в биллинге везде голда покупается, чтобы везде не менять, просто баксы начисляю тут и все
+        setDollar(Math.max(dollars + amount, 0));
     }
 
-    public boolean doPayGold(long amount) {
-        if(canPayGold(amount)) {
-            changeGold(-amount);
-            return true;
-        }
-        return false;
+    public void changeDollars(float amount) {
+        setDollar(Math.max(dollars + amount, 0));
     }
 
-    public void changeGold(long amount) {
-        setGold(gold + amount);
-    }
-
-    public void setGold(long gold) {
-        if (gold < 0) {
-            throw new RuntimeException("Rubies can't be < 0. Current value = " + gold);
-        }
-        this.gold = gold;
-    }
-
-    public void changeDollars(long amount) {
-        setDollar(dollars + amount);
-        if(dollars > maxDollars) {
-            maxDollars = dollars;
-            needSubmitScore = true;
-        }
-    }
-
-    public void setDollar(long dollars) {
+    public void setDollar(float dollars) {
         if (dollars < 0) {
             throw new RuntimeException("Dollars can't be < 0. Current value = " + dollars);
         }
         this.dollars = dollars;
     }
 
-    public long getDollars() {
+    public float getDollars() {
         return dollars;
     }
 
     private void trySaveWithCooldown() {
         if(System.currentTimeMillis() > lastSaveTime + SAVE_INTERVAL) {
             saveUser();
-            if(needSubmitScore) { // репортим рейтинг
-                submitScore();
-                needSubmitScore = false;
-            }
         }
     }
 
@@ -156,8 +124,8 @@ public class User {
 
     public void submitScore() {
         if(GameApplication.get().platform.isLeaderboardAvailable() && isAuthorized()) {
-            int leaderboardScore = (int)Math.min(Integer.MAX_VALUE, maxDollars / 1_000_000); // в рейтинге только от миллиона
-            GameApplication.get().platform.leaderboard().submitScore(GameConfig.LEADERBOARD_MAX_DOLLARS_NAME, leaderboardScore, NumberFormat.format(maxDollars));
+            int leaderboardScore = (int)dollars;
+            GameApplication.get().platform.leaderboard().submitScore(GameConfig.LEADERBOARD_MAX_DOLLARS_NAME, leaderboardScore, NumberFormat.format(leaderboardScore));
         }
     }
 
@@ -169,15 +137,12 @@ public class User {
 //        YandexSDK.alert("cloudUser.id = " + cloudUser.id);
         if(cloudUser.id == 0) { // это значит что в облако ничего не сохраняли и нужно не потерять локальный прогресс, все локальное добавить и сохранить в облако
             instance.id = 1; // помечаем юзера и в следующий раз уже будет только облачный браться
-            // instance.location = 1; // НЕ СБРАСЫВАЕМ локацию, иначе прогресс пропадет
-            instance.gold = cloudUser.gold;
             instance.dollars = cloudUser.dollars;
             instance.lastSaveTime = cloudUser.lastSaveTime;
             instance.lastLoginTime = cloudUser.lastLoginTime;
             instance.soundOn = cloudUser.soundOn;
             instance.musicOn = cloudUser.musicOn;
             instance.loginDayCount = cloudUser.loginDayCount;
-            instance.maxDollars = cloudUser.maxDollars;
             instance.isAdHide = cloudUser.isAdHide;
             instance.purchasedProducts = new HashSet<>(cloudUser.purchasedProducts);
             instance.saveUserLocal(); // сохраняем локально
@@ -217,7 +182,6 @@ public class User {
         return "User{" +
             "id=" + id +
             ", location=" + location +
-            ", gold=" + gold +
             ", dollars=" + dollars +
             ", lastSaveTime=" + lastSaveTime +
             ", lastLoginTime=" + lastLoginTime +

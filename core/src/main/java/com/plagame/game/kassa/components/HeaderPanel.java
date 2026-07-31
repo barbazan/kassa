@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
+import com.plagame.game.kassa.utils.NumberFormat;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 import java.util.function.Supplier;
@@ -58,17 +59,6 @@ public class HeaderPanel extends Table {
         });
         innerTable.add(dollarsGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.left).pad(pad).fill();
 
-//        Group goldGroup = createGoldPanel();
-//        goldGroup.addListener(new ActorGestureListener() {
-//            @Override
-//            public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
-//                SoundUtil.playClickSound();
-//                GameApplication.get().getGameScreen().uiStage.showShopGoldDialog();
-//                super.touchDown(event, x, y, pointer, button);
-//            }
-//        });
-//        innerTable.add(goldGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.right).padLeft(iconSize);
-
         Image settingsImage = new Image(ATLAS_1.findRegion("icon_settings"));
         settingsImage.setSize(iconSize, iconSize);
         settingsImage.addListener(new ActorGestureListener() {
@@ -85,18 +75,19 @@ public class HeaderPanel extends Table {
         row();
     }
 
-    private Group createStatItem(String iconName, Supplier<Long> valueSupplier) {
+    private Group createStatItem(String iconName, Supplier<Float> valueSupplier) {
         Group group = new Group();
         float width = GameApplication.get().minScreenSize * 0.28f;
         group.setSize(width, iconSize * 0.8f);
         Image bgImage = new Image(ATLAS_1.findRegion("title_bg"));
         bgImage.setSize(group.getWidth(), group.getHeight());
         group.addActor(bgImage);
-        Label label = new NumberFormatLabel(new Label.LabelStyle(FONT_HEADER, Color.BLACK)) {
+        Label label = new ModelLabel(new Label.LabelStyle(FONT_HEADER, Color.BLACK)) {
             @Override
-            public long getLongValue() {
-                return valueSupplier.get();
+            protected String getValue() {
+                return NumberFormat.formatCost(valueSupplier.get());
             }
+
         };
         label.setAlignment(Align.center);
         label.setPosition(group.getWidth() / 2 - label.getWidth() / 2, group.getHeight() / 2 - label.getHeight() / 2);
@@ -108,33 +99,5 @@ public class HeaderPanel extends Table {
         return group;
     }
 
-    private Group createGoldPanel() {
-        Group group = new Group();
-        float width = GameApplication.get().minScreenSize * 0.25f;
-        group.setSize(width, iconSize * 0.8f);
-        Image bgImage = new Image(ATLAS_1.findRegion("title_bg"));
-        bgImage.setSize(group.getWidth(), group.getHeight());
-        group.addActor(bgImage);
-        Label label = new ModelLabel(new Label.LabelStyle(FONT_HEADER, Color.BLACK)) {
-            @Override
-            protected String getValue() {
-                return String.valueOf(User.get().gold);
-            }
-        };
-        label.setAlignment(Align.center);
-        label.setPosition(group.getWidth() * 0.85f / 2 - label.getWidth() / 2, group.getHeight() / 2 - label.getHeight() / 2);
-        group.addActor(label);
-        Image iconImage = new Image(ATLAS_1.findRegion("icon_gold"));
-        iconImage.setSize(iconSize * 1.0f, iconSize * 1.0f);
-        iconImage.setPosition(- iconSize * 0.8f, (group.getHeight() - iconImage.getHeight()) / 2);
-        group.addActor(iconImage);
-
-        Image plusImage = new Image(ATLAS_1.findRegion("icon_plus_green"));
-        plusImage.setSize(iconImage.getWidth() * 0.7f, iconImage.getHeight() * 0.7f);
-        plusImage.setPosition(group.getWidth() - plusImage.getWidth() * 1.1f, (group.getHeight() - plusImage.getHeight()) / 2);
-        group.addActor(plusImage);
-
-        return group;
-    }
 
 }

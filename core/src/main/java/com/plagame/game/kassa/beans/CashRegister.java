@@ -343,8 +343,14 @@ public class CashRegister extends Group {
                         String totalCostStr = formatTotalCost(totalCost);
                         if(totalCost > 0 && totalCostStr.equals("$" + terminalValue)) {
                             SoundUtil.playClickSound();
+                            try {
+                                float terminalPayedSum = Float.parseFloat(terminalValue);
+                                User.get().changeDollars(terminalPayedSum); // начислить игроку terminalPayedSum
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            //todo звук
                             finishPayment();
-                            //todo прибавлять юзеру деньги
                             GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
                             moveCameraSlowlyBack();
                             hideCard();
@@ -638,8 +644,8 @@ public class CashRegister extends Group {
                     float change = payedSum - totalCost; //сдачи сколько нужно
                     if(givingSum >= change) {
                         SoundUtil.playClickSound();
-                        //todo списать с игрока givingSum
-                        //todo начислить игроку payedSum
+                        User.get().changeDollars(-givingSum); //списать с игрока givingSum
+                        User.get().changeDollars(payedSum); // начислить игроку payedSum
                         //todo звук
                         finishPayment();
                         GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();

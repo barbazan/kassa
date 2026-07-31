@@ -174,7 +174,7 @@ public class UIStage extends BaseStage {
 
     public void checkFullscreenAdv() {
         if(GameApplication.get().platform.isAdsAvailable()) {
-            if(!GameApplication.get().platform.ads().isFullscreenAdCooldown() && !User.get().isAdHide && User.get().maxDollars >= 10_000_000) {
+            if(!GameApplication.get().platform.ads().isFullscreenAdCooldown() && !User.get().isAdHide) {
                 GameApplication.get().platform.ads().showFullscreenAdv();
             }
         }
