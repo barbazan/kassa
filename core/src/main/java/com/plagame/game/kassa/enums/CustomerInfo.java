@@ -24,6 +24,8 @@ public enum CustomerInfo {
     CUSTOMER_INFO_9(9),
     CUSTOMER_INFO_10(10),
     CUSTOMER_INFO_11(11),
+    CUSTOMER_INFO_12(12),
+    CUSTOMER_INFO_13(13),
 
     // без ног
     CUSTOMER_INFO_100(100),
@@ -31,8 +33,6 @@ public enum CustomerInfo {
     CUSTOMER_INFO_102(102),
     CUSTOMER_INFO_103(103),
     CUSTOMER_INFO_104(104),
-    CUSTOMER_INFO_105(105),
-    CUSTOMER_INFO_106(106),
     ;
 
     public final int type;

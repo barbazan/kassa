@@ -24,6 +24,7 @@ public class UserData {
     public Set<String> purchasedProducts = new HashSet<>(); // запурчайсеные токены
     public List<Purchase> purchaseList = new ArrayList<>(); // оплаченые покупки
     public List<LeaderboardEntry> ratingMaxDollars = new ArrayList<>(); // рейтинг
+    public HashSet<Integer> buyedProducts = new HashSet<>(); // купленные продукты
 
     public UserData apply(User user) {
         this.id = user.id;
@@ -33,6 +34,7 @@ public class UserData {
         this.dollars = user.dollars;
         this.lastLoginTime = user.lastLoginTime;
         this.isAdHide = user.isAdHide;
+        this.buyedProducts = user.buyedProducts;
         this.purchasedProducts = user.purchasedProducts;
         return this;
     }

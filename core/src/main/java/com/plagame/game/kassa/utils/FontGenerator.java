@@ -33,6 +33,11 @@ public class FontGenerator {
         return generateBitmapFont(scale, color, fontSize);
     }
 
+    public BitmapFont generateSmallBitmapFont(float scale, Color color) {
+        int fontSize = 24;
+        return generateBitmapFont(scale, color, fontSize);
+    }
+
    public BitmapFont generateBitmapFont(float scale, Color color, int fontSize) {
         String fontFilename = "fonts/Montserrat-SemiBold_" + fontSize + ".fnt";
         System.out.println("------generateBitmapFont-------------fontFilename = " + fontFilename);

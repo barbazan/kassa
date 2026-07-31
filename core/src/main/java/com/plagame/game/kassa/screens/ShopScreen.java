@@ -1,6 +1,7 @@
 package com.plagame.game.kassa.screens;
 
 import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
+import static com.plagame.game.kassa.GameApplication.FONT_SMALL;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_COLOR;
@@ -20,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
-import com.plagame.game.kassa.GameConfig;
+import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.components.HeaderPanel;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.AssetUtil;
@@ -130,10 +131,33 @@ public class ShopScreen extends BaseScreen {
 
         productsTable.add().size(imageHeight * 0.55f).expandX();
 
-        Button buyBtn = createBuyBtn(100, tableHeight * 0.65f);
+        // табличка "Продано" показываем если товар куплен
+        Group soldTable = createSoldTable(tableHeight * 0.65f);
+        soldTable.setPosition(productsTable.getWidth() - soldTable.getWidth() - pad * 3 / 2, productsTable.getHeight() - soldTable.getHeight() + pad);
+        soldTable.setVisible(User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
+        productsTable.addActor(soldTable);
+
+        // кнопку "Купить" показываем если продукт не куплен
+        int  cost = 10 * index; //todo
+        Button buyBtn = createBuyBtn(cost, index,tableHeight * 0.65f);
         buyBtn.setPosition(productsTable.getWidth() - buyBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - buyBtn.getHeight() - pad);
+        buyBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
+        buyBtn.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                if(User.get().doPayDollars(cost)) {
+                    for(int i = index; i < index + 4; i++) {
+                        User.get().buyedProducts.add(i);
+                    }
+                    User.get().saveUser();
+                    buyBtn.setVisible(false);
+                    soldTable.setVisible(true);
+                }
+                super.tap(event, x, y, count, button);
+            }
+        });
+
         productsTable.addActor(buyBtn);
-//        productsTable.add(buyBtn).size(buyBtn.getWidth(), buyBtn.getHeight()).align(Align.topRight).padTop(pad).padRight(pad / 2).expandX().fill();
 
         return productsTable;
     }
@@ -175,27 +199,62 @@ public class ShopScreen extends BaseScreen {
         return startBtn;
     }
 
-    private Button createBuyBtn(int cost, float groupHeight) {
+    private Button createBuyBtn(int cost, int index, float groupHeight) {
         float btnHeight = groupHeight * 0.95f;
-        final Button buyBtn = new Button(
-            new TextureRegionDrawable(ATLAS_1.findRegion("button_green")),
-            new TextureRegionDrawable(ATLAS_1.findRegion("button_green"))
-        );
+        TextureRegionDrawable buttonGray = new TextureRegionDrawable(ATLAS_1.findRegion("button_gray"));
+        TextureRegionDrawable buttonGreen = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
+        Button.ButtonStyle style = new Button.ButtonStyle();
+        style.up = buttonGreen;     // по умолчанию
+        style.disabled = buttonGray;  // при нажатии (опционально)
+        Button buyButton = new Button(style) {
+            @Override
+            public void act(float delta) {
+                boolean canPay = User.get().canPayDollars(cost);
+                setDisabled(!canPay);
+                super.act(delta);
+            }
+        };
         float h = btnHeight;
         float w = btnHeight;
-        buyBtn.setSize(w, h);
-        buyBtn.addListener(new ActorGestureListener() {
-            @Override
-            public void tap(InputEvent event, float x, float y, int count, int button) {
-                //todo
-                super.tap(event, x, y, count, button);
-            }
-        });
+        buyButton.setSize(w, h);
+//        buyButton.addListener(new ActorGestureListener() {
+//            @Override
+//            public void tap(InputEvent event, float x, float y, int count, int button) {
+//                if(User.get().doPayDollars(cost)) {
+//                    for(int i = index; i < index + 4; i++) {
+//                        User.get().buyedProducts.add(i);
+//                    }
+//                    User.get().saveUser();
+//                }
+//                super.tap(event, x, y, count, button);
+//            }
+//        });
+//        Table costpanel = createCostPanel(100 + 50 * GameConfig.random.nextInt(20)); //todo
+        Table costpanel = createCostPanel(cost); //todo
+        buyButton.add(costpanel).align(Align.center).fill();
 
-        Table costpanel = createCostPanel(100 + 50 * GameConfig.random.nextInt(20)); //todo
-        buyBtn.add(costpanel).align(Align.center).fill();
+        return buyButton;
+    }
 
-        return buyBtn;
+    private Group createSoldTable(float groupHeight) {
+        float h = groupHeight;
+        float w = h;
+        Group group = new Group();
+        group.setSize(w, h);
+        Image image = new Image(ATLAS_1.findRegion("sold_table"));
+        image.setSize(w, h);
+        image.setOrigin(image.getWidth() / 2, image.getHeight() / 2);
+        image.setScale(1.1f);
+        image.setPosition(group.getWidth() / 2 - image.getWidth() / 2, group.getHeight() / 2- image.getHeight() / 2);
+        group.addActor(image);
+
+        Label label = new Label("ПРОДАНО", new Label.LabelStyle(FONT_SMALL, Color.WHITE)); //todo I18N
+        label.setAlignment(Align.center);
+        label.setPosition(group.getWidth() / 2 - label.getWidth() / 2, group.getHeight() * 0.675f - label.getHeight() / 2);
+        group.addActor(label);
+        group.setRotation(-30);
+
+        return group;
     }
 
     private Table createCostPanel(ProductInfo productInfo) {

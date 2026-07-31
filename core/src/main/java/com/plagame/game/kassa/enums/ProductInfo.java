@@ -6,7 +6,10 @@ import static com.plagame.game.kassa.Resources.ATLAS_PRODUCTS;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.plagame.game.kassa.GameConfig;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -148,6 +151,7 @@ public enum ProductInfo {
     PRODUCT_INFO_132(132, 2275),
     ;
 
+    public static final List<Integer> START_PRODUCT_LIST = Arrays.asList(PRODUCT_INFO_1.type, PRODUCT_INFO_2.type, PRODUCT_INFO_3.type, PRODUCT_INFO_4.type, PRODUCT_INFO_5.type, PRODUCT_INFO_6.type, PRODUCT_INFO_7.type, PRODUCT_INFO_8.type);
     public final int type;
     public final float cost;
     private TextureRegion textureRegion;

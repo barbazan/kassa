@@ -187,7 +187,7 @@ public class GameApplication extends Game {
         FONT_DIALOG_BUTTON = FONT_DEFAULT;
         FONT_RATING = FONT_DEFAULT;
         FONT_VERY_BIG = fontGenerator.generateVeryBigBitmapFont(1, Color.WHITE);
-        FONT_SMALL = FONT_DEFAULT;
+        FONT_SMALL = fontGenerator.generateSmallBitmapFont(1, Color.WHITE);;
         FONT_VERY_SMALL = FONT_DEFAULT;
     }
 

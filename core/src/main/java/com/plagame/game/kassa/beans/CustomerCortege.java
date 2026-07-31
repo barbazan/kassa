@@ -96,7 +96,7 @@ public class CustomerCortege extends Group {
     }
 
     private void moveCustomer(Image img) {
-        float deltaX= img.getX() + img.getWidth() * 1.2f;
+        float deltaX= img.getX() + img.getWidth() * 2.2f;
         float deltaY= img.getHeight() * 0.02f;
         float duration = 2.8f;
         float stepDuration = duration / 10;
@@ -117,6 +117,7 @@ public class CustomerCortege extends Group {
                     Actions.run(new Runnable() {
                         @Override
                         public void run() {
+                            img.setVisible(false);
                             if(customerList.isEmpty()) {
                                 GameApplication.get().setProductPlacementScreen();
                             }

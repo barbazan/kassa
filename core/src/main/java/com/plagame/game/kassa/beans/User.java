@@ -1,5 +1,7 @@
 package com.plagame.game.kassa.beans;
 
+import static com.plagame.game.kassa.enums.ProductInfo.START_PRODUCT_LIST;
+
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.serialize.ByteArrayUserSerializer;
@@ -30,6 +32,7 @@ public class User {
     public long lastLoginTime = System.currentTimeMillis();
     public boolean soundOn = true;
     public boolean musicOn = true;
+    public HashSet<Integer> buyedProducts = new HashSet<>();
     public HashSet<String> purchasedProducts = new HashSet<>();
     public long loginDayCount;
     public boolean isAdHide;
@@ -47,6 +50,7 @@ public class User {
                     System.out.println("---------------loadUserLocal-----------instance = " + instance);
                     if (instance == null) {
                         instance = new User();
+                        instance.buyedProducts.addAll(START_PRODUCT_LIST);
                         instance.saveUserLocal();
                     }
                 }
@@ -64,15 +68,16 @@ public class User {
         this.dollars = userData.dollars;
         this.lastLoginTime = userData.lastLoginTime;
         this.isAdHide = userData.isAdHide;
+        this.buyedProducts = new HashSet<>(userData.buyedProducts);
         this.purchasedProducts = new HashSet<>(userData.purchasedProducts);
         return this;
     }
 
-    public boolean canPayDollars(long amount) {
+    public boolean canPayDollars(float amount) {
         return dollars >= amount;
     }
 
-    public boolean doPayDollars(long amount) {
+    public boolean doPayDollars(float amount) {
         if(canPayDollars(amount)) {
             changeDollars(-amount);
             return true;
@@ -144,6 +149,7 @@ public class User {
             instance.musicOn = cloudUser.musicOn;
             instance.loginDayCount = cloudUser.loginDayCount;
             instance.isAdHide = cloudUser.isAdHide;
+            instance.buyedProducts = new HashSet<>(cloudUser.buyedProducts);
             instance.purchasedProducts = new HashSet<>(cloudUser.purchasedProducts);
             instance.saveUserLocal(); // сохраняем локально
         } else { // иначе сохраняем локально то что пришло из облака
@@ -187,6 +193,7 @@ public class User {
             ", lastLoginTime=" + lastLoginTime +
             ", soundOn=" + soundOn +
             ", musicOn=" + musicOn +
+            ", buyedProducts=" + buyedProducts +
             ", purchasedProducts=" + purchasedProducts +
             ", loginDayCount=" + loginDayCount +
             '}';

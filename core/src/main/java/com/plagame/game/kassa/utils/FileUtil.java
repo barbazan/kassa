@@ -52,40 +52,4 @@ public class FileUtil {
             return null;
         }
     }
-
-//    public static void saveUserLocal(User user) {
-//        try {
-//            FileHandle file = Gdx.files.local(USER_FILENAME);
-//
-//            byte[] data = user.serialize();
-//
-//            System.out.println("----------------------------FileUtil.saveUserLocal bytes = " + data.length);
-//
-//            file.writeBytes(data, false);
-//
-//        } catch (Throwable t) {
-//            t.printStackTrace();
-//        }
-//    }
-//
-//    public static User loadUserLocal() {
-//        try {
-//            FileHandle file = Gdx.files.local(USER_FILENAME);
-//
-//            if (!file.exists()) {
-//                return null;
-//            }
-//
-//            byte[] data = file.readBytes();
-//
-//            System.out.println("----------------------------FileUtil.loadUserLocal bytes = " + data.length);
-//
-//            return User.deserialize(data);
-//
-//        } catch (Throwable t) {
-//            t.printStackTrace();
-//            System.err.println("Can`t load user local. Error: " + t.getMessage());
-//            return null;
-//        }
-//    }
 }
