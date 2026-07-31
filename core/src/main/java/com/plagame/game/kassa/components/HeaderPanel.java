@@ -85,7 +85,7 @@ public class HeaderPanel extends Table {
         Label label = new ModelLabel(new Label.LabelStyle(FONT_HEADER, Color.BLACK)) {
             @Override
             protected String getValue() {
-                return NumberFormat.formatCost(valueSupplier.get());
+                return "$" + NumberFormat.formatCost(valueSupplier.get());
             }
 
         };

@@ -346,6 +346,7 @@ public class CashRegister extends Group {
                             try {
                                 float terminalPayedSum = Float.parseFloat(terminalValue);
                                 User.get().changeDollars(terminalPayedSum); // начислить игроку terminalPayedSum
+                                User.get().saveUser();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -646,6 +647,7 @@ public class CashRegister extends Group {
                         SoundUtil.playClickSound();
                         User.get().changeDollars(-givingSum); //списать с игрока givingSum
                         User.get().changeDollars(payedSum); // начислить игроку payedSum
+                        User.get().saveUser();
                         //todo звук
                         finishPayment();
                         GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
