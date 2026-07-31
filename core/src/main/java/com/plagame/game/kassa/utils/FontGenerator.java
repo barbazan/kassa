@@ -28,6 +28,11 @@ public class FontGenerator {
         return generateBitmapFont(scale, color, fontSize);
     }
 
+    public BitmapFont generateBigBitmapFont(float scale, Color color) {
+        int fontSize = 48;
+        return generateBitmapFont(scale, color, fontSize);
+    }
+
     public BitmapFont generateVeryBigBitmapFont(float scale, Color color) {
         int fontSize = 64;
         return generateBitmapFont(scale, color, fontSize);

@@ -183,7 +183,7 @@ public class GameApplication extends Game {
         FONT_DEFAULT = fontGenerator.generateDefaultBitmapFont(1, Color.WHITE);
         FONT_HEADER = fontGenerator.generateHeaderBitmapFont(1, Color.WHITE);
         FONT_DIALOG_HEADER = FONT_DEFAULT;
-        FONT_BIG = FONT_DIALOG_HEADER;
+        FONT_BIG = fontGenerator.generateBigBitmapFont(1, Color.WHITE);;
         FONT_DIALOG_BUTTON = FONT_DEFAULT;
         FONT_RATING = FONT_DEFAULT;
         FONT_VERY_BIG = fontGenerator.generateVeryBigBitmapFont(1, Color.WHITE);

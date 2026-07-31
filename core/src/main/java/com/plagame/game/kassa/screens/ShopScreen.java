@@ -1,5 +1,7 @@
 package com.plagame.game.kassa.screens;
 
+import static com.plagame.game.kassa.GameApplication.FONT_BIG;
+import static com.plagame.game.kassa.GameApplication.FONT_DEFAULT;
 import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_SMALL;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
@@ -180,7 +182,7 @@ public class ShopScreen extends BaseScreen {
             new TextureRegionDrawable(textureRegion),
             new TextureRegionDrawable(textureRegion)
         );
-        Label label = new Label("СТАРТ", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
+        Label label = new Label("СТАРТ", new Label.LabelStyle(FONT_BIG, Color.WHITE)); //todo I18N
         label.setAlignment(Align.center);
         float w = label.getWidth() * 1.5f;
         float h = w * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
