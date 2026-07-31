@@ -106,6 +106,7 @@ public class CashRegister extends Group {
         Table tableLeft = new Table();
         tableLeft.setSize(kassaWidth * 0.25f, kassaHeight);
         tableRight = new Table();
+//        tableRight.setDebug(true);
         tableRight.setSize(kassaWidth * 0.75f, kassaHeight);
 
 
@@ -127,7 +128,7 @@ public class CashRegister extends Group {
 
         Label changeTextLabel = new Label("CHANGE", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
         changeTextLabel.setAlignment(Align.left);
-        tableRight.add(changeTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 6).fill();
+        tableRight.add(changeTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 7).fill();
 
         Label changeLabel = new ModelLabel("", new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW)) {
             @Override
@@ -141,12 +142,12 @@ public class CashRegister extends Group {
         };
         changeLabel.setAlignment(Align.right);
         changeLabel.setHeight(btnSize);
-        tableRight.add(changeLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 6).colspan(2).expandX().fill();
+        tableRight.add(changeLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 7).colspan(2).expandX().fill();
         tableRight.row();
 
         Label givingTextLabel = new Label("GIVING", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
         givingTextLabel.setAlignment(Align.left);
-        tableRight.add(givingTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 7).fill();
+        tableRight.add(givingTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 8).fill();
 
         Label givingLabel = new ModelLabel("", new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW)) {
             @Override
@@ -164,7 +165,7 @@ public class CashRegister extends Group {
         };
         givingLabel.setAlignment(Align.right);
         givingLabel.setHeight(btnSize);
-        tableRight.add(givingLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 7).colspan(2).expandX().fill();
+        tableRight.add(givingLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 8).colspan(2).expandX().fill();
         tableRight.row();
 
         Table cashTable = createKassaCashBox(tableRight.getWidth());
@@ -405,7 +406,7 @@ public class CashRegister extends Group {
             if (cost == (int) cost) {
                 strCost = strCost.substring(0, strCost.indexOf("."));
             } else {
-                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 2));
+                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 3));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -516,7 +517,8 @@ public class CashRegister extends Group {
                             Actions.rotateBy(180 + 180 * GameConfig.random.nextFloat(), 0.6f)
                         ));
                         addActor(img);
-                        givingSum += getCoinValue(finalI);
+                        float coinValue = getCoinValue(finalI);
+                        givingSum += coinValue;
                         dollarsImagesList.add(img);
                     }
                 }
