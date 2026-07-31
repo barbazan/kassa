@@ -45,24 +45,13 @@ public class ShopScreen extends BaseScreen {
         Table dialogTable = new Table();
 //        dialogTable.setDebug(true);
         dialogTable.setSize(width, height);
-//        dialogTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("dialog_bg")));
         dialogTable.padBottom(pad * 4);
 
         Label totalLabel = new Label("МАГАЗИН", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
         totalLabel.setAlignment(Align.center);
-        dialogTable.add(totalLabel).align(Align.center).pad(pad * 2).padTop(pad * 3).fill();
+        float padTop = GameApplication.get().isPortrait() ? pad * 3 : pad / 2;
+        dialogTable.add(totalLabel).align(Align.left).pad(pad / 2).padTop(padTop).fill();
         dialogTable.row();
-
-//        Table dollarsTable = new Table();
-//        Label dollarsLabel = new Label("1267", new Label.LabelStyle(FONT_VERY_BIG, Color.YELLOW)); //todo
-////        Label dollarsLabel = new Label(String.valueOf(User.get().dollars), new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE));
-//        dollarsLabel.setAlignment(Align.left);
-//        Image dollarImage = new Image(ATLAS_1.findRegion("icon_dollar"));
-//        dollarImage.setSize(dollarsLabel.getHeight(), dollarsLabel.getHeight());
-//        dollarsTable.add(dollarImage).size(dollarImage.getWidth()).align(Align.right);
-//        dollarsTable.add(dollarsLabel).align(Align.left).pad(pad);
-//        dialogTable.add(dollarsTable).align(Align.top).fill();
-//        dialogTable.row();
 
         for(int i = 1; i <= ProductInfo.values().length; i+=4) {
             Table goodTable = createGoodsTable(i,width * 0.96f);
@@ -80,8 +69,12 @@ public class ShopScreen extends BaseScreen {
 
         stage.addActor(scrollPane);
 
-        Button btnStart = createStartBtn(width * 0.9f);
-        btnStart.setPosition(GameApplication.get().screenWidth / 2 - btnStart . getWidth() / 2, pad / 2);
+        Button btnStart = createStartBtn();
+        if(GameApplication.get().isPortrait()) {
+            btnStart.setPosition(GameApplication.get().screenWidth / 2 - btnStart.getWidth() / 2, pad / 2);
+        } else {
+            btnStart.setPosition(GameApplication.get().screenWidth  - btnStart.getWidth() - pad / 2, pad / 2);
+        }
         stage.addActor(btnStart);
     }
 
@@ -105,7 +98,6 @@ public class ShopScreen extends BaseScreen {
         float tableHeight = tableWidth / 2.90f;
         float imageHeight = tableHeight * 0.9f;
         float pad = imageHeight / 10;
-        float maxWidth = tableWidth / 4;
         Table productsTable = new Table();
         productsTable.setSize(tableWidth, tableHeight);
 //        productsTable.setDebug(true);
@@ -122,12 +114,11 @@ public class ShopScreen extends BaseScreen {
             group.setSize(tableHeight * 0.49f, tableHeight);
 
             Table costPanel = createCostPanel(productInfo);
-            costPanel.setPosition(group.getWidth() / 2 - costPanel.getWidth() / 2, pad);
+            costPanel.setPosition(group.getWidth() / 2 - costPanel.getWidth() / 2, pad * 0.75f);
             group.addActor(costPanel);
 
             Image productImage = new Image(productInfo.getTextureRegion());
             productImage.setSize(vector2.x, vector2.y);
-//            productImage.setScale(1.05f);
             productImage.setScale(1.1f);
             productImage.setPosition(group.getWidth() / 2 - productImage.getWidth() / 2, costPanel.getHeight() + (group.getHeight() - costPanel.getHeight()) / 2 - productImage.getHeight() / 2);
             group.addActor(productImage);
@@ -158,14 +149,16 @@ public class ShopScreen extends BaseScreen {
         return new Vector2(iconWidth, iconHeight);
     }
 
-    private Button createStartBtn(float width) {
-        float btnHeight = width * 0.15f;
+    private Button createStartBtn() {
+        TextureRegion textureRegion = ATLAS_1.findRegion("button_green");
         final Button startBtn = new Button(
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
+            new TextureRegionDrawable(textureRegion),
+            new TextureRegionDrawable(textureRegion)
         );
-        float h = btnHeight;
-        float w = startBtn.getWidth() * h / startBtn.getHeight();
+        Label label = new Label("START", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
+        label.setAlignment(Align.center);
+        float w = label.getWidth() * 1.5f;
+        float h = w * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
         startBtn.setSize(w, h);
         startBtn.addListener(new ActorGestureListener() {
             @Override
@@ -174,6 +167,9 @@ public class ShopScreen extends BaseScreen {
                 super.tap(event, x, y, count, button);
             }
         });
+        label.setPosition(startBtn.getWidth() / 2 - label.getWidth() / 2, startBtn.getHeight() / 2 - label.getHeight() / 2);
+        startBtn.add(label);
+
         return startBtn;
     }
 
