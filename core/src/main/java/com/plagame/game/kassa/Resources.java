@@ -21,9 +21,16 @@ public class Resources {
     private static final String ATLAS_PRODUCTS_FILENAME = "images/kassa_atlas_products.atlas";
 
     public static final String GAME_BG_FILENAME = "images/game_bg.jpg";
+    public static final String MUSIC_BG_FILENAME = "sounds/music_bg.mp3";
     public static final String SOUND_CLICK_FILENAME = "sounds/click.mp3";
-    public static final String SOUND_SPEND_MONEY_FILENAME = "sounds/money.mp3";
-    public static final String SOUND_GOT_MONEY_FILENAME = "sounds/money_3.mp3";
+    public static final String SOUND_CUSTOMER_CLICK_FILENAME = "sounds/customer_click.mp3";
+    public static final String SOUND_KASSA_CLICK_FILENAME = "sounds/kassa_click.mp3";
+    public static final String SOUND_KASSA_CASH_FILENAME = "sounds/kassa_cash.mp3";
+    public static final String SOUND_KASSA_COIN_FILENAME = "sounds/kassa_coin.mp3";
+    public static final String SOUND_PRODUCT_CLICK_FILENAME = "sounds/product_click.mp3";
+    public static final String SOUND_TERMINAL_CLICK_FILENAME = "sounds/terminal_click.mp3";
+    public static final String SOUND_TERMINAL_OK_CLICK_FILENAME = "sounds/terminal_ok_click.mp3";
+    public static final String SOUND_WRONG_CLICK_FILENAME = "sounds/wrong_click.mp3";
 
     public static TextureAtlas ATLAS_1;
     public static TextureAtlas ATLAS_CUSTOMERS;
@@ -90,9 +97,19 @@ public class Resources {
     }
 
     private static void loadSounds() {
+//        AssetUtil.loadSound(SOUND_CLICK_FILENAME);
+//        AssetUtil.loadSound(SOUND_SPEND_MONEY_FILENAME);
+//        AssetUtil.loadSound(SOUND_GOT_MONEY_FILENAME);
+        AssetUtil.loadMusic(MUSIC_BG_FILENAME);
         AssetUtil.loadSound(SOUND_CLICK_FILENAME);
-        AssetUtil.loadSound(SOUND_SPEND_MONEY_FILENAME);
-        AssetUtil.loadSound(SOUND_GOT_MONEY_FILENAME);
+        AssetUtil.loadSound(SOUND_CUSTOMER_CLICK_FILENAME);
+        AssetUtil.loadSound(SOUND_KASSA_CLICK_FILENAME);
+        AssetUtil.loadSound(SOUND_KASSA_CASH_FILENAME);
+        AssetUtil.loadSound(SOUND_KASSA_COIN_FILENAME);
+        AssetUtil.loadSound(SOUND_PRODUCT_CLICK_FILENAME);
+        AssetUtil.loadSound(SOUND_TERMINAL_CLICK_FILENAME);
+        AssetUtil.loadSound(SOUND_TERMINAL_OK_CLICK_FILENAME);
+        AssetUtil.loadSound(SOUND_WRONG_CLICK_FILENAME);
         loadedSounds = true;
     }
 

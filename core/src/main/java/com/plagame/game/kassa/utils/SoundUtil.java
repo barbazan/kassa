@@ -3,7 +3,14 @@ package com.plagame.game.kassa.utils;
 import static com.plagame.game.kassa.GameConfig.DEFAULT_CLICK_VOLUME;
 import static com.plagame.game.kassa.GameConfig.DEFAULT_SOUND_VOLUME;
 import static com.plagame.game.kassa.Resources.SOUND_CLICK_FILENAME;
-import static com.plagame.game.kassa.Resources.SOUND_SPEND_MONEY_FILENAME;
+import static com.plagame.game.kassa.Resources.SOUND_CUSTOMER_CLICK_FILENAME;
+import static com.plagame.game.kassa.Resources.SOUND_KASSA_CASH_FILENAME;
+import static com.plagame.game.kassa.Resources.SOUND_KASSA_CLICK_FILENAME;
+import static com.plagame.game.kassa.Resources.SOUND_KASSA_COIN_FILENAME;
+import static com.plagame.game.kassa.Resources.SOUND_PRODUCT_CLICK_FILENAME;
+import static com.plagame.game.kassa.Resources.SOUND_TERMINAL_CLICK_FILENAME;
+import static com.plagame.game.kassa.Resources.SOUND_TERMINAL_OK_CLICK_FILENAME;
+import static com.plagame.game.kassa.Resources.SOUND_WRONG_CLICK_FILENAME;
 
 import com.badlogic.gdx.audio.Sound;
 import com.plagame.game.kassa.beans.User;
@@ -14,7 +21,7 @@ import com.plagame.game.kassa.beans.User;
  */
 public class SoundUtil {
 
-    private static final long SOUND_SAFE_DELTA = 500;
+    private static final long SOUND_SAFE_DELTA = 100;
 
     private static long safeSoundLastTime;
 
@@ -22,12 +29,36 @@ public class SoundUtil {
         playSound(SOUND_CLICK_FILENAME, DEFAULT_CLICK_VOLUME);
     }
 
-//    public static Long playGotMoneySound() {
-//        return playSound(SOUND_MONEY_FILENAME);
-//    }
+    public static void playCustomerClickSound() {
+        SoundUtil.playSoundSafe(SOUND_CUSTOMER_CLICK_FILENAME);
+    }
 
-    public static void playSpentMoneySound() {
-        SoundUtil.playSoundSafe(SOUND_SPEND_MONEY_FILENAME);
+    public static void playKassaClickSound() {
+        SoundUtil.playSoundSafe(SOUND_KASSA_CLICK_FILENAME);
+    }
+
+    public static void playKassaCashSound() {
+        SoundUtil.playSoundSafe(SOUND_KASSA_CASH_FILENAME);
+    }
+
+    public static void playKassaCoinSound() {
+        SoundUtil.playSoundSafe(SOUND_KASSA_COIN_FILENAME);
+    }
+
+    public static void playProductClickSound() {
+        SoundUtil.playSoundSafe(SOUND_PRODUCT_CLICK_FILENAME);
+    }
+
+    public static void playTerminalClickSound() {
+        SoundUtil.playSoundSafe(SOUND_TERMINAL_CLICK_FILENAME);
+    }
+
+    public static void playTerminalOkSound() {
+        SoundUtil.playSoundSafe(SOUND_TERMINAL_OK_CLICK_FILENAME);
+    }
+
+    public static void playWrongClickSound() {
+        SoundUtil.playSoundSafe(SOUND_WRONG_CLICK_FILENAME);
     }
 
     public static void playSoundSafe(String filename) {

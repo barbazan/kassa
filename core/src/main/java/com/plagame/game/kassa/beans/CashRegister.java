@@ -59,7 +59,6 @@ public class CashRegister extends Group {
 
     public void checkProduct(ProductInfo productInfo) { // пробить продукт на кассе
         totalCost += productInfo.cost;
-        SoundUtil.playClickSound(); //todo звук пробития на кассе
     }
 
     private void init(CashRegister cashRegister) {
@@ -248,7 +247,7 @@ public class CashRegister extends Group {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
                     if(isProcessPayment && cardType > 0) {
-                        SoundUtil.playClickSound();
+                        SoundUtil.playTerminalClickSound();
                         if(terminalValue.length() < MAX_PRICE_LENGTH) {
                             if(!terminalValue.contains(".") || terminalValue.substring(terminalValue.indexOf(".")).length() <= 2) {
                                 terminalValue = terminalValue + btnValue;
@@ -273,7 +272,7 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(isProcessPayment && cardType > 0) {
-                    SoundUtil.playClickSound();
+                    SoundUtil.playTerminalClickSound();
                     if(!terminalValue.isEmpty()) {
                         terminalValue = terminalValue.substring(0, terminalValue.length() - 1);
                     }
@@ -288,7 +287,7 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(isProcessPayment && cardType > 0) {
-                    SoundUtil.playClickSound();
+                    SoundUtil.playTerminalClickSound();
                     if(terminalValue.length() < MAX_PRICE_LENGTH) {
                         terminalValue = terminalValue + "0";
                     }
@@ -303,7 +302,7 @@ public class CashRegister extends Group {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(isProcessPayment && cardType > 0) {
-                    SoundUtil.playClickSound();
+                    SoundUtil.playTerminalClickSound();
                     if(terminalValue.length() < MAX_PRICE_LENGTH && !terminalValue.isEmpty() && !terminalValue.contains(".")) {
                         terminalValue = terminalValue + ".";
                     }
@@ -342,7 +341,7 @@ public class CashRegister extends Group {
                     if(isProcessPayment && cardType > 0) {
                         String totalCostStr = formatTotalCost(totalCost);
                         if(totalCost > 0 && totalCostStr.equals("$" + terminalValue)) {
-                            SoundUtil.playClickSound();
+                            SoundUtil.playTerminalOkSound();
                             try {
                                 float terminalPayedSum = Float.parseFloat(terminalValue);
                                 User.get().changeDollars(terminalPayedSum); // начислить игроку terminalPayedSum
@@ -350,14 +349,13 @@ public class CashRegister extends Group {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            //todo звук
                             finishPayment();
                             GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
                             moveCameraSlowlyBack();
                             hideCard();
                         }
                     } else {
-                        //todo wrong sound
+                        SoundUtil.playWrongClickSound();
                         if(GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) { //todo remove
                             moveCameraSlowlyBack();
                             hideCard();
@@ -459,7 +457,7 @@ public class CashRegister extends Group {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
                     if(isProcessPayment && cardType == 0) {
-                        SoundUtil.playClickSound(); //todo
+                        SoundUtil.playKassaCashSound();
                         Image img = new Image(ATLAS_1.findRegion("dollar_" + finalI));
                         img.setColor(getColorForDollarsPack(finalI));
                         float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
@@ -508,7 +506,7 @@ public class CashRegister extends Group {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
                     if(isProcessPayment && cardType == 0) {
-                        SoundUtil.playClickSound(); //todo
+                        SoundUtil.playKassaCoinSound();
                         Image img = new Image(ATLAS_1.findRegion(finalI == 1 ? "coin_1" : "coin_2"));
                         float globalX = kassa.getX() + tableRight.getX() + cashTable.getX() + slotGroup.getX();
                         float globalY = kassa.getY() + tableRight.getY() + cashTable.getY() + slotGroup.getY() + slotGroup.getHeight() / 2;
@@ -644,11 +642,10 @@ public class CashRegister extends Group {
                 if(isProcessPayment && cardType == 0) {
                     float change = payedSum - totalCost; //сдачи сколько нужно
                     if(givingSum >= change) {
-                        SoundUtil.playClickSound();
+                        SoundUtil.playKassaClickSound();
                         User.get().changeDollars(-givingSum); //списать с игрока givingSum
                         User.get().changeDollars(payedSum); // начислить игроку payedSum
                         User.get().saveUser();
-                        //todo звук
                         finishPayment();
                         GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
                         moveCameraSlowlyBack();

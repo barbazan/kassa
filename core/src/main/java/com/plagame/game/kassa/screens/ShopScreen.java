@@ -148,6 +148,7 @@ public class ShopScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(User.get().doPayDollars(cost)) {
+                    SoundUtil.playKassaClickSound();
                     for(int i = index; i < index + 4; i++) {
                         User.get().buyedProducts.add(i);
                     }

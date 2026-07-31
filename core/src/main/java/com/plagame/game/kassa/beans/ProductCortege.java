@@ -66,7 +66,7 @@ public class ProductCortege extends Group {
                         if(productImageList != null && !productImageList.isEmpty()) {
                             Image first = productImageList.get(0);
                             if(first != null && first == img) {
-                                SoundUtil.playClickSound();
+                                SoundUtil.playProductClickSound();
                                 if(img != currentProductImage) {
                                     currentProductImage = img;
                                     productImageList.removeFirst();

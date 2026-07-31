@@ -187,7 +187,7 @@ public class CustomerCortege extends Group {
             cardImage.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    SoundUtil.playClickSound();
+                    SoundUtil.playCustomerClickSound();
                     cardImage.setVisible(false);
                     GameApplication.get().getGameScreen().gameScene.cashRegister.payCard(cardType);
                     moveCameraSlowly(isCard);
@@ -228,7 +228,7 @@ public class CustomerCortege extends Group {
             cashGroup.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    SoundUtil.playClickSound();
+                    SoundUtil.playCustomerClickSound();
                     cashGroup.setVisible(false);
                     GameApplication.get().getGameScreen().gameScene.cashRegister.payCash();
                     moveCameraSlowly(isCard);

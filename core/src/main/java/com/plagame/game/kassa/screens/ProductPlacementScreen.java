@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.AssetUtil;
+import com.plagame.game.kassa.utils.SoundUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -171,6 +172,7 @@ public class ProductPlacementScreen extends BaseScreen {
 
                 @Override
                 public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
+                    SoundUtil.playTerminalOkSound();
                     Image target = (Image) getActor();
                     target.setColor(Color.WHITE);
                     Image sourceImage = (Image)payload.getObject();
