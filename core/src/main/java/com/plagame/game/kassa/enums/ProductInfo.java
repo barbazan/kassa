@@ -142,6 +142,10 @@ public enum ProductInfo {
     PRODUCT_INFO_126(126, 22.75f),
     PRODUCT_INFO_127(127, 22.75f),
     PRODUCT_INFO_128(128, 22.75f),
+    PRODUCT_INFO_129(129, 220),
+    PRODUCT_INFO_130(130, 275),
+    PRODUCT_INFO_131(131, 425),
+    PRODUCT_INFO_132(132, 2275),
     ;
 
     public final int type;

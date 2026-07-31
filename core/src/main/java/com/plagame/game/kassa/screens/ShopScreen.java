@@ -25,6 +25,7 @@ import com.plagame.game.kassa.components.HeaderPanel;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.AssetUtil;
 import com.plagame.game.kassa.utils.NumberFormat;
+import com.plagame.game.kassa.utils.SoundUtil;
 
 /**
  * Created by Дмитрий Малышев on 27.07.2026.
@@ -155,7 +156,7 @@ public class ShopScreen extends BaseScreen {
             new TextureRegionDrawable(textureRegion),
             new TextureRegionDrawable(textureRegion)
         );
-        Label label = new Label("START", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
+        Label label = new Label("СТАРТ", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
         label.setAlignment(Align.center);
         float w = label.getWidth() * 1.5f;
         float h = w * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
@@ -163,6 +164,7 @@ public class ShopScreen extends BaseScreen {
         startBtn.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
                 GameApplication.get().setNextDayScreen();
                 super.tap(event, x, y, count, button);
             }
