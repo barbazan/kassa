@@ -1,132 +1,327 @@
 
 kassa_atlas_customers.png
-size: 4096,2048
+size: 4096,4096
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 customer_1
   rotate: false
-  xy: 1278, 142
+  xy: 434, 23
   size: 294, 885
   orig: 294, 885
   offset: 0, 0
   index: -1
 customer_10
   rotate: false
-  xy: 2436, 136
-  size: 299, 818
-  orig: 299, 818
-  offset: 0, 0
-  index: -1
-customer_100
-  rotate: false
-  xy: 2007, 29
-  size: 427, 922
-  orig: 427, 922
-  offset: 0, 0
-  index: -1
-customer_101
-  rotate: false
-  xy: 2839, 1080
-  size: 451, 964
-  orig: 451, 964
-  offset: 0, 0
-  index: -1
-customer_102
-  rotate: false
-  xy: 2737, 169
-  size: 316, 813
-  orig: 316, 813
-  offset: 0, 0
-  index: -1
-customer_103
-  rotate: false
-  xy: 3055, 427
-  size: 306, 651
-  orig: 306, 651
-  offset: 0, 0
-  index: -1
-customer_104
-  rotate: false
-  xy: 3292, 1127
-  size: 439, 917
-  orig: 439, 917
-  offset: 0, 0
-  index: -1
-customer_11
-  rotate: false
-  xy: 2471, 984
-  size: 366, 1060
-  orig: 366, 1060
+  xy: 3671, 3258
+  size: 292, 800
+  orig: 292, 800
   offset: 0, 0
   index: -1
 customer_12
   rotate: false
-  xy: 1, 880
-  size: 543, 1164
-  orig: 543, 1164
+  xy: 1920, 3058
+  size: 463, 1000
+  orig: 463, 1000
   offset: 0, 0
   index: -1
 customer_13
   rotate: false
-  xy: 1632, 953
-  size: 421, 1091
-  orig: 421, 1091
+  xy: 1, 1680
+  size: 563, 1112
+  orig: 563, 1112
+  offset: 0, 0
+  index: -1
+customer_14
+  rotate: false
+  xy: 1350, 1780
+  size: 519, 1164
+  orig: 519, 1164
+  offset: 0, 0
+  index: -1
+customer_15
+  rotate: false
+  xy: 2385, 3070
+  size: 345, 988
+  orig: 345, 988
+  offset: 0, 0
+  index: -1
+customer_16
+  rotate: false
+  xy: 1621, 68
+  size: 309, 831
+  orig: 309, 831
+  offset: 0, 0
+  index: -1
+customer_17
+  rotate: false
+  xy: 2989, 2230
+  size: 295, 970
+  orig: 295, 970
+  offset: 0, 0
+  index: -1
+customer_18
+  rotate: false
+  xy: 2402, 2098
+  size: 304, 970
+  orig: 304, 970
+  offset: 0, 0
+  index: -1
+customer_19
+  rotate: false
+  xy: 2556, 272
+  size: 285, 970
+  orig: 285, 970
   offset: 0, 0
   index: -1
 customer_2
   rotate: false
-  xy: 968, 1
+  xy: 2246, 901
   size: 308, 970
   orig: 308, 970
   offset: 0, 0
   index: -1
+customer_20
+  rotate: false
+  xy: 1350, 2946
+  size: 568, 1112
+  orig: 568, 1112
+  offset: 0, 0
+  index: -1
+customer_21
+  rotate: false
+  xy: 1871, 901
+  size: 373, 970
+  orig: 373, 970
+  offset: 0, 0
+  index: -1
+customer_22
+  rotate: false
+  xy: 3336, 3258
+  size: 333, 800
+  orig: 333, 800
+  offset: 0, 0
+  index: -1
+customer_23
+  rotate: false
+  xy: 2732, 3202
+  size: 271, 856
+  orig: 271, 856
+  offset: 0, 0
+  index: -1
+customer_24
+  rotate: false
+  xy: 2708, 2225
+  size: 279, 843
+  orig: 279, 843
+  offset: 0, 0
+  index: -1
+customer_25
+  rotate: false
+  xy: 1478, 920
+  size: 304, 858
+  orig: 304, 858
+  offset: 0, 0
+  index: -1
+customer_26
+  rotate: false
+  xy: 1121, 907
+  size: 355, 871
+  orig: 355, 871
+  offset: 0, 0
+  index: -1
+customer_27
+  rotate: false
+  xy: 1, 910
+  size: 512, 768
+  orig: 512, 768
+  offset: 0, 0
+  index: -1
+customer_28
+  rotate: false
+  xy: 730, 108
+  size: 388, 800
+  orig: 388, 800
+  offset: 0, 0
+  index: -1
 customer_3
   rotate: false
-  xy: 546, 973
-  size: 529, 1071
-  orig: 529, 1071
+  xy: 1932, 80
+  size: 312, 819
+  orig: 312, 819
+  offset: 0, 0
+  index: -1
+customer_30
+  rotate: false
+  xy: 3632, 2456
+  size: 316, 800
+  orig: 316, 800
+  offset: 0, 0
+  index: -1
+customer_32
+  rotate: false
+  xy: 3022, 1413
+  size: 317, 815
+  orig: 317, 815
+  offset: 0, 0
+  index: -1
+customer_33
+  rotate: false
+  xy: 1, 2794
+  size: 673, 1264
+  orig: 673, 1264
+  offset: 0, 0
+  index: -1
+customer_34
+  rotate: false
+  xy: 3286, 2414
+  size: 344, 800
+  orig: 344, 800
+  offset: 0, 0
+  index: -1
+customer_35
+  rotate: false
+  xy: 676, 2794
+  size: 672, 1264
+  orig: 672, 1264
+  offset: 0, 0
+  index: -1
+customer_36
+  rotate: false
+  xy: 2843, 423
+  size: 290, 819
+  orig: 290, 819
+  offset: 0, 0
+  index: -1
+customer_37
+  rotate: false
+  xy: 2246, 99
+  size: 292, 800
+  orig: 292, 800
+  offset: 0, 0
+  index: -1
+customer_38
+  rotate: false
+  xy: 3005, 3216
+  size: 329, 842
+  orig: 329, 842
+  offset: 0, 0
+  index: -1
+customer_39
+  rotate: false
+  xy: 3563, 812
+  size: 342, 798
+  orig: 342, 798
   offset: 0, 0
   index: -1
 customer_4
   rotate: false
-  xy: 502, 26
+  xy: 2556, 1244
   size: 464, 852
   orig: 464, 852
   offset: 0, 0
   index: -1
-customer_5
+customer_40
   rotate: false
-  xy: 3733, 1063
-  size: 312, 981
-  orig: 312, 981
+  xy: 566, 910
+  size: 351, 865
+  orig: 351, 865
+  offset: 0, 0
+  index: -1
+customer_41
+  rotate: false
+  xy: 3135, 615
+  size: 426, 796
+  orig: 426, 796
+  offset: 0, 0
+  index: -1
+customer_43
+  rotate: false
+  xy: 3563, 10
+  size: 282, 800
+  orig: 282, 800
+  offset: 0, 0
+  index: -1
+customer_44
+  rotate: false
+  xy: 3341, 1612
+  size: 319, 800
+  orig: 319, 800
+  offset: 0, 0
+  index: -1
+customer_45
+  rotate: false
+  xy: 3662, 1654
+  size: 290, 800
+  orig: 290, 800
   offset: 0, 0
   index: -1
 customer_6
   rotate: false
-  xy: 1, 17
+  xy: 1120, 44
   size: 499, 861
   orig: 499, 861
   offset: 0, 0
   index: -1
 customer_7
   rotate: false
-  xy: 2055, 956
-  size: 414, 1088
-  orig: 414, 1088
+  xy: 1871, 1873
+  size: 529, 1071
+  orig: 529, 1071
   offset: 0, 0
   index: -1
 customer_8
   rotate: false
-  xy: 1077, 1029
+  xy: 566, 1777
   size: 553, 1015
   orig: 553, 1015
   offset: 0, 0
   index: -1
 customer_9
   rotate: false
-  xy: 1574, 44
+  xy: 1, 1
   size: 431, 907
   orig: 431, 907
+  offset: 0, 0
+  index: -1
+customer_42
+  rotate: false
+  xy: 1, 1
+  size: 431, 907
+  orig: 431, 907
+  offset: 0, 0
+  index: -1
+
+kassa_atlas_customers2.png
+size: 2048,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+customer_11
+  rotate: false
+  xy: 1, 1
+  size: 276, 800
+  orig: 276, 800
+  offset: 0, 0
+  index: -1
+customer_29
+  rotate: false
+  xy: 279, 1
+  size: 258, 800
+  orig: 258, 800
+  offset: 0, 0
+  index: -1
+customer_31
+  rotate: false
+  xy: 795, 40
+  size: 251, 761
+  orig: 251, 761
+  offset: 0, 0
+  index: -1
+customer_5
+  rotate: false
+  xy: 539, 1
+  size: 254, 800
+  orig: 254, 800
   offset: 0, 0
   index: -1
