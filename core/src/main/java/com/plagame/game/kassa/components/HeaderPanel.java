@@ -52,14 +52,14 @@ public class HeaderPanel extends Table {
         innerTable.add(dayGroup).size(dayGroup.getWidth(), dayGroup.getHeight()).align(Align.left).pad(pad).padRight(pad * 3).fill();
 
         Group dollarsGroup = createStatItem("icon_dollars", () -> User.get().getDollars());
-        dollarsGroup.addListener(new ActorGestureListener() {
-            @Override
-            public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                SoundUtil.playClickSound();
-//                GameApplication.get().getGameScreen().uiStage.showShopActionsDialog(); //todo
-                super.touchDown(event, x, y, pointer, button);
-            }
-        });
+//        dollarsGroup.addListener(new ActorGestureListener() {
+//            @Override
+//            public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
+//                SoundUtil.playClickSound();
+////                GameApplication.get().getGameScreen().uiStage.showShopActionsDialog(); //todo
+//                super.touchDown(event, x, y, pointer, button);
+//            }
+//        });
         innerTable.add(dollarsGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.left).pad(pad).fill();
 
         Image settingsImage = new Image(ATLAS_1.findRegion("icon_settings"));

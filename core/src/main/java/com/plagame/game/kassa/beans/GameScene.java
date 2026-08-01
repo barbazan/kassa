@@ -116,7 +116,8 @@ public class GameScene extends Group {
 
     private List<ProductInfo> createProductList() {
         List<ProductInfo> productList = new ArrayList<>();
-        for(int i = 0; i < 5; i++) {
+        int prodCount = 3 + GameConfig.random.nextInt(6);
+        for(int i = 0; i < prodCount; i++) {
             ProductInfo productInfo = ProductInfo.getRandom();
             productList.add(productInfo);
         }

@@ -4,6 +4,7 @@ import static com.plagame.game.kassa.Resources.ATLAS_PRODUCTS;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.plagame.game.kassa.GameConfig;
+import com.plagame.game.kassa.beans.User;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -153,11 +154,11 @@ public enum ProductInfo {
         PRODUCT_INFO_1.type, PRODUCT_INFO_2.type, PRODUCT_INFO_3.type, PRODUCT_INFO_4.type,
         PRODUCT_INFO_5.type, PRODUCT_INFO_6.type, PRODUCT_INFO_7.type, PRODUCT_INFO_8.type
     );
-    public static final List<Integer> UNLOCK_PRODUCT_LIST = Arrays.asList(
-        PRODUCT_INFO_1.type, PRODUCT_INFO_2.type, PRODUCT_INFO_3.type, PRODUCT_INFO_4.type,
-        PRODUCT_INFO_5.type, PRODUCT_INFO_6.type, PRODUCT_INFO_7.type, PRODUCT_INFO_8.type,
-        PRODUCT_INFO_9.type, PRODUCT_INFO_10.type, PRODUCT_INFO_11.type, PRODUCT_INFO_12.type,
-        PRODUCT_INFO_13.type, PRODUCT_INFO_14.type, PRODUCT_INFO_15.type, PRODUCT_INFO_16.type
+    public static final List<ProductInfo> UNLOCK_PRODUCT_LIST = Arrays.asList(
+        PRODUCT_INFO_1, PRODUCT_INFO_2, PRODUCT_INFO_3, PRODUCT_INFO_4,
+        PRODUCT_INFO_5, PRODUCT_INFO_6, PRODUCT_INFO_7, PRODUCT_INFO_8,
+        PRODUCT_INFO_9, PRODUCT_INFO_10, PRODUCT_INFO_11, PRODUCT_INFO_12,
+        PRODUCT_INFO_13, PRODUCT_INFO_14, PRODUCT_INFO_15, PRODUCT_INFO_16
     );
 
     public final int type;
@@ -175,8 +176,16 @@ public enum ProductInfo {
     }
 
     public static ProductInfo getRandom() {
-        int rndType = 1 + GameConfig.random.nextInt(values().length);
-        return ENUM_MAPS.PRODUCT_INFO_MAP.get(rndType);
+        if(User.get().isBuyFull) {
+            return getRandom(Arrays.asList(values()));
+        } else {
+            return getRandom(UNLOCK_PRODUCT_LIST);
+        }
+    }
+
+    private static ProductInfo getRandom(List<ProductInfo> productList) {
+        int rndType = GameConfig.random.nextInt(productList.size());
+        return productList.get(rndType);
     }
 
     public static Set<ProductInfo> getRandomSet(int count) {
