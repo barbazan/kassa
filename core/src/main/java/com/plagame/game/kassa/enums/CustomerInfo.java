@@ -4,8 +4,10 @@ import static com.plagame.game.kassa.Resources.ATLAS_CUSTOMERS;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.plagame.game.kassa.GameConfig;
+import com.plagame.game.kassa.beans.User;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Дмитрий Малышев on 23.07.2026.
@@ -35,6 +37,11 @@ public enum CustomerInfo {
     CUSTOMER_INFO_104(104),
     ;
 
+    public static final List<CustomerInfo> UNLOCK_CUSTOMER_LIST = Arrays.asList(
+        CUSTOMER_INFO_1, CUSTOMER_INFO_2, CUSTOMER_INFO_3,
+        CUSTOMER_INFO_4, CUSTOMER_INFO_5, CUSTOMER_INFO_6
+    );
+
     public final int type;
     private TextureRegion textureRegion;
 
@@ -48,9 +55,16 @@ public enum CustomerInfo {
     }
 
     public static CustomerInfo getRandom() {
-        int rndType = GameConfig.random.nextInt(values().length);
-        CustomerInfo customerInfo = Arrays.asList(values()).get(rndType);
-        return customerInfo;
+        if(User.get().isBuyFull) {
+            return getRandom(Arrays.asList(values()));
+        } else {
+            return getRandom(UNLOCK_CUSTOMER_LIST);
+        }
+    }
+
+    private static CustomerInfo getRandom(List<CustomerInfo> customerList) {
+        int rndType = GameConfig.random.nextInt(customerList.size());
+        return customerList.get(rndType);
     }
 
     public TextureRegion getTextureRegion() {

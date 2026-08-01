@@ -1,12 +1,10 @@
 package com.plagame.game.kassa.enums;
 
-import static com.plagame.game.kassa.Resources.ATLAS_1;
 import static com.plagame.game.kassa.Resources.ATLAS_PRODUCTS;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.plagame.game.kassa.GameConfig;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -161,6 +159,7 @@ public enum ProductInfo {
         PRODUCT_INFO_9.type, PRODUCT_INFO_10.type, PRODUCT_INFO_11.type, PRODUCT_INFO_12.type,
         PRODUCT_INFO_13.type, PRODUCT_INFO_14.type, PRODUCT_INFO_15.type, PRODUCT_INFO_16.type
     );
+
     public final int type;
     public final float cost;
     private TextureRegion textureRegion;

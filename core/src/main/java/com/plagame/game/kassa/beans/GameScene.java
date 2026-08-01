@@ -101,7 +101,9 @@ public class GameScene extends Group {
 
     private List<CustomerInfo> createCustomerList() {
         Set<CustomerInfo> set = new HashSet<>();
-        int count = 4 + GameConfig.random.nextInt(4);
+        int maxCount = Math.min(User.get().day + 2, 6);
+        int rndCount = 3 + GameConfig.random.nextInt(4);
+        int count = Math.min(rndCount, maxCount);
         while(set.size() < count) {
             try {
                 set.add(CustomerInfo.getRandom());

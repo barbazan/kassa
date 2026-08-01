@@ -64,7 +64,6 @@ public class GameScreen extends BaseScreen {
         gameScene.resize();
         uiStage.clear();
         uiStage = new UIStage();
-//        gameScene.customerCortege.moveCameraSlowly(false);
     }
 
 //    private void checkConnect() {
