@@ -1,5 +1,7 @@
 package com.plagame.game.kassa;
 
+import static com.plagame.game.kassa.GameConfig.DEFAULT_MUSIC_VOLUME;
+import static com.plagame.game.kassa.Resources.MUSIC_BG_FILENAME;
 import static com.plagame.game.kassa.Resources.resourcesAssigned;
 
 import com.badlogic.gdx.Application;
@@ -7,6 +9,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -56,6 +59,7 @@ public class GameApplication extends Game {
     private SettingsScreen settingsScreen;
     public static BitmapFont FONT_DEFAULT, FONT_HEADER, FONT_DIALOG_HEADER, FONT_DIALOG_BUTTON, FONT_RATING, FONT_BIG, FONT_VERY_BIG, FONT_SMALL, FONT_VERY_SMALL;
     public int exceptionCount;
+    public Music bgMusic;
 
     public GameApplication(PlatformServices platformServices) {
         this.platform = platformServices;
@@ -89,6 +93,10 @@ public class GameApplication extends Game {
             System.out.println("------------- ASSIGN_RESOURCES -------------");
             goToFirstScreen();
             loadingScreen.dispose();
+            bgMusic = assetManager.get(MUSIC_BG_FILENAME, Music.class);
+            bgMusic.setVolume(DEFAULT_MUSIC_VOLUME);
+            bgMusic.setLooping(true);
+            GameApplication.get().bgMusic.play();
         }
     }
 
@@ -246,8 +254,15 @@ public class GameApplication extends Game {
     }
 
     @Override
+    public void pause() {
+        super.pause();
+        GameApplication.get().bgMusic.pause();
+    }
+
+    @Override
     public void resume() {
         super.resume();
+        GameApplication.get().bgMusic.play();
     }
 
     @Override
