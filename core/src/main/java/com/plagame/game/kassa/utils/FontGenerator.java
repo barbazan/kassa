@@ -14,11 +14,13 @@ public class FontGenerator {
     final String FONT_CHARS_ALL = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzçğıiöşüñáéíóúАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZÇĞİÖŞÜ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>¡¿"; // не удалять, это используется в редакторе hiero для генерации атласов
     final String FONT_CHARS = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!$%#@|\\/?-+=()*&.;:,{}\"'<>"; // не удалять, это используется в редакторе hiero для генерации атласов
     final String DIGIT_CHARS = "0123456789-+=.,KMBTQWERYU"; // не удалять, это используется в редакторе hiero для генерации атласов
+//    private final String FONT_PREFIX = "fonts/Montserrat-SemiBold_";
+    private final String FONT_PREFIX = "fonts/Toyz_";
 
     public BitmapFont generateDefaultBitmapFont(float scale, Color color) {
         System.out.println("getDefaultFontSize() = " + getDefaultFontSize());
         int fontSize = getDefaultFontSize();
-        String fontFilename = "fonts/Montserrat-SemiBold_" + fontSize + ".fnt";
+        String fontFilename = FONT_PREFIX + fontSize + ".fnt";
         return generateBitmapFont(scale, color, fontFilename);
     }
 
@@ -44,7 +46,7 @@ public class FontGenerator {
     }
 
    public BitmapFont generateBitmapFont(float scale, Color color, int fontSize) {
-        String fontFilename = "fonts/Montserrat-SemiBold_" + fontSize + ".fnt";
+        String fontFilename = FONT_PREFIX + fontSize + ".fnt";
         System.out.println("------generateBitmapFont-------------fontFilename = " + fontFilename);
         return generateBitmapFont(scale, color, fontFilename);
     }
