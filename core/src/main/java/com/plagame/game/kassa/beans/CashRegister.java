@@ -353,6 +353,8 @@ public class CashRegister extends Group {
                             GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
                             moveCameraSlowlyBack();
                             hideCard();
+                        } else {
+                            SoundUtil.playWrongClickSound();
                         }
                     } else {
                         SoundUtil.playWrongClickSound();
