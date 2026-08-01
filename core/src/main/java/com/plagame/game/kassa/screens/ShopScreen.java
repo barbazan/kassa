@@ -5,7 +5,7 @@ import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_SMALL;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
-import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_COLOR;
+import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_2_COLOR;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -83,7 +83,7 @@ public class ShopScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        AssetUtil.clearScreen(LOADING_SCREEN_BG_COLOR.color);
+        AssetUtil.clearScreen(LOADING_SCREEN_BG_2_COLOR.color);
         super.render(delta);
     }
 
@@ -104,7 +104,7 @@ public class ShopScreen extends BaseScreen {
         Table productsTable = new Table();
         productsTable.setSize(tableWidth, tableHeight);
 //        productsTable.setDebug(true);
-        productsTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("panel_goods_bg")));
+        productsTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("panel_goods_bg_2")));
         productsTable.pad(pad / 2);
 
         productsTable.add().expandX();

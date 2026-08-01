@@ -33,6 +33,7 @@ public enum ColorInfo {
     DAILY_REWARD_SELECTED(new Color(0xffbe00ff)),
     RUBY(new Color(0xbd0ebeff)),
     LOADING_SCREEN_BG_COLOR(new Color(0x257495ff)),
+    LOADING_SCREEN_BG_2_COLOR(new Color(0xfe0405ff)),
     ;
 
     public Color color;
