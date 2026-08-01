@@ -138,28 +138,34 @@ public class ShopScreen extends BaseScreen {
         soldTable.setVisible(User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
         productsTable.addActor(soldTable);
 
-        // кнопку "Купить" показываем если продукт не куплен
-        int  cost = 10 * index; //todo
-        Button buyBtn = createBuyBtn(cost, index,tableHeight * 0.65f);
-        buyBtn.setPosition(productsTable.getWidth() - buyBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - buyBtn.getHeight() - pad);
-        buyBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
-        buyBtn.addListener(new ActorGestureListener() {
-            @Override
-            public void tap(InputEvent event, float x, float y, int count, int button) {
-                if(User.get().doPayDollars(cost)) {
-                    SoundUtil.playKassaClickSound();
-                    for(int i = index; i < index + 4; i++) {
-                        User.get().buyedProducts.add(i);
+        if(User.get().isFullVersionBuyed || ProductInfo.UNLOCK_PRODUCT_LIST.contains(ProductInfo.getByType(index))) { // кнопку "Купить" показываем если куплена полная версия или продукт входи в начальный анлокнутый набор
+            int  cost = 100 * index; //todo
+            Button buyBtn = createBuyBtn(cost, tableHeight * 0.65f);
+            buyBtn.setPosition(productsTable.getWidth() - buyBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - buyBtn.getHeight() - pad);
+            buyBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
+            buyBtn.addListener(new ActorGestureListener() {
+                @Override
+                public void tap(InputEvent event, float x, float y, int count, int button) {
+                    if(User.get().doPayDollars(cost)) {
+                        SoundUtil.playKassaClickSound();
+                        for(int i = index; i < index + 4; i++) {
+                            User.get().buyedProducts.add(i);
+                        }
+                        User.get().saveUser();
+                        buyBtn.setVisible(false);
+                        soldTable.setVisible(true);
                     }
-                    User.get().saveUser();
-                    buyBtn.setVisible(false);
-                    soldTable.setVisible(true);
+                    super.tap(event, x, y, count, button);
                 }
-                super.tap(event, x, y, count, button);
-            }
-        });
-
-        productsTable.addActor(buyBtn);
+            });
+            productsTable.addActor(buyBtn);
+        } else {
+            // кнопку "купить полную версию" показываем если продукт не куплен
+            Button unlockBtn = createRedBtn(tableHeight * 0.65f);
+            unlockBtn.setPosition(productsTable.getWidth() - unlockBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - unlockBtn.getHeight() - pad);
+            unlockBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
+            productsTable.addActor(unlockBtn);
+        }
 
         return productsTable;
     }
@@ -203,7 +209,7 @@ public class ShopScreen extends BaseScreen {
         return startBtn;
     }
 
-    private Button createBuyBtn(int cost, int index, float groupHeight) {
+    private Button createBuyBtn(int cost, float groupHeight) {
         float btnHeight = groupHeight * 0.95f;
         TextureRegionDrawable buttonGray = new TextureRegionDrawable(ATLAS_1.findRegion("button_gray"));
         TextureRegionDrawable buttonGreen = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
@@ -223,23 +229,41 @@ public class ShopScreen extends BaseScreen {
         float h = btnHeight;
         float w = btnHeight;
         buyButton.setSize(w, h);
-//        buyButton.addListener(new ActorGestureListener() {
-//            @Override
-//            public void tap(InputEvent event, float x, float y, int count, int button) {
-//                if(User.get().doPayDollars(cost)) {
-//                    for(int i = index; i < index + 4; i++) {
-//                        User.get().buyedProducts.add(i);
-//                    }
-//                    User.get().saveUser();
-//                }
-//                super.tap(event, x, y, count, button);
-//            }
-//        });
-//        Table costpanel = createCostPanel(100 + 50 * GameConfig.random.nextInt(20)); //todo
-        Table costpanel = createCostPanel(cost); //todo
+        Table costpanel = createCostPanel(cost);
         buyButton.add(costpanel).align(Align.center).fill();
 
         return buyButton;
+    }
+
+    private Button createRedBtn(float groupHeight) {
+        float btnHeight = groupHeight * 0.95f;
+        TextureRegionDrawable buttonGray = new TextureRegionDrawable(ATLAS_1.findRegion("button_gray"));
+        TextureRegionDrawable buttonGreen = new TextureRegionDrawable(ATLAS_1.findRegion("button_red"));
+        TextureRegionDrawable buttonGreenDown = new TextureRegionDrawable(ATLAS_1.findRegion("button_red"));
+        Button.ButtonStyle style = new Button.ButtonStyle();
+        style.up = buttonGreen;     // по умолчанию
+        style.down = buttonGreenDown;     // по умолчанию
+        style.disabled = buttonGray;  // при нажатии (опционально)
+        Button redButton = new Button(style);
+        redButton.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+//                GameApplication.get().setBuyFullVersionScreen();
+                super.tap(event, x, y, count, button);
+            }
+        });
+        float h = btnHeight;
+        float w = btnHeight;
+        redButton.setSize(w, h);
+
+        Label label = new Label("купить" +
+            "\n полную" +
+            "\n версию", new Label.LabelStyle(FONT_SMALL, Color.WHITE)); //todo I18N
+        label.setAlignment(Align.center);
+        redButton.add(label).align(Align.center).fill();
+
+        return redButton;
     }
 
     private Group createSoldTable(float groupHeight) {

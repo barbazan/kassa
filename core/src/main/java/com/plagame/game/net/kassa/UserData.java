@@ -34,7 +34,7 @@ public class UserData {
         this.day = user.day;
         this.lastLoginTime = user.lastLoginTime;
         this.isAdHide = user.isAdHide;
-        this.isBuyFull = user.isBuyFull;
+        this.isBuyFull = user.isFullVersionBuyed;
         this.buyedProducts = user.buyedProducts;
         this.purchasedProducts = user.purchasedProducts;
         return this;

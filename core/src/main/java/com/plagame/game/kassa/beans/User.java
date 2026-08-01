@@ -37,7 +37,7 @@ public class User {
     public HashSet<String> purchasedProducts = new HashSet<>();
     public long loginDayCount;
     public boolean isAdHide;
-    public boolean isBuyFull;
+    public boolean isFullVersionBuyed;
     public Map<String, Integer> rankMap = new HashMap<>(); // никуда не сохраняем, живет в рамках одной игровой снессии
 
     public User() {
@@ -70,7 +70,7 @@ public class User {
         this.day = userData.day;
         this.lastLoginTime = userData.lastLoginTime;
         this.isAdHide = userData.isAdHide;
-        this.isBuyFull = userData.isBuyFull;
+        this.isFullVersionBuyed = userData.isBuyFull;
         this.buyedProducts = new HashSet<>(userData.buyedProducts);
         this.purchasedProducts = new HashSet<>(userData.purchasedProducts);
         return this;

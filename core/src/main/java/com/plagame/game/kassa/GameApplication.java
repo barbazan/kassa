@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.plagame.game.kassa.screens.BuyFullVersionScreen;
 import com.plagame.game.kassa.screens.DayCompleteScreen;
 import com.plagame.game.kassa.screens.NextDayScreen;
 import com.plagame.game.kassa.screens.ProductPlacementScreen;
@@ -51,6 +52,7 @@ public class GameApplication extends Game {
     private ProductPlacementScreen productPlacementScreen;
     private DayCompleteScreen dayCompleteScreen;
     private NextDayScreen nextDayScreen;
+    private BuyFullVersionScreen buyFullVersionScreen;
     private SettingsScreen settingsScreen;
     public static BitmapFont FONT_DEFAULT, FONT_HEADER, FONT_DIALOG_HEADER, FONT_DIALOG_BUTTON, FONT_RATING, FONT_BIG, FONT_VERY_BIG, FONT_SMALL, FONT_VERY_SMALL;
     public int exceptionCount;
@@ -153,6 +155,15 @@ public class GameApplication extends Game {
         nextDayScreen = new NextDayScreen();
         setScreen(nextDayScreen);
         setInputProcessor(nextDayScreen.getInputProcessor());
+    }
+
+    public void setBuyFullVersionScreen() {
+        if(buyFullVersionScreen != null) {
+            buyFullVersionScreen.dispose();
+        }
+        buyFullVersionScreen = new BuyFullVersionScreen();
+        setScreen(buyFullVersionScreen);
+        setInputProcessor(buyFullVersionScreen.getInputProcessor());
     }
 
     public void setSettingsScreen() {

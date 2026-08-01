@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Дмитрий Малышев on 22.07.2026.
@@ -176,11 +177,18 @@ public enum ProductInfo {
     }
 
     public static ProductInfo getRandom() {
-        if(User.get().isBuyFull) {
+        if(User.get().isFullVersionBuyed) {
             return getRandom(Arrays.asList(values()));
         } else {
-            return getRandom(UNLOCK_PRODUCT_LIST);
+            return getRandom(User.get().buyedProducts);
         }
+    }
+
+    private static ProductInfo getRandom(Set<Integer> productList) {
+        return getRandom(productList.stream()
+            .map(ProductInfo::getByType)
+            .collect(Collectors.toList())
+        );
     }
 
     private static ProductInfo getRandom(List<ProductInfo> productList) {
