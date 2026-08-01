@@ -1,7 +1,6 @@
 package com.plagame.game.kassa.screens;
 
 import static com.plagame.game.kassa.GameApplication.FONT_BIG;
-import static com.plagame.game.kassa.GameApplication.FONT_DEFAULT;
 import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_SMALL;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
@@ -206,8 +205,10 @@ public class ShopScreen extends BaseScreen {
         float btnHeight = groupHeight * 0.95f;
         TextureRegionDrawable buttonGray = new TextureRegionDrawable(ATLAS_1.findRegion("button_gray"));
         TextureRegionDrawable buttonGreen = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
+        TextureRegionDrawable buttonGreenDown = new TextureRegionDrawable(ATLAS_1.findRegion("button_green_down"));
         Button.ButtonStyle style = new Button.ButtonStyle();
         style.up = buttonGreen;     // по умолчанию
+        style.down = buttonGreenDown;     // по умолчанию
         style.disabled = buttonGray;  // при нажатии (опционально)
         Button buyButton = new Button(style) {
             @Override

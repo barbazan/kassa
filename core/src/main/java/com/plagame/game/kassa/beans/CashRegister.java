@@ -35,6 +35,7 @@ import java.util.Map;
  */
 public class CashRegister extends Group {
 
+    private static final float EPS = 0.001f;
     private static final int MAX_PRICE_LENGTH = 8;
     public float terminalWidth, terminalHeight;
     public float totalCost; // это стоимость продуктов, которую должен оплатить покупатель
@@ -153,7 +154,7 @@ public class CashRegister extends Group {
             @Override
             protected String getValue() {
                 float change = payedSum - totalCost; //сдачи сколько нужно
-                if(givingSum >= change) {
+                if(givingSum + EPS >= change) {
                     setColor(Color.GREEN);
                 } else {
                     setColor(Color.YELLOW);
@@ -315,7 +316,7 @@ public class CashRegister extends Group {
 
         terminalBtnOk = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok_down"))
         ) {
             @Override
             public void act(float delta) {
@@ -610,15 +611,16 @@ public class CashRegister extends Group {
 
         final Button btnOk = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok"))
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok_down"))
         ) {
             @Override
             public void act(float delta) {
-                if(isProcessPayment && cardType == 0 && givingSum >= (payedSum - totalCost)) {
-                    setDisabled(false);
+                float change = payedSum - totalCost; //сдачи сколько нужно
+                if(isProcessPayment && cardType == 0 && givingSum + EPS >= change) {
+//                    setDisabled(false);
                     kassaBtnOk.setColor(Color.WHITE);
                 } else {
-                    setDisabled(true);
+//                    setDisabled(true);
                     kassaBtnOk.setColor(Color.DARK_GRAY);
                 }
                 super.act(delta);
@@ -630,21 +632,17 @@ public class CashRegister extends Group {
         btnOk.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                if(isProcessPayment && cardType == 0) {
-                    float change = payedSum - totalCost; //сдачи сколько нужно
-                    System.out.println("-----------givingSum = " + givingSum);
-                    System.out.println("-----------change = " + change);
-                    if(givingSum >= change) {
-                        SoundUtil.playKassaClickSound();
-                        User.get().changeDollars(-givingSum); //списать с игрока givingSum
-                        User.get().changeDollars(payedSum); // начислить игроку payedSum
-                        User.get().saveUser();
-                        finishPayment();
-                        GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
-                        moveCameraSlowlyBack();
-                    } else {
-                        //todo wrong sound
-                    }
+                float change = payedSum - totalCost; //сдачи сколько нужно
+                if(isProcessPayment && cardType == 0 && givingSum + EPS >= change) {
+                    SoundUtil.playKassaClickSound();
+                    User.get().changeDollars(-givingSum); //списать с игрока givingSum
+                    User.get().changeDollars(payedSum); // начислить игроку payedSum
+                    User.get().saveUser();
+                    finishPayment();
+                    GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
+                    moveCameraSlowlyBack();
+                } else {
+                    SoundUtil.playWrongClickSound();
                 }
                 super.tap(event, x, y, count, button);
             }
@@ -658,7 +656,7 @@ public class CashRegister extends Group {
 
         final Button btnReturn = new Button(
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_return")),
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_return"))
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_return_down"))
         ) {
             @Override
             public void act(float delta) {
