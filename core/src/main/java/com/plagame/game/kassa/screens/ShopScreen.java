@@ -139,14 +139,14 @@ public class ShopScreen extends BaseScreen {
         productsTable.addActor(soldTable);
 
         if(User.get().isFullVersionBuyed || ProductInfo.UNLOCK_PRODUCT_LIST.contains(ProductInfo.getByType(index))) { // кнопку "Купить" показываем если куплена полная версия или продукт входи в начальный анлокнутый набор
-            int  cost = 100 * index; //todo
-            Button buyBtn = createBuyBtn(cost, tableHeight * 0.65f);
+            int unlockPrice = (int)(45 * Math.pow(index, 1.5));
+            Button buyBtn = createBuyBtn(unlockPrice, tableHeight * 0.65f);
             buyBtn.setPosition(productsTable.getWidth() - buyBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - buyBtn.getHeight() - pad);
             buyBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
             buyBtn.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
-                    if(User.get().doPayDollars(cost)) {
+                    if(User.get().doPayDollars(unlockPrice)) {
                         SoundUtil.playKassaClickSound();
                         for(int i = index; i < index + 4; i++) {
                             User.get().buyedProducts.add(i);
