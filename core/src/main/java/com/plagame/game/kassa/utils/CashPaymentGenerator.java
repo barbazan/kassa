@@ -5,92 +5,200 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class CashPaymentGenerator {
+public final class CashPaymentGenerator {
 
-    private static final int[] BILLS = {5, 10, 20, 50, 100};
+    private static final int[] BILLS_5 = {5, 50, 100};
+    private static final int[] BILLS_10 = {10, 50, 100};
+    private static final int[] BILLS_20 = {20, 50, 100};
+    private static final int[] BILLS_50_100 = {50, 100};
     private static final Random RANDOM = new Random();
 
-    public static int generatePaidAmount(double price) {
+    private CashPaymentGenerator() {
+    }
 
-        int need = (int) price + 1;
+    private static int[] chooseCustomerBills() {
+        int chance = RANDOM.nextInt(100);
 
-        // Если хватает одной купюры — оставляем вашу "естественность"
-        List<Integer> singleBills = new ArrayList<>();
-
-        for (int bill : BILLS) {
-            if (bill >= need) {
-                singleBills.add(bill);
-            }
+        // 10% покупателей
+        if (chance < 10) {
+            return BILLS_5;
         }
 
-        if (!singleBills.isEmpty()) {
-            return chooseNatural(singleBills);
+        // Следующие 20%
+        if (chance < 30) {
+            return BILLS_10;
         }
 
-        return findBestSum(need);
+        // Следующие 40%
+        if (chance < 70) {
+            return BILLS_20;
+        }
+
+        // Оставшиеся 30%
+        return BILLS_50_100;
     }
 
     /**
-     * Ищет минимальную сумму >= need,
-     * используя любое количество купюр.
+     * Возвращает общую сумму, которую дал покупатель.
      */
-    private static int findBestSum(int need) {
+    public static int generatePaidAmount(double price) {
+        List<Integer> bills = generateBills(price);
 
-        int maxBill = 100;
+        int total = 0;
 
-        // небольшой запас
-        int limit = need + maxBill;
+        for (int bill : bills) {
+            total = Math.addExact(total, bill);
+        }
 
-        boolean[] reachable = new boolean[limit + 1];
-        int[] billsUsed = new int[limit + 1];
+        return total;
+    }
 
-        reachable[0] = true;
+    /**
+     * Возвращает конкретный набор купюр.
+     *
+     * Условия:
+     * 1. Общая сумма строго больше price.
+     * 2. Если убрать любую купюру, денег станет недостаточно.
+     */
+    public static List<Integer> generateBills(double price) {
 
-        for (int sum = 0; sum <= limit; sum++) {
+        validatePrice(price);
 
-            if (!reachable[sum])
-                continue;
+        long need = (long) Math.floor(price) + 1L;
 
-            for (int bill : BILLS) {
+        // Набор номиналов, доступных конкретному покупателю.
+        int[] customerBills = chooseCustomerBills();
 
-                int next = sum + bill;
+        List<Integer> result = new ArrayList<>();
 
-                if (next > limit)
+        long total = 0;
+        int smallestBill = Integer.MAX_VALUE;
+
+        while (total < need) {
+
+            List<Integer> allowedBills = new ArrayList<>();
+
+            // Используем только купюры этого покупателя.
+            for (int bill : customerBills) {
+
+                long newTotal = total + bill;
+                int newSmallestBill =
+                    Math.min(smallestBill, bill);
+
+                if (newTotal > Integer.MAX_VALUE) {
                     continue;
+                }
 
-                if (!reachable[next] || billsUsed[next] > billsUsed[sum] + 1) {
-                    reachable[next] = true;
-                    billsUsed[next] = billsUsed[sum] + 1;
+                /*
+                 * Если сумма уже достаточная, проверяем,
+                 * что ни одну купюру нельзя будет убрать.
+                 */
+                if (newTotal < need
+                    || newTotal - newSmallestBill < need) {
+
+                    allowedBills.add(bill);
                 }
             }
+
+            if (allowedBills.isEmpty()) {
+                throw new IllegalStateException(
+                    "Не удалось подобрать оплату."
+                        + " Цена: " + price
+                );
+            }
+
+            int selectedBill =
+                chooseNaturalBill(allowedBills);
+
+            result.add(selectedBill);
+            total += selectedBill;
+            smallestBill =
+                Math.min(smallestBill, selectedBill);
         }
 
-        for (int sum = need; sum <= limit; sum++) {
-            if (reachable[sum]) {
-                return sum;
+        Collections.shuffle(result, RANDOM);
+
+        return result;
+    }
+
+    /**
+     * Выбирает случайную купюру с небольшим уклоном
+     * в сторону крупных номиналов.
+     *
+     * Вес купюры равен её номиналу:
+     * 100 будет встречаться чаще 50,
+     * а 50 — чаще 10.
+     */
+    private static int chooseNaturalBill(List<Integer> variants) {
+
+        int totalWeight = 0;
+
+        for (int bill : variants) {
+            totalWeight += bill;
+        }
+
+        int randomValue = RANDOM.nextInt(totalWeight);
+
+        for (int bill : variants) {
+            randomValue -= bill;
+
+            if (randomValue < 0) {
+                return bill;
             }
         }
 
-        // Теоретически сюда не попадем
-        return need;
+        // Теоретически недостижимо.
+        return variants.get(variants.size() - 1);
     }
 
-    private static int chooseNatural(List<Integer> variants) {
+    private static void validatePrice(double price) {
 
-        Collections.sort(variants);
+        if (!Double.isFinite(price) || price < 0) {
+            throw new IllegalArgumentException(
+                "Price must be a finite non-negative number: " + price
+            );
+        }
 
-        double r = RANDOM.nextDouble();
+        /*
+         * Максимальная сумма типа int, которую можно собрать
+         * из купюр, кратных пяти.
+         */
+        long maxPayableAmount =
+            Integer.MAX_VALUE - Integer.MAX_VALUE % 5L;
 
-        if (r < 0.8)
-            return variants.get(0);
+        if (price >= maxPayableAmount) {
+            throw new IllegalArgumentException(
+                "Price is too large: " + price
+            );
+        }
+    }
 
-        if (r < 0.95 && variants.size() > 1)
-            return variants.get(1);
+    public static void main(String[] args) {
 
-        return variants.get(RANDOM.nextInt(variants.size()));
+        Random random = new Random();
+
+        for (int i = 0; i < 1000; i++) {
+
+            // Случайная цена от 1.00 до 1000.00
+            double price = (random.nextInt(100_000) + 100) / 100.0;
+
+            List<Integer> bills = generateBills(price);
+
+            int paidAmount = 0;
+
+            for (int bill : bills) {
+                paidAmount += bill;
+            }
+
+            System.out.printf(
+                "%.2f -> %d %s%n",
+                price,
+                paidAmount,
+                bills
+            );
+        }
     }
 }
-
 
 
 //package com.plagame.game.kassa.utils;
