@@ -315,7 +315,7 @@ public class CashRegister extends Group {
         btnTable.row();
 
         terminalBtnOk = new Button(
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok_up")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok_down"))
         ) {
             @Override
@@ -610,7 +610,7 @@ public class CashRegister extends Group {
         float btnHeight = kassa.getWidth() * 0.15f;
 
         final Button btnOk = new Button(
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok_up")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_ok_down"))
         ) {
             @Override
@@ -655,7 +655,7 @@ public class CashRegister extends Group {
         float btnHeight = kassa.getWidth() * 0.15f;
 
         final Button btnReturn = new Button(
-            new TextureRegionDrawable(ATLAS_1.findRegion("btn_return")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("btn_return_up")),
             new TextureRegionDrawable(ATLAS_1.findRegion("btn_return_down"))
         ) {
             @Override
