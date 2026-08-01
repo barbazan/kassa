@@ -1,5 +1,7 @@
 package com.plagame.game.kassa.utils;
 
+import java.util.Locale;
+
 /**
  * Created by Дмитрий Малышев on 30.04.2026.
  * Email: dmitry.malyshev@gmail.com
@@ -14,18 +16,33 @@ public class NumberFormat {
         if (cost == 0) {
             return "--.--";
         }
-        String strCost = String.valueOf(cost);
-        try {
-            if (cost == (int) cost) {
-                strCost = strCost.substring(0, strCost.indexOf("."));
-            } else {
-                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 3));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        if (cost == (int) cost) {
+            return String.valueOf((int) cost);
         }
-        return strCost;
+
+        return String.format(Locale.US, "%.2f", cost);
     }
+
+//    public static String formatCost(float cost) {
+//        if (cost == 0) {
+//            return "--.--";
+//        }
+//        String strCost = String.valueOf(cost);
+//        try {
+//            if (cost == (int) cost) {
+//                strCost = strCost.substring(0, strCost.indexOf("."));
+//            } else {
+//                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 4));
+//            }
+//            if(strCost.indexOf(".") > 0 && strCost.length() - strCost.indexOf(".") < 3) {
+//                strCost += "0"; // если после запятой один символ, то добавляем еще ноль, типа чтобы было не 23.5 а 23.50
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return strCost;
+//    }
 
     public static String format(long value) {
         if (value < 1000) return String.valueOf(value);

@@ -20,6 +20,7 @@ import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.components.ModelLabel;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.CashPaymentGenerator;
+import com.plagame.game.kassa.utils.NumberFormat;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 import java.util.HashMap;
@@ -152,10 +153,8 @@ public class CashRegister extends Group {
             @Override
             protected String getValue() {
                 float change = payedSum - totalCost; //сдачи сколько нужно
-                if(givingSum == change) {
+                if(givingSum >= change) {
                     setColor(Color.GREEN);
-                } else if(givingSum > totalCost) {
-                    setColor(Color.YELLOW);
                 } else {
                     setColor(Color.YELLOW);
                 }
@@ -408,17 +407,7 @@ public class CashRegister extends Group {
         if(cost == 0) {
             return "--.--";
         }
-        String strCost = String.valueOf(cost);
-        try {
-            if (cost == (int) cost) {
-                strCost = strCost.substring(0, strCost.indexOf("."));
-            } else {
-                strCost = strCost.substring(0, Math.min(strCost.length(), strCost.indexOf(".") + 3));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "$" + strCost;
+        return "$" + NumberFormat.formatCost(cost);
     }
 
     private void moveCameraSlowlyBack() {
@@ -643,6 +632,8 @@ public class CashRegister extends Group {
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 if(isProcessPayment && cardType == 0) {
                     float change = payedSum - totalCost; //сдачи сколько нужно
+                    System.out.println("-----------givingSum = " + givingSum);
+                    System.out.println("-----------change = " + change);
                     if(givingSum >= change) {
                         SoundUtil.playKassaClickSound();
                         User.get().changeDollars(-givingSum); //списать с игрока givingSum
