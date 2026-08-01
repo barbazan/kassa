@@ -16,11 +16,11 @@ public class UserData {
     public int id;
     public String secret;
     public String login;
-    public int location; // локация LocationInfo
-    public long gold; // премиум валюта
     public float dollars; // игровая валюта
+    public int day; // игровой день
     public long lastLoginTime;
     public boolean isAdHide;
+    public boolean isBuyFull;
     public Set<String> purchasedProducts = new HashSet<>(); // запурчайсеные токены
     public List<Purchase> purchaseList = new ArrayList<>(); // оплаченые покупки
     public List<LeaderboardEntry> ratingMaxDollars = new ArrayList<>(); // рейтинг
@@ -30,10 +30,11 @@ public class UserData {
         this.id = user.id;
         this.secret = user.secret;
         this.login = user.login;
-        this.location = user.location;
         this.dollars = user.dollars;
+        this.day = user.day;
         this.lastLoginTime = user.lastLoginTime;
         this.isAdHide = user.isAdHide;
+        this.isBuyFull = user.isBuyFull;
         this.buyedProducts = user.buyedProducts;
         this.purchasedProducts = user.purchasedProducts;
         return this;

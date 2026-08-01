@@ -27,6 +27,7 @@ public class User {
     public String secret = "";
     public String login = "";
     public int location = 1; // локация LocationInfo
+    public int day = 1; // игровая валюта
     public float dollars = 0; // игровая валюта
     public long lastSaveTime = System.currentTimeMillis(); // последнее время сохранения, чтобы часто не сохранять
     public long lastLoginTime = System.currentTimeMillis();
@@ -36,6 +37,7 @@ public class User {
     public HashSet<String> purchasedProducts = new HashSet<>();
     public long loginDayCount;
     public boolean isAdHide;
+    public boolean isBuyFull;
     public Map<String, Integer> rankMap = new HashMap<>(); // никуда не сохраняем, живет в рамках одной игровой снессии
 
     public User() {
@@ -64,10 +66,11 @@ public class User {
         this.id = userData.id;
         this.secret = userData.secret;
         this.login = userData.login;
-        this.location = userData.location;
         this.dollars = userData.dollars;
+        this.day = userData.day;
         this.lastLoginTime = userData.lastLoginTime;
         this.isAdHide = userData.isAdHide;
+        this.isBuyFull = userData.isBuyFull;
         this.buyedProducts = new HashSet<>(userData.buyedProducts);
         this.purchasedProducts = new HashSet<>(userData.purchasedProducts);
         return this;

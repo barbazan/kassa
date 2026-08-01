@@ -191,6 +191,8 @@ public class ShopScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
+                User.get().day++;
+                User.get().saveUser();
                 GameApplication.get().setNextDayScreen();
                 super.tap(event, x, y, count, button);
             }

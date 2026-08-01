@@ -151,7 +151,16 @@ public enum ProductInfo {
     PRODUCT_INFO_132(132, 2275),
     ;
 
-    public static final List<Integer> START_PRODUCT_LIST = Arrays.asList(PRODUCT_INFO_1.type, PRODUCT_INFO_2.type, PRODUCT_INFO_3.type, PRODUCT_INFO_4.type, PRODUCT_INFO_5.type, PRODUCT_INFO_6.type, PRODUCT_INFO_7.type, PRODUCT_INFO_8.type);
+    public static final List<Integer> START_PRODUCT_LIST = Arrays.asList(
+        PRODUCT_INFO_1.type, PRODUCT_INFO_2.type, PRODUCT_INFO_3.type, PRODUCT_INFO_4.type,
+        PRODUCT_INFO_5.type, PRODUCT_INFO_6.type, PRODUCT_INFO_7.type, PRODUCT_INFO_8.type
+    );
+    public static final List<Integer> UNLOCK_PRODUCT_LIST = Arrays.asList(
+        PRODUCT_INFO_1.type, PRODUCT_INFO_2.type, PRODUCT_INFO_3.type, PRODUCT_INFO_4.type,
+        PRODUCT_INFO_5.type, PRODUCT_INFO_6.type, PRODUCT_INFO_7.type, PRODUCT_INFO_8.type,
+        PRODUCT_INFO_9.type, PRODUCT_INFO_10.type, PRODUCT_INFO_11.type, PRODUCT_INFO_12.type,
+        PRODUCT_INFO_13.type, PRODUCT_INFO_14.type, PRODUCT_INFO_15.type, PRODUCT_INFO_16.type
+    );
     public final int type;
     public final float cost;
     private TextureRegion textureRegion;

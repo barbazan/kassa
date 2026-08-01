@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
+import com.plagame.game.kassa.beans.User;
 
 /**
  * Created by Дмитрий Малышев on 27.07.2026.
@@ -26,7 +27,7 @@ public class NextDayScreen extends BaseScreen {
 
     private void init() {
         stage.clear();
-        Label label = new Label("ДЕНЬ " + (1 + GameConfig.random.nextInt(20)), new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N    todo настоящий день
+        Label label = new Label("ДЕНЬ " + User.get().day, new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
         System.out.println("label = " + label);
         label.setAlignment(Align.center);
         label.setPosition(stage.getWidth() / 2 - label.getWidth() / 2, stage.getHeight() / 2 - label.getHeight() / 2);

@@ -48,6 +48,9 @@ public class HeaderPanel extends Table {
 
         innerTable.add().expandX().fill();
 
+        Group dayGroup = createDayStat();
+        innerTable.add(dayGroup).size(dayGroup.getWidth(), dayGroup.getHeight()).align(Align.left).pad(pad).padRight(pad * 3).fill();
+
         Group dollarsGroup = createStatItem("icon_dollars", () -> User.get().getDollars());
         dollarsGroup.addListener(new ActorGestureListener() {
             @Override
@@ -73,6 +76,26 @@ public class HeaderPanel extends Table {
         add(innerTable).align(Align.topRight).pad(pad).padTop(0).expandX().fill();
 
         row();
+    }
+
+    private Group createDayStat() {
+        Group group = new Group();
+        float width = GameApplication.get().minScreenSize * 0.28f;
+        group.setSize(width, iconSize * 0.8f);
+        Image bgImage = new Image(ATLAS_1.findRegion("title_bg"));
+        bgImage.setSize(group.getWidth(), group.getHeight());
+        group.addActor(bgImage);
+        Label label = new ModelLabel(new Label.LabelStyle(FONT_HEADER, Color.BLACK)) {
+            @Override
+            protected String getValue() {
+                return "ДЕНЬ " + User.get().day;
+            }
+
+        };
+        label.setAlignment(Align.center);
+        label.setPosition(group.getWidth() / 2 - label.getWidth() / 2, group.getHeight() / 2 - label.getHeight() / 2);
+        group.addActor(label);
+        return group;
     }
 
     private Group createStatItem(String iconName, Supplier<Float> valueSupplier) {
