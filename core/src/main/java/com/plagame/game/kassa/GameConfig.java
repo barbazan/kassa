@@ -17,7 +17,7 @@ public class GameConfig {
     public static final float DEFAULT_CLICK_VOLUME = 0.2f;
 
     public static final boolean GUI_DEBUG = false;
-    public static final boolean SHOW_FPS = true;
+    public static final boolean SHOW_FPS = false;
     public static final boolean RELEASE_BUILD = false;
     public static final String LEADERBOARD_MAX_DOLLARS_NAME = "maxDollars5";
 
