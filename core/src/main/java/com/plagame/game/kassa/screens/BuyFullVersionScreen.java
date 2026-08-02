@@ -29,12 +29,11 @@ public class BuyFullVersionScreen extends BaseScreen {
 
     private void init() {
         addBackground();
-        initButton();
+        initButtons();
     }
 
     private void addBackground() {
         TextureRegion textureRegion = new TextureRegion(new Texture("images/full_version_bg.jpg"));
-        System.out.println("------------textureRegion = " + textureRegion);
         Image bgImage = new Image(textureRegion);
         float scaleX = GameApplication.get().screenWidth / textureRegion.getRegionWidth();
         float scaleY = GameApplication.get().screenHeight / textureRegion.getRegionHeight();
@@ -44,8 +43,22 @@ public class BuyFullVersionScreen extends BaseScreen {
         stage.addActor(bgImage);
     }
 
-    private void initButton() {
+    private void initButtons() {
         float pad = GameApplication.get().minScreenSize / 20;
+        TextureRegionDrawable buttonCloseTexture = new TextureRegionDrawable(ATLAS_1.findRegion("button_close"));
+        Button buttonClose = new Button(new TextureRegionDrawable(ATLAS_1.findRegion("button_close")));
+        buttonClose.setSize(pad * 4, pad * 4);
+        buttonClose.setPosition(pad, GameApplication.get().screenHeight - buttonClose.getHeight() - pad);
+        buttonClose.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                GameApplication.get().setGameScreen();
+                super.tap(event, x, y, count, button);
+            }
+        });
+        stage.addActor(buttonClose);
+
         TextureRegionDrawable buttonGray = new TextureRegionDrawable(ATLAS_1.findRegion("button_gray"));
         TextureRegionDrawable buttonGreen = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
         TextureRegionDrawable buttonGreenDown = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
