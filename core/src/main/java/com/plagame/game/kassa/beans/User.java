@@ -28,7 +28,7 @@ public class User {
     public String login = "";
     public int location = 1; // локация LocationInfo
     public int day = 1; // игровая валюта
-    public float dollars = 0; // игровая валюта
+    public float dollars = 250; // игровая валюта
     public long lastSaveTime = System.currentTimeMillis(); // последнее время сохранения, чтобы часто не сохранять
     public long lastLoginTime = System.currentTimeMillis();
     public boolean soundOn = true;

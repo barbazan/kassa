@@ -190,11 +190,7 @@ public enum ProductInfo {
     }
 
     public static ProductInfo getRandom() {
-        if(User.get().isFullVersionBuyed) {
-            return getRandom(Arrays.asList(values()));
-        } else {
-            return getRandom(User.get().buyedProducts);
-        }
+        return getRandom(User.get().buyedProducts);
     }
 
     private static ProductInfo getRandom(Set<Integer> productList) {

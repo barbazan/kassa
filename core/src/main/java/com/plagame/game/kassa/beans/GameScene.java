@@ -83,8 +83,8 @@ public class GameScene extends Group {
     }
 
     public void nextDay() {
-        List<CustomerInfo> customerList = createCustomerList();
-        List<ProductInfo> productList = createProductList();
+        List<CustomerInfo> customerList = createFirstCustomerList();
+        List<ProductInfo> productList = createFirstProductList();
         init(customerList, productList);
     }
 
@@ -99,10 +99,10 @@ public class GameScene extends Group {
         }
     }
 
-    private List<CustomerInfo> createCustomerList() {
+    private List<CustomerInfo> createFirstCustomerList() {
         Set<CustomerInfo> set = new HashSet<>();
         int maxCount = Math.min(User.get().day + 2, 6);
-        int rndCount = 3 + GameConfig.random.nextInt(4);
+        int rndCount = 4 + GameConfig.random.nextInt(4) + GameConfig.random.nextInt(4);
         int count = Math.min(rndCount, maxCount);
         while(set.size() < count) {
             try {
@@ -114,9 +114,11 @@ public class GameScene extends Group {
         return new ArrayList<>(set);
     }
 
-    private List<ProductInfo> createProductList() {
+    private List<ProductInfo> createFirstProductList() {
         List<ProductInfo> productList = new ArrayList<>();
-        int prodCount = 3 + GameConfig.random.nextInt(6);
+        int maxCount = Math.min(User.get().day + 4, 10);
+        int rndCount = 4 + GameConfig.random.nextInt(4) + GameConfig.random.nextInt(4);
+        int prodCount = Math.min(rndCount, maxCount);
         for(int i = 0; i < prodCount; i++) {
             ProductInfo productInfo = ProductInfo.getRandom();
             productList.add(productInfo);

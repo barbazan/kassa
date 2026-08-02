@@ -12,6 +12,7 @@ import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.SoundUtil;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -112,8 +113,11 @@ public class ProductCortege extends Group {
     }
 
     public void nextProducts() {
-        List<ProductInfo> newProductList = new LinkedList<>();
-        for(int i = 0; i < 5; i++) {
+        List<ProductInfo> newProductList = new ArrayList<>();
+        int maxCount = Math.min(User.get().day + 4, 10);
+        int rndCount = 4 + GameConfig.random.nextInt(4) + GameConfig.random.nextInt(4);
+        int prodCount = Math.min(rndCount, maxCount);
+        for(int i = 0; i < prodCount; i++) {
             ProductInfo productInfo = ProductInfo.getRandom();
             newProductList.add(productInfo);
         }

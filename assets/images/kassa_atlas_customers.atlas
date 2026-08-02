@@ -6,322 +6,295 @@ filter: Nearest,Nearest
 repeat: none
 customer_1
   rotate: false
-  xy: 434, 23
-  size: 294, 885
-  orig: 294, 885
+  xy: 1150, 1399
+  size: 431, 907
+  orig: 431, 907
   offset: 0, 0
   index: -1
 customer_10
   rotate: false
-  xy: 3671, 3258
+  xy: 3429, 3129
   size: 292, 800
   orig: 292, 800
   offset: 0, 0
   index: -1
+customer_11
+  rotate: false
+  xy: 1, 2359
+  size: 276, 800
+  orig: 276, 800
+  offset: 0, 0
+  index: -1
 customer_12
   rotate: false
-  xy: 1920, 3058
+  xy: 3195, 1267
   size: 463, 1000
   orig: 463, 1000
   offset: 0, 0
   index: -1
 customer_13
   rotate: false
-  xy: 1, 1680
+  xy: 1087, 210
   size: 563, 1112
   orig: 563, 1112
   offset: 0, 0
   index: -1
 customer_14
   rotate: false
-  xy: 1350, 1780
+  xy: 2222, 137
   size: 519, 1164
   orig: 519, 1164
   offset: 0, 0
   index: -1
 customer_15
   rotate: false
-  xy: 2385, 3070
+  xy: 2848, 1281
   size: 345, 988
   orig: 345, 988
   offset: 0, 0
   index: -1
 customer_16
   rotate: false
-  xy: 1621, 68
+  xy: 1776, 2296
   size: 309, 831
   orig: 309, 831
   offset: 0, 0
   index: -1
 customer_17
   rotate: false
-  xy: 2989, 2230
+  xy: 2551, 1303
   size: 295, 970
   orig: 295, 970
   offset: 0, 0
   index: -1
 customer_18
   rotate: false
-  xy: 2402, 2098
+  xy: 1958, 1313
   size: 304, 970
   orig: 304, 970
   offset: 0, 0
   index: -1
 customer_19
   rotate: false
-  xy: 2556, 272
+  xy: 2264, 1312
   size: 285, 970
   orig: 285, 970
   offset: 0, 0
   index: -1
 customer_2
   rotate: false
-  xy: 2246, 901
-  size: 308, 970
-  orig: 308, 970
+  xy: 859, 1419
+  size: 289, 910
+  orig: 289, 910
   offset: 0, 0
   index: -1
 customer_20
   rotate: false
-  xy: 1350, 2946
+  xy: 1652, 199
   size: 568, 1112
   orig: 568, 1112
   offset: 0, 0
   index: -1
 customer_21
   rotate: false
-  xy: 1871, 901
+  xy: 1583, 1324
   size: 373, 970
   orig: 373, 970
   offset: 0, 0
   index: -1
 customer_22
   rotate: false
-  xy: 3336, 3258
+  xy: 1540, 3129
   size: 333, 800
   orig: 333, 800
   offset: 0, 0
   index: -1
 customer_23
   rotate: false
-  xy: 2732, 3202
+  xy: 3165, 2271
   size: 271, 856
   orig: 271, 856
   offset: 0, 0
   index: -1
 customer_24
   rotate: false
-  xy: 2708, 2225
-  size: 279, 843
-  orig: 279, 843
+  xy: 1875, 3129
+  size: 290, 800
+  orig: 290, 800
   offset: 0, 0
   index: -1
 customer_25
   rotate: false
-  xy: 1478, 920
+  xy: 3438, 2269
   size: 304, 858
   orig: 304, 858
   offset: 0, 0
   index: -1
 customer_26
   rotate: false
-  xy: 1121, 907
+  xy: 502, 1458
   size: 355, 871
   orig: 355, 871
   offset: 0, 0
   index: -1
 customer_27
   rotate: false
-  xy: 1, 910
+  xy: 254, 3161
   size: 512, 768
   orig: 512, 768
   offset: 0, 0
   index: -1
 customer_28
   rotate: false
-  xy: 730, 108
+  xy: 2167, 3129
   size: 388, 800
   orig: 388, 800
   offset: 0, 0
   index: -1
+customer_29
+  rotate: false
+  xy: 2557, 3129
+  size: 258, 800
+  orig: 258, 800
+  offset: 0, 0
+  index: -1
 customer_3
   rotate: false
-  xy: 1932, 80
-  size: 312, 819
-  orig: 312, 819
+  xy: 2418, 2284
+  size: 279, 843
+  orig: 279, 843
   offset: 0, 0
   index: -1
 customer_30
   rotate: false
-  xy: 3632, 2456
+  xy: 3111, 3129
   size: 316, 800
   orig: 316, 800
   offset: 0, 0
   index: -1
+customer_31
+  rotate: false
+  xy: 1, 3168
+  size: 251, 761
+  orig: 251, 761
+  offset: 0, 0
+  index: -1
 customer_32
   rotate: false
-  xy: 3022, 1413
+  xy: 1165, 2314
   size: 317, 815
   orig: 317, 815
   offset: 0, 0
   index: -1
 customer_33
   rotate: false
-  xy: 1, 2794
+  xy: 3417, 1
   size: 673, 1264
   orig: 673, 1264
   offset: 0, 0
   index: -1
 customer_34
   rotate: false
-  xy: 3286, 2414
+  xy: 279, 2359
   size: 344, 800
   orig: 344, 800
   offset: 0, 0
   index: -1
 customer_35
   rotate: false
-  xy: 676, 2794
+  xy: 2743, 1
   size: 672, 1264
   orig: 672, 1264
   offset: 0, 0
   index: -1
 customer_36
   rotate: false
-  xy: 2843, 423
+  xy: 1484, 2308
   size: 290, 819
   orig: 290, 819
   offset: 0, 0
   index: -1
 customer_37
   rotate: false
-  xy: 2246, 99
+  xy: 2817, 3129
   size: 292, 800
   orig: 292, 800
   offset: 0, 0
   index: -1
 customer_38
   rotate: false
-  xy: 3005, 3216
+  xy: 2087, 2285
   size: 329, 842
   orig: 329, 842
   offset: 0, 0
   index: -1
 customer_39
   rotate: false
-  xy: 3563, 812
+  xy: 1196, 3131
   size: 342, 798
   orig: 342, 798
   offset: 0, 0
   index: -1
 customer_4
   rotate: false
-  xy: 2556, 1244
+  xy: 2699, 2275
   size: 464, 852
   orig: 464, 852
   offset: 0, 0
   index: -1
 customer_40
   rotate: false
-  xy: 566, 910
+  xy: 3744, 2262
   size: 351, 865
   orig: 351, 865
   offset: 0, 0
   index: -1
 customer_41
   rotate: false
-  xy: 3135, 615
+  xy: 768, 3133
   size: 426, 796
   orig: 426, 796
   offset: 0, 0
   index: -1
-customer_43
+customer_42
   rotate: false
-  xy: 3563, 10
-  size: 282, 800
-  orig: 282, 800
-  offset: 0, 0
-  index: -1
-customer_44
-  rotate: false
-  xy: 3341, 1612
+  xy: 3723, 3129
   size: 319, 800
   orig: 319, 800
   offset: 0, 0
   index: -1
-customer_45
+customer_43
   rotate: false
-  xy: 3662, 1654
-  size: 290, 800
-  orig: 290, 800
+  xy: 881, 2331
+  size: 282, 800
+  orig: 282, 800
+  offset: 0, 0
+  index: -1
+customer_5
+  rotate: false
+  xy: 625, 2331
+  size: 254, 800
+  orig: 254, 800
   offset: 0, 0
   index: -1
 customer_6
   rotate: false
-  xy: 1120, 44
+  xy: 1, 1496
   size: 499, 861
   orig: 499, 861
   offset: 0, 0
   index: -1
 customer_7
   rotate: false
-  xy: 1871, 1873
+  xy: 556, 346
   size: 529, 1071
   orig: 529, 1071
   offset: 0, 0
   index: -1
 customer_8
   rotate: false
-  xy: 566, 1777
+  xy: 1, 441
   size: 553, 1015
   orig: 553, 1015
-  offset: 0, 0
-  index: -1
-customer_9
-  rotate: false
-  xy: 1, 1
-  size: 431, 907
-  orig: 431, 907
-  offset: 0, 0
-  index: -1
-customer_42
-  rotate: false
-  xy: 1, 1
-  size: 431, 907
-  orig: 431, 907
-  offset: 0, 0
-  index: -1
-
-kassa_atlas_customers2.png
-size: 2048,1024
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-customer_11
-  rotate: false
-  xy: 1, 1
-  size: 276, 800
-  orig: 276, 800
-  offset: 0, 0
-  index: -1
-customer_29
-  rotate: false
-  xy: 279, 1
-  size: 258, 800
-  orig: 258, 800
-  offset: 0, 0
-  index: -1
-customer_31
-  rotate: false
-  xy: 795, 40
-  size: 251, 761
-  orig: 251, 761
-  offset: 0, 0
-  index: -1
-customer_5
-  rotate: false
-  xy: 539, 1
-  size: 254, 800
-  orig: 254, 800
   offset: 0, 0
   index: -1

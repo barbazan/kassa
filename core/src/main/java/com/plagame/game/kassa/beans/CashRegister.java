@@ -635,8 +635,8 @@ public class CashRegister extends Group {
                 float change = payedSum - totalCost; //сдачи сколько нужно
                 if(isProcessPayment && cardType == 0 && givingSum + EPS >= change) {
                     SoundUtil.playKassaClickSound();
-                    User.get().changeDollars(-givingSum); //списать с игрока givingSum
                     User.get().changeDollars(payedSum); // начислить игроку payedSum
+                    User.get().changeDollars(-givingSum); //списать с игрока givingSum
                     User.get().saveUser();
                     finishPayment();
                     GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
