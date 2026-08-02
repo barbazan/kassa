@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.screens.BuyFullVersionScreen;
 import com.plagame.game.kassa.screens.DayCompleteScreen;
 import com.plagame.game.kassa.screens.NextDayScreen;
@@ -96,7 +97,9 @@ public class GameApplication extends Game {
             bgMusic = assetManager.get(MUSIC_BG_FILENAME, Music.class);
             bgMusic.setVolume(DEFAULT_MUSIC_VOLUME);
             bgMusic.setLooping(true);
-            GameApplication.get().bgMusic.play();
+            if(User.get().musicOn) {
+                GameApplication.get().bgMusic.play();
+            }
         }
     }
 
@@ -256,13 +259,17 @@ public class GameApplication extends Game {
     @Override
     public void pause() {
         super.pause();
-        GameApplication.get().bgMusic.pause();
+        if(User.get().musicOn) {
+            GameApplication.get().bgMusic.pause();
+        }
     }
 
     @Override
     public void resume() {
         super.resume();
-        GameApplication.get().bgMusic.play();
+        if(User.get().musicOn) {
+            GameApplication.get().bgMusic.play();
+        }
     }
 
     @Override

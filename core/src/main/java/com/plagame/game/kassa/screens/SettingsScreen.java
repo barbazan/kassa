@@ -8,8 +8,10 @@ import static com.plagame.game.kassa.Resources.ATLAS_1;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -30,7 +32,6 @@ public class SettingsScreen extends BaseScreen {
     private static final float MIN_NAME_LENGTH = 2;
     private static final float MAX_NAME_LENGTH = 32;
 
-
     private TextField loginEditField;
     private float pad;
 
@@ -44,6 +45,7 @@ public class SettingsScreen extends BaseScreen {
         float tableHeight = GameApplication.get().screenHeight;
         pad = tableWidth / 40;
         Table table = new Table();
+//        table.setDebug(true);
         table.setSize(tableWidth, tableHeight);
         table.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("bar_bg")));
         table.align(Align.top);
@@ -112,6 +114,18 @@ public class SettingsScreen extends BaseScreen {
         table.add(nickButton).expandX().pad(pad).padTop(0);
         table.row();
 
+        float imageSize = tableWidth / 5;
+        Table t = new Table();
+
+        Group musicBtn = createMusicBtn(imageSize);
+        t.add(musicBtn).size(musicBtn.getWidth()).align(Align.right).pad(pad);
+        Group soundBtn = createSoundBtn(imageSize);
+        t.add(soundBtn).size(soundBtn.getWidth()).align(Align.left).pad(pad);
+
+        table.add(t).align(Align.center).expandX();
+
+        table.row();
+
         table.add().expand().fill();
         table.row();
 
@@ -119,6 +133,8 @@ public class SettingsScreen extends BaseScreen {
         table.add(closeButton).expandX().pad(pad);
         table.row();
 
+        table.setSize(GameApplication.get().minScreenSize, GameApplication.get().screenHeight);
+        table.setPosition(GameApplication.get().screenWidth / 2 - tableWidth / 2, GameApplication.get().screenHeight / 2 - tableHeight / 2);
         stage.addActor(table);
     }
 
@@ -145,7 +161,6 @@ public class SettingsScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                GameApplication.get().getGameScreen().uiStage.checkFullscreenAdv();
                 GameApplication.get().setGameScreen();
             }
         });
@@ -178,4 +193,56 @@ public class SettingsScreen extends BaseScreen {
         return redButton;
     }
 
+    private Group createMusicBtn(float imageSize) {
+        Group musicGroup = new Group();
+        musicGroup.setSize(imageSize, imageSize);
+        Image musicOnImage = new Image(ATLAS_1.findRegion("music_on"));
+        musicOnImage.setSize(imageSize, imageSize);
+        musicGroup.addActor(musicOnImage);
+        Image musicOffImage = new Image(ATLAS_1.findRegion("music_off"));
+        musicOffImage.setSize(imageSize, imageSize);
+        musicGroup.addActor(musicOffImage);
+        musicGroup.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                User.get().musicOn = !User.get().musicOn;
+                User.get().saveUser();
+                if(User.get().musicOn) {
+                    GameApplication.get().bgMusic.play();
+                } else {
+                    GameApplication.get().bgMusic.pause();
+                }
+                musicOnImage.setVisible(User.get().musicOn);
+                musicOffImage.setVisible(!User.get().musicOn);
+            }
+        });
+        musicOnImage.setVisible(User.get().musicOn);
+        musicOffImage.setVisible(!User.get().musicOn);
+        return musicGroup;
+    }
+
+    private Group createSoundBtn(float imageSize) {
+        Group musicGroup = new Group();
+        musicGroup.setSize(imageSize, imageSize);
+        Image musicOnImage = new Image(ATLAS_1.findRegion("sound_on"));
+        musicOnImage.setSize(imageSize, imageSize);
+        musicGroup.addActor(musicOnImage);
+        Image musicOffImage = new Image(ATLAS_1.findRegion("sound_off"));
+        musicOffImage.setSize(imageSize, imageSize);
+        musicGroup.addActor(musicOffImage);
+        musicGroup.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                User.get().soundOn = !User.get().soundOn;
+                User.get().saveUser();
+                musicOnImage.setVisible(User.get().soundOn);
+                musicOffImage.setVisible(!User.get().soundOn);
+            }
+        });
+        musicOnImage.setVisible(User.get().soundOn);
+        musicOffImage.setVisible(!User.get().soundOn);
+        return musicGroup;
+    }
 }

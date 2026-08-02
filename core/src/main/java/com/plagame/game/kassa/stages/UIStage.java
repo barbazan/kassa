@@ -12,9 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
-import com.plagame.game.kassa.components.HeaderPanel;
 import com.plagame.game.kassa.components.RatingDialog;
-import com.plagame.game.kassa.components.ShopGoldDialog;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 import java.util.ArrayList;
@@ -28,12 +26,10 @@ public class UIStage extends BaseStage {
 
     public boolean isTouched;
     private boolean isDialog;
-    public ShopGoldDialog shopGoldDialog;
     public RatingDialog ratingDialog;
     private Image noAdsIcon;
     private final List<Rectangle> buttonsRectangleList = new ArrayList<>();
     private boolean isPurchasesChecked;
-    public HeaderPanel headerPanel;
 
     public UIStage() {
         super();
@@ -41,18 +37,12 @@ public class UIStage extends BaseStage {
     }
 
     private void init() {
-        initHeaderPanel();
         initButtons();
     }
 
     public void resize() {
         clear();
         init();
-    }
-
-    private void initHeaderPanel() {
-        headerPanel = new HeaderPanel();
-        addActor(headerPanel);
     }
 
     private void initButtons() {
@@ -75,7 +65,6 @@ public class UIStage extends BaseStage {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
                     SoundUtil.playClickSound();
-                    showShopGoldDialog();
                 }
             });
             noAdsIcon.addAction(
@@ -120,13 +109,6 @@ public class UIStage extends BaseStage {
         // todo
     }
 
-    public void showShopGoldDialog() {
-        hideAllDialogs();
-        shopGoldDialog = new ShopGoldDialog();
-        addActor(shopGoldDialog);
-        isDialog = true;
-    }
-
     public void showRatingDialog() {
         hideAllDialogs();
         GameApplication.get().networkWebSocketClient.sendSaveUserPacket();
@@ -134,14 +116,6 @@ public class UIStage extends BaseStage {
         ratingDialog = new RatingDialog();
         addActor(ratingDialog);
         isDialog = true;
-    }
-
-    public void hideShopGoldDialog() {
-        if(shopGoldDialog != null) {
-            shopGoldDialog.setVisible(false);
-            shopGoldDialog = null;
-            isDialog = false;
-        }
     }
 
     public void hideRatingDialog() {
@@ -158,7 +132,6 @@ public class UIStage extends BaseStage {
     }
 
     private void hideAllDialogs() {
-        hideShopGoldDialog();
         hideRatingDialog();
     }
 

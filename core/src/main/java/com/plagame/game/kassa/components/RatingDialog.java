@@ -66,9 +66,9 @@ public class RatingDialog extends Table {
             @Override
             public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 SoundUtil.playClickSound();
-                GameApplication.get().getGameScreen().uiStage.hideRatingDialog();
-                GameApplication.get().getGameScreen().uiStage.refresh();
-                GameApplication.get().getGameScreen().uiStage.checkFullscreenAdv();
+//                GameApplication.get().getGameScreen().uiStage.hideRatingDialog();
+//                GameApplication.get().getGameScreen().uiStage.refresh();
+//                GameApplication.get().getGameScreen().uiStage.checkFullscreenAdv();
             }
         });
         closeImage.setSize(imageSize, imageSize);

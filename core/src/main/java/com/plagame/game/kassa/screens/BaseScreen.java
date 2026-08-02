@@ -32,7 +32,7 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        stage.act();
+        stage.act(delta);
         stage.draw();
     }
 

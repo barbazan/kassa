@@ -5,6 +5,7 @@ import static com.plagame.game.kassa.GameConfig.SHOW_FPS;
 import com.badlogic.gdx.InputProcessor;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.GameScene;
+import com.plagame.game.kassa.components.HeaderPanel;
 import com.plagame.game.kassa.stages.UIStage;
 import com.plagame.game.kassa.utils.AssetUtil;
 import com.plagame.game.kassa.utils.FPSRate;
@@ -15,14 +16,23 @@ import com.plagame.game.kassa.utils.FPSRate;
  */
 public class GameScreen extends BaseScreen {
 
-    public UIStage uiStage;
+//    public UIStage uiStage;
     private FPSRate fpsRate;
     public GameScene gameScene;
+    public HeaderPanel headerPanel;
 
     public GameScreen() {
         super();
-        uiStage = new UIStage();
-        gameScene = new GameScene();
+        init();
+    }
+
+    private void init() {
+        initHeaderPanel();
+//        uiStage = new UIStage();
+        if(gameScene == null) {
+            gameScene = new GameScene();
+        }
+        gameScene.resize();
         stage.addActor(gameScene);
         if(SHOW_FPS && GameApplication.get().FONT_VERY_SMALL != null) {
             fpsRate = new FPSRate();
@@ -34,7 +44,7 @@ public class GameScreen extends BaseScreen {
         AssetUtil.clearScreen();
         super.render(delta); // тут сцена отрисовывается на стейдже экторами
 
-        uiStage.render(delta);
+//        uiStage.render(delta);
 
         GameApplication.get().batchBegin();
         if(fpsRate != null) {
@@ -52,7 +62,8 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void dispose() {
-        uiStage.dispose();
+//        uiStage.dispose();
+        stage.dispose();
         if(fpsRate != null) {
             fpsRate.dispose();
         }
@@ -61,9 +72,7 @@ public class GameScreen extends BaseScreen {
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        gameScene.resize();
-        uiStage.clear();
-        uiStage = new UIStage();
+        init();
     }
 
 //    private void checkConnect() {
@@ -71,4 +80,10 @@ public class GameScreen extends BaseScreen {
 //            GameApplication.get().networkWebSocketClient.tryReconnect();
 //        }
 //    }
+
+    private void initHeaderPanel() {
+        headerPanel = new HeaderPanel();
+        stage.addActor(headerPanel);
+    }
+
 }
