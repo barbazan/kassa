@@ -1,6 +1,6 @@
 package com.plagame.game.kassa.screens;
 
-import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
+import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG_TOYZ;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
-import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.beans.User;
 
 /**
@@ -27,7 +26,7 @@ public class NextDayScreen extends BaseScreen {
 
     private void init() {
         stage.clear();
-        Label label = new Label("ДЕНЬ " + User.get().day, new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
+        Label label = new Label("ДЕНЬ " + User.get().day, new Label.LabelStyle(FONT_VERY_BIG_TOYZ, Color.WHITE)); //todo I18N
         System.out.println("label = " + label);
         label.setAlignment(Align.center);
         label.setPosition(stage.getWidth() / 2 - label.getWidth() / 2, stage.getHeight() / 2 - label.getHeight() / 2);

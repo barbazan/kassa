@@ -1,6 +1,7 @@
 package com.plagame.game.kassa.screens;
 
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
+import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG_TOYZ;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -25,7 +26,7 @@ public class DayCompleteScreen extends BaseScreen {
 
     private void init() {
         stage.clear();
-        Label label = new Label("ДЕНЬ ЗАВЕРШЕН", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
+        Label label = new Label("ДЕНЬ ЗАВЕРШЕН", new Label.LabelStyle(FONT_VERY_BIG_TOYZ, Color.WHITE)); //todo I18N
         label.setAlignment(Align.center);
         label.setPosition(stage.getWidth() / 2 - label.getWidth() / 2, stage.getHeight() / 2 - label.getHeight() / 2);
         label.addAction(

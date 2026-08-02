@@ -59,6 +59,7 @@ public class GameApplication extends Game {
     private BuyFullVersionScreen buyFullVersionScreen;
     private SettingsScreen settingsScreen;
     public static BitmapFont FONT_DEFAULT, FONT_HEADER, FONT_DIALOG_HEADER, FONT_DIALOG_BUTTON, FONT_RATING, FONT_BIG, FONT_VERY_BIG, FONT_SMALL, FONT_VERY_SMALL;
+    public static BitmapFont FONT_BIG_TOYZ, FONT_VERY_BIG_TOYZ;
     public int exceptionCount;
     public Music bgMusic;
 
@@ -120,6 +121,7 @@ public class GameApplication extends Game {
     private void goToFirstScreen() {
 //        setSettingsScreen();
 //        setShopScreen();
+//        setProductPlacementScreen();
         setGameScreen();
     }
 
@@ -209,6 +211,8 @@ public class GameApplication extends Game {
         FONT_DIALOG_BUTTON = FONT_DEFAULT;
         FONT_RATING = FONT_DEFAULT;
         FONT_VERY_BIG = fontGenerator.generateVeryBigBitmapFont(1, Color.WHITE);
+        FONT_BIG_TOYZ = fontGenerator.generateBigToyzBitmapFont(1, Color.WHITE);
+        FONT_VERY_BIG_TOYZ = fontGenerator.generateVeryBigToyzBitmapFont(1, Color.WHITE);
         FONT_SMALL = fontGenerator.generateSmallBitmapFont(1, Color.WHITE);;
         FONT_VERY_SMALL = FONT_DEFAULT;
     }

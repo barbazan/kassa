@@ -1,9 +1,9 @@
 package com.plagame.game.kassa.screens;
 
-import static com.plagame.game.kassa.GameApplication.FONT_BIG;
+import static com.plagame.game.kassa.GameApplication.FONT_BIG_TOYZ;
 import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_SMALL;
-import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG;
+import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG_TOYZ;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_2_COLOR;
 
@@ -50,7 +50,7 @@ public class ShopScreen extends BaseScreen {
         dialogTable.setSize(width, height);
         dialogTable.padBottom(pad * 4);
 
-        Label totalLabel = new Label("МАГАЗИН", new Label.LabelStyle(FONT_VERY_BIG, Color.WHITE)); //todo I18N
+        Label totalLabel = new Label("МАГАЗИН", new Label.LabelStyle(FONT_VERY_BIG_TOYZ, Color.WHITE)); //todo I18N
         totalLabel.setAlignment(Align.center);
         float padTop = GameApplication.get().isPortrait() ? pad * 3 : pad / 2;
         dialogTable.add(totalLabel).align(Align.left).pad(pad / 2).padTop(padTop).fill();
@@ -188,7 +188,7 @@ public class ShopScreen extends BaseScreen {
             new TextureRegionDrawable(textureRegion),
             new TextureRegionDrawable(textureRegion)
         );
-        Label label = new Label("СТАРТ", new Label.LabelStyle(FONT_BIG, Color.WHITE)); //todo I18N
+        Label label = new Label("СТАРТ", new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY)); //todo I18N
         label.setAlignment(Align.center);
         float w = label.getWidth() * 1.5f;
         float h = w * textureRegion.getRegionHeight() / textureRegion.getRegionWidth();
@@ -238,8 +238,8 @@ public class ShopScreen extends BaseScreen {
     private Button createRedBtn(float groupHeight) {
         float btnHeight = groupHeight * 0.95f;
         TextureRegionDrawable buttonGray = new TextureRegionDrawable(ATLAS_1.findRegion("button_gray"));
-        TextureRegionDrawable buttonGreen = new TextureRegionDrawable(ATLAS_1.findRegion("button_red"));
-        TextureRegionDrawable buttonGreenDown = new TextureRegionDrawable(ATLAS_1.findRegion("button_red"));
+        TextureRegionDrawable buttonGreen = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
+        TextureRegionDrawable buttonGreenDown = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
         Button.ButtonStyle style = new Button.ButtonStyle();
         style.up = buttonGreen;     // по умолчанию
         style.down = buttonGreenDown;     // по умолчанию
@@ -249,7 +249,7 @@ public class ShopScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-//                GameApplication.get().setBuyFullVersionScreen();
+                GameApplication.get().setBuyFullVersionScreen();
                 super.tap(event, x, y, count, button);
             }
         });
@@ -259,7 +259,7 @@ public class ShopScreen extends BaseScreen {
 
         Label label = new Label("купить" +
             "\n полную" +
-            "\n версию", new Label.LabelStyle(FONT_SMALL, Color.WHITE)); //todo I18N
+            "\n версию", new Label.LabelStyle(FONT_SMALL, Color.DARK_GRAY)); //todo I18N
         label.setAlignment(Align.center);
         redButton.add(label).align(Align.center).fill();
 
@@ -278,7 +278,7 @@ public class ShopScreen extends BaseScreen {
         image.setPosition(group.getWidth() / 2 - image.getWidth() / 2, group.getHeight() / 2- image.getHeight() / 2);
         group.addActor(image);
 
-        Label label = new Label("ПРОДАНО", new Label.LabelStyle(FONT_SMALL, Color.WHITE)); //todo I18N
+        Label label = new Label("ПРОДАНО", new Label.LabelStyle(FONT_SMALL, Color.DARK_GRAY)); //todo I18N
         label.setAlignment(Align.center);
         label.setPosition(group.getWidth() / 2 - label.getWidth() / 2, group.getHeight() * 0.675f - label.getHeight() / 2);
         group.addActor(label);
