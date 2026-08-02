@@ -111,7 +111,7 @@ public class CashRegister extends Group {
         tableRight.setSize(kassaWidth * 0.75f, kassaHeight);
 
 
-        Label totalLabel = new Label("TOTAL", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        Label totalLabel = new Label("СУММА", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
         totalLabel.setAlignment(Align.center);
         tableRight.add(totalLabel).align(Align.center).pad(btnPad).colspan(3).fill();
         tableRight.row();
@@ -127,7 +127,7 @@ public class CashRegister extends Group {
         tableRight.add(totalCostLabel).align(Align.center).pad(btnPad).colspan(3).fill();
         tableRight.row();
 
-        Label changeTextLabel = new Label("CHANGE", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        Label changeTextLabel = new Label("СДАЧА", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
         changeTextLabel.setAlignment(Align.left);
         tableRight.add(changeTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 7).fill();
 
@@ -146,7 +146,7 @@ public class CashRegister extends Group {
         tableRight.add(changeLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 7).colspan(2).expandX().fill();
         tableRight.row();
 
-        Label givingTextLabel = new Label("GIVING", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        Label givingTextLabel = new Label("", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
         givingTextLabel.setAlignment(Align.left);
         tableRight.add(givingTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 8).fill();
 
@@ -206,7 +206,7 @@ public class CashRegister extends Group {
 //        btnTable.setDebug(true);
         btnTable.setSize(terminalWidth, terminalHeight);
 
-        Label totalLabel = new Label("TOTAL", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK));
+        Label totalLabel = new Label("СУММА", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK));
         totalLabel.setAlignment(Align.center);
         btnTable.add(totalLabel).align(Align.center).pad(btnPad).colspan(3).fill();
         btnTable.row();
