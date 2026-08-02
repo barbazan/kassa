@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.Resources;
 
 /**
@@ -15,15 +16,19 @@ public class LoadingScreen extends BaseScreen {
     public static String IMAGE_LOGO_FILENAME = "images/logo.jpg";
 //    public static String IMAGE_LOGO_2_FILENAME = "images/logo_3.jpg";
 
-    private final Label loading;
-    private final ProgressBar progressBar;
-    private final long startTime;
+    private Label loading;
+    private ProgressBar progressBar;
+    private long startTime;
     private int progress;
 
     public LoadingScreen() {
         super();
-        background = createBgSprite(IMAGE_LOGO_FILENAME);
-//        background = createBgSprite(IMAGE_LOGO_2_FILENAME);
+        init();
+    }
+
+    private void init() {
+        background = createBgSprite(getBgFilename());
+//        background = createBgSprite(IMAGE_LOGO_FILENAME);
         progressBar = new ProgressBar(0, 100, 1, false, skin);
         progressBar.setPosition(0, 0);
         progressBar.setSize(Gdx.graphics.getWidth(), progressBar.getHeight());
@@ -68,4 +73,19 @@ public class LoadingScreen extends BaseScreen {
         skin.dispose();
     }
 
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        init();
+    }
+
+    private String getBgFilename() {
+        if(GameApplication.get().isPortrait()) {
+            int rnd = 1 + GameConfig.random.nextInt(2);
+            return "images/loading_bg_v_" + rnd + ".jpg";
+        } else {
+            int rnd = 1 + GameConfig.random.nextInt(2);
+            return "images/loading_bg_h_" + rnd + ".jpg";
+        }
+    }
 }
