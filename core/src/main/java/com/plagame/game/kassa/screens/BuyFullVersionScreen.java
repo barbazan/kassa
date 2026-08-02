@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 /**
@@ -33,14 +34,26 @@ public class BuyFullVersionScreen extends BaseScreen {
     }
 
     private void addBackground() {
-        TextureRegion textureRegion = new TextureRegion(new Texture("images/full_version_bg.jpg"));
+        TextureRegion textureRegion;
+        if(GameApplication.get().isPortrait()) {
+            int num = 1 + GameConfig.random.nextInt(1);
+            textureRegion = new TextureRegion(new Texture("images/full_version_bg_v_" + num + ".jpg"));
+        } else {
+            int num = 1 + GameConfig.random.nextInt(2);
+            textureRegion = new TextureRegion(new Texture("images/full_version_bg_h_" + num + ".jpg"));
+        }
+        Image bgImage = getImage(textureRegion);
+        stage.addActor(bgImage);
+    }
+
+    private static Image getImage(TextureRegion textureRegion) {
         Image bgImage = new Image(textureRegion);
         float scaleX = GameApplication.get().screenWidth / textureRegion.getRegionWidth();
         float scaleY = GameApplication.get().screenHeight / textureRegion.getRegionHeight();
         float scale = Math.max(scaleX, scaleY);
         bgImage.setSize(textureRegion.getRegionWidth() * scale, textureRegion.getRegionHeight() * scale);
         bgImage.setPosition(GameApplication.get().screenWidth / 2 - bgImage.getWidth() / 2, GameApplication.get().screenHeight / 2 - bgImage.getHeight() / 2);
-        stage.addActor(bgImage);
+        return bgImage;
     }
 
     private void initButtons() {

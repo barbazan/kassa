@@ -122,6 +122,7 @@ public class GameApplication extends Game {
 //        setSettingsScreen();
 //        setShopScreen();
 //        setProductPlacementScreen();
+//        setBuyFullVersionScreen();
         setGameScreen();
     }
 
