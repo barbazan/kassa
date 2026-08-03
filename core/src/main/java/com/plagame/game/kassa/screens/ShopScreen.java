@@ -6,6 +6,7 @@ import static com.plagame.game.kassa.GameApplication.FONT_SMALL;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG_TOYZ;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_2_COLOR;
+import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_3_COLOR;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -83,7 +84,7 @@ public class ShopScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        AssetUtil.clearScreen(LOADING_SCREEN_BG_2_COLOR.color);
+        AssetUtil.clearScreen(LOADING_SCREEN_BG_3_COLOR.color);
         super.render(delta);
     }
 
@@ -104,7 +105,7 @@ public class ShopScreen extends BaseScreen {
         Table productsTable = new Table();
         productsTable.setSize(tableWidth, tableHeight);
 //        productsTable.setDebug(true);
-        productsTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("panel_goods_bg_2")));
+        productsTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("panel_goods_bg_3")));
         productsTable.pad(pad / 2);
 
         productsTable.add().expandX();
@@ -293,7 +294,7 @@ public class ShopScreen extends BaseScreen {
 
     private Table createCostPanel(float cost) {
         Table costTable = new Table();
-        Label costLabel = new Label(NumberFormat.formatCost(cost), new Label.LabelStyle(FONT_HEADER, Color.WHITE));
+        Label costLabel = new Label(NumberFormat.formatCost(cost), new Label.LabelStyle(FONT_HEADER, Color.DARK_GRAY));
         costLabel.setAlignment(Align.center);
 
         Image costImg = new Image(ATLAS_1.findRegion("icon_dollar"));

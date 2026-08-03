@@ -34,6 +34,7 @@ public enum ColorInfo {
     RUBY(new Color(0xbd0ebeff)),
     LOADING_SCREEN_BG_COLOR(new Color(0x257495ff)),
     LOADING_SCREEN_BG_2_COLOR(new Color(0xfe0405ff)),
+    LOADING_SCREEN_BG_3_COLOR(new Color(0x00cd0eff)),
     ;
 
     public Color color;
