@@ -55,6 +55,7 @@ public class CashRegister extends Group {
     public boolean isProcessPayment;
     public int cardType;
     private Set<String> paymentTypes = new HashSet<>(); // способы оплаты наличка или карта, нужно для достижений
+    public boolean wasRare; // пробивали ли редкий товар из RARE_PRODUCT_LIST
 
     public CashRegister() {
         this(null);
@@ -768,7 +769,10 @@ public class CashRegister extends Group {
             }
         }
 
-        //todo ACHIEVEMENT_INFO_7
+        if(wasRare) {
+            User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_7, 1);
+            wasRare = false;
+        }
 
         if(totalCost > 50) {
             User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_8, 1);

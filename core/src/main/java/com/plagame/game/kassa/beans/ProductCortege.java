@@ -68,6 +68,9 @@ public class ProductCortege extends Group {
                             Image first = productImageList.get(0);
                             if(first != null && first == img) {
                                 SoundUtil.playProductClickSound();
+                                if(productInfo.isRare()) {
+                                    GameApplication.get().getGameScreen().gameScene.cashRegister.wasRare = true;
+                                }
                                 if(img != currentProductImage) {
                                     currentProductImage = img;
                                     productImageList.removeFirst();

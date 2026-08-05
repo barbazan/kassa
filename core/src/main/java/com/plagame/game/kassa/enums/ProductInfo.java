@@ -3,6 +3,7 @@ package com.plagame.game.kassa.enums;
 import static com.plagame.game.kassa.Resources.ATLAS_PRODUCTS;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.beans.User;
 
@@ -228,5 +229,9 @@ public enum ProductInfo {
             System.out.println("--------textureRegion = " + textureRegion);
         }
         return textureRegion;
+    }
+
+    public boolean isRare() {
+        return ProductInfo.RARE_PRODUCT_LIST.contains(this);
     }
 }
