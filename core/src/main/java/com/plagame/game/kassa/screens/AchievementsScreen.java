@@ -1,6 +1,5 @@
 package com.plagame.game.kassa.screens;
 
-import static com.plagame.game.kassa.GameApplication.FONT_BIG;
 import static com.plagame.game.kassa.GameApplication.FONT_BIG_TOYZ;
 import static com.plagame.game.kassa.GameApplication.FONT_DEFAULT;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG_TOYZ;
@@ -10,7 +9,6 @@ import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_3_COLOR;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -21,8 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
-import com.plagame.game.kassa.beans.User;
-import com.plagame.game.kassa.components.HeaderPanel;
 import com.plagame.game.kassa.enums.AchievementInfo;
 import com.plagame.game.kassa.utils.AssetUtil;
 import com.plagame.game.kassa.utils.SoundUtil;
@@ -112,11 +108,12 @@ public class AchievementsScreen extends BaseScreen {
         descLabel.setAlignment(Align.topLeft);
         achievmentTable.add(descLabel).align(Align.topLeft).pad(pad).expand().fill();
 
-        boolean hasAvhiev = User.get().hasAchievment(achievementInfo.type);
+        boolean hasAvhiev = achievementInfo.isComplete();
         Image achievImage = new Image(ATLAS_1.findRegion(hasAvhiev ? "icon_achiev" : "icon_achiev_disable"));
-        float imageSize = tableHeight * 0.55f;
+        float imageSize = tableHeight * 0.30f;
         achievImage.setSize(imageSize, imageSize);
-        achievImage.setPosition(achievmentTable.getWidth() - achievImage.getWidth() - pad, achievmentTable.getHeight() * 0.44f - achievImage.getHeight() / 2);
+//        achievImage.setPosition(achievmentTable.getWidth() - achievImage.getWidth() - pad, achievmentTable.getHeight() * 0.44f - achievImage.getHeight() / 2);
+        achievImage.setPosition(achievmentTable.getWidth() - achievImage.getWidth() - pad, pad);
         achievmentTable.addActor(achievImage);
 
         return achievmentTable;
