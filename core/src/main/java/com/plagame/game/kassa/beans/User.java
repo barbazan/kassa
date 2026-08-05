@@ -4,6 +4,7 @@ import static com.plagame.game.kassa.enums.ProductInfo.START_PRODUCT_LIST;
 
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
+import com.plagame.game.kassa.enums.AchievementInfo;
 import com.plagame.game.kassa.serialize.ByteArrayUserSerializer;
 import com.plagame.game.kassa.serialize.JsonUserSerializer;
 import com.plagame.game.kassa.utils.FileUtil;
@@ -28,14 +29,14 @@ public class User {
     public String login = "";
     public int location = 1; // локация LocationInfo
     public int day = 1; // игровая валюта
-    public float dollars = 250; // игровая валюта
+    public int dollars = 250_00; // игровая валюта доллары, хранятся в центах, чтобы без флота
     public long lastSaveTime = System.currentTimeMillis(); // последнее время сохранения, чтобы часто не сохранять
     public long lastLoginTime = System.currentTimeMillis();
     public boolean soundOn = true;
     public boolean musicOn = true;
     public HashSet<Integer> buyedProducts = new HashSet<>();
-    public HashSet<Integer> achievments = new HashSet<>();
     public HashSet<String> purchasedProducts = new HashSet<>();
+    public HashMap<Integer, Integer> achievments = new HashMap();
     public long loginDayCount;
     public boolean isAdHide;
     public boolean isFullVersionBuyed;
@@ -73,16 +74,20 @@ public class User {
         this.isAdHide = userData.isAdHide;
         this.isFullVersionBuyed = userData.isBuyFull;
         this.buyedProducts = new HashSet<>(userData.buyedProducts);
-        this.achievments = new HashSet<>(userData.achievments);
+        this.achievments = new HashMap<>(userData.achievments);
         this.purchasedProducts = new HashSet<>(userData.purchasedProducts);
         return this;
+    }
+
+    public String getDollarsAsString() {
+        return NumberFormat.formatCost(dollars);
     }
 
     public boolean canPayDollars(float amount) {
         return dollars >= amount;
     }
 
-    public boolean doPayDollars(float amount) {
+    public boolean doPayDollars(int amount) {
         if(canPayDollars(amount)) {
             changeDollars(-amount);
             return true;
@@ -94,19 +99,15 @@ public class User {
         setDollar(Math.max(dollars + amount, 0));
     }
 
-    public void changeDollars(float amount) {
+    public void changeDollars(int amount) {
         setDollar(Math.max(dollars + amount, 0));
     }
 
-    public void setDollar(float dollars) {
+    public void setDollar(int dollars) {
         if (dollars < 0) {
             throw new RuntimeException("Dollars can't be < 0. Current value = " + dollars);
         }
         this.dollars = dollars;
-    }
-
-    public float getDollars() {
-        return dollars;
     }
 
     private void trySaveWithCooldown() {
@@ -139,8 +140,9 @@ public class User {
         }
     }
 
-    public boolean hasAchievment(int type) {
-        return achievments.contains(type);
+    public void addAchievementProgress(AchievementInfo achievementInfo, int value) {
+        int curValue = achievments.getOrDefault(achievementInfo.type, 0);
+        achievments.put(achievementInfo.type, curValue + value);
     }
 
     public boolean isAuthorized() {

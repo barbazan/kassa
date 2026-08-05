@@ -12,17 +12,29 @@ public class NumberFormat {
         ' ', 'K', 'M', 'B', 'T', 'Q', 'W', 'E', 'R', 'Y', 'U'
     };
 
-    public static String formatCost(float cost) {
-        if (cost == 0) {
+    public static String formatCost(int dollars) { // цена в центах
+        if (dollars == 0) {
             return "--.--";
         }
 
-        if (cost == (int) cost) {
-            return String.valueOf((int) cost);
+        if (dollars % 100 == 0) {
+            return String.valueOf(dollars / 100);
         }
 
-        return String.format(Locale.US, "%.2f", cost);
+        return String.format(Locale.US, "%.2f", dollars / 100.0);
     }
+
+//    public static String formatCost(float cost) {
+//        if (cost == 0) {
+//            return "--.--";
+//        }
+//
+//        if (cost == (int) cost) {
+//            return String.valueOf((int) cost);
+//        }
+//
+//        return String.format(Locale.US, "%.2f", cost);
+//    }
 
 //    public static String formatCost(float cost) {
 //        if (cost == 0) {

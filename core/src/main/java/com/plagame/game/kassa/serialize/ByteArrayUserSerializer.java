@@ -34,7 +34,7 @@ public class ByteArrayUserSerializer {
 
             out.writeInt(user.location);
 
-            out.writeFloat(user.dollars);
+            out.writeInt(user.dollars);
             out.writeLong(user.lastSaveTime);
             out.writeLong(user.lastLoginTime);
 
@@ -69,7 +69,7 @@ public class ByteArrayUserSerializer {
 
             user.location = in.readInt();
 
-            user.dollars = in.readFloat();
+            user.dollars = in.readInt();
 
             user.lastSaveTime = in.readLong();
             user.lastLoginTime = in.readLong();

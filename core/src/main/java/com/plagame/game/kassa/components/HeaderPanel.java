@@ -14,10 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
-import com.plagame.game.kassa.utils.NumberFormat;
 import com.plagame.game.kassa.utils.SoundUtil;
-
-import java.util.function.Supplier;
 
 
 /**
@@ -49,9 +46,9 @@ public class HeaderPanel extends Table {
         innerTable.add().expandX().fill();
 
         Group dayGroup = createDayStat();
-        innerTable.add(dayGroup).size(dayGroup.getWidth(), dayGroup.getHeight()).align(Align.left).pad(pad).padRight(pad * 3).fill();
+        innerTable.add(dayGroup).size(dayGroup.getWidth(), dayGroup.getHeight()).align(Align.left).pad(pad).padRight(0).fill();
 
-        Group dollarsGroup = createStatItem("icon_dollars", () -> User.get().getDollars());
+        Group dollarsGroup = createStatItem("icon_dollars");
         dollarsGroup.addListener(new ActorGestureListener() {
             @Override
             public void touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -109,7 +106,7 @@ public class HeaderPanel extends Table {
         return group;
     }
 
-    private Group createStatItem(String iconName, Supplier<Float> valueSupplier) {
+    private Group createStatItem(String iconName) {
         Group group = new Group();
         float width = GameApplication.get().minScreenSize * 0.28f;
         group.setSize(width, iconSize * 0.8f);
@@ -119,17 +116,17 @@ public class HeaderPanel extends Table {
         Label label = new ModelLabel(new Label.LabelStyle(FONT_HEADER, Color.BLACK)) {
             @Override
             protected String getValue() {
-                return "$" + NumberFormat.formatCost(valueSupplier.get());
+                return "$" + User.get().getDollarsAsString();
             }
 
         };
         label.setAlignment(Align.center);
         label.setPosition(group.getWidth() / 2 - label.getWidth() / 2, group.getHeight() / 2 - label.getHeight() / 2);
         group.addActor(label);
-        Image iconImage = new Image(ATLAS_1.findRegion(iconName));
-        iconImage.setSize(iconSize * 1.0f, iconSize * 1.0f);
-        iconImage.setPosition(- iconSize * 0.8f, (group.getHeight() - iconImage.getHeight()) / 2);
-        group.addActor(iconImage);
+//        Image iconImage = new Image(ATLAS_1.findRegion(iconName));
+//        iconImage.setSize(iconSize * 1.0f, iconSize * 1.0f);
+//        iconImage.setPosition(- iconSize * 0.8f, (group.getHeight() - iconImage.getHeight()) / 2);
+//        group.addActor(iconImage);
         return group;
     }
 

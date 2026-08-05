@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public final class CashPaymentGenerator {
 
-    private static final int[] BILLS_5 = {5, 50, 100};
-    private static final int[] BILLS_10 = {10, 50, 100};
-    private static final int[] BILLS_20 = {20, 50, 100};
-    private static final int[] BILLS_50_100 = {50, 100};
+    private static final int[] BILLS_5 = {500, 5000, 10000};
+    private static final int[] BILLS_10 = {1000, 5000, 10000};
+    private static final int[] BILLS_20 = {2000, 5000, 10000};
+    private static final int[] BILLS_50_100 = {5000, 10000};
     private static final Random RANDOM = new Random();
 
     private CashPaymentGenerator() {
@@ -41,13 +42,12 @@ public final class CashPaymentGenerator {
     /**
      * Возвращает общую сумму, которую дал покупатель.
      */
-    public static int generatePaidAmount(double price) {
-        List<Integer> bills = generateBills(price);
+    public static int generatePaidAmount(int priceInCents) {
+        List<Integer> bills = generateBills(priceInCents);
 
         int total = 0;
-
         for (int bill : bills) {
-            total = Math.addExact(total, bill);
+            total += bill;
         }
 
         return total;
@@ -60,39 +60,32 @@ public final class CashPaymentGenerator {
      * 1. Общая сумма строго больше price.
      * 2. Если убрать любую купюру, денег станет недостаточно.
      */
-    public static List<Integer> generateBills(double price) {
+    public static List<Integer> generateBills(int priceInCents) {
 
-        validatePrice(price);
+        validatePrice(priceInCents);
 
-        long need = (long) Math.floor(price) + 1L;
+        int need = priceInCents + 1;
 
-        // Набор номиналов, доступных конкретному покупателю.
         int[] customerBills = chooseCustomerBills();
 
         List<Integer> result = new ArrayList<>();
 
-        long total = 0;
+        int total = 0;
         int smallestBill = Integer.MAX_VALUE;
 
         while (total < need) {
 
             List<Integer> allowedBills = new ArrayList<>();
 
-            // Используем только купюры этого покупателя.
             for (int bill : customerBills) {
 
-                long newTotal = total + bill;
-                int newSmallestBill =
-                    Math.min(smallestBill, bill);
+                int newTotal = total + bill;
+                int newSmallestBill = Math.min(smallestBill, bill);
 
-                if (newTotal > Integer.MAX_VALUE) {
+                if (newTotal < 0) {
                     continue;
                 }
 
-                /*
-                 * Если сумма уже достаточная, проверяем,
-                 * что ни одну купюру нельзя будет убрать.
-                 */
                 if (newTotal < need
                     || newTotal - newSmallestBill < need) {
 
@@ -102,18 +95,14 @@ public final class CashPaymentGenerator {
 
             if (allowedBills.isEmpty()) {
                 throw new IllegalStateException(
-                    "Не удалось подобрать оплату."
-                        + " Цена: " + price
-                );
+                    "Не удалось подобрать оплату. Цена: " + priceInCents);
             }
 
-            int selectedBill =
-                chooseNaturalBill(allowedBills);
+            int selectedBill = chooseNaturalBill(allowedBills);
 
             result.add(selectedBill);
             total += selectedBill;
-            smallestBill =
-                Math.min(smallestBill, selectedBill);
+            smallestBill = Math.min(smallestBill, selectedBill);
         }
 
         Collections.shuffle(result, RANDOM);
@@ -151,25 +140,16 @@ public final class CashPaymentGenerator {
         return variants.get(variants.size() - 1);
     }
 
-    private static void validatePrice(double price) {
+    private static void validatePrice(int priceInCents) {
 
-        if (!Double.isFinite(price) || price < 0) {
+        if (priceInCents < 0) {
             throw new IllegalArgumentException(
-                "Price must be a finite non-negative number: " + price
-            );
+                "Price must be non-negative: " + priceInCents);
         }
 
-        /*
-         * Максимальная сумма типа int, которую можно собрать
-         * из купюр, кратных пяти.
-         */
-        long maxPayableAmount =
-            Integer.MAX_VALUE - Integer.MAX_VALUE % 5L;
-
-        if (price >= maxPayableAmount) {
+        if (priceInCents == Integer.MAX_VALUE) {
             throw new IllegalArgumentException(
-                "Price is too large: " + price
-            );
+                "Price is too large: " + priceInCents);
         }
     }
 
@@ -179,144 +159,21 @@ public final class CashPaymentGenerator {
 
         for (int i = 0; i < 1000; i++) {
 
-            // Случайная цена от 1.00 до 1000.00
-            double price = (random.nextInt(100_000) + 100) / 100.0;
+            int price = random.nextInt(100_000) + 100;
 
             List<Integer> bills = generateBills(price);
 
-            int paidAmount = 0;
-
-            for (int bill : bills) {
-                paidAmount += bill;
-            }
+            int paidAmount = bills.stream().mapToInt(Integer::intValue).sum();
 
             System.out.printf(
-                "%.2f -> %d %s%n",
-                price,
-                paidAmount,
-                bills
+                "%.2f -> %.2f %s%n",
+                price / 100.0,
+                paidAmount / 100.0,
+                bills.stream()
+                    .map(v -> String.format("%.0f", v / 100.0))
+                    .collect(Collectors.toList())
             );
         }
     }
 }
 
-
-//package com.plagame.game.kassa.utils;
-//
-//import java.util.ArrayList;
-//import java.util.Collections;
-//import java.util.List;
-//import java.util.Random;
-//
-///**
-// * Created by Дмитрий Малышев on 26.07.2026.
-// * Email: dmitry.malyshev@gmail.com
-// */
-//public class CashPaymentGenerator {
-//
-//    private static final int[] BILLS = {5, 10, 20, 50, 100};
-//    private static final Random RANDOM = new Random();
-//
-//    public static int generatePaidAmount(double price) {
-//
-//        int need = (int) Math.ceil(price);
-//
-//        List<Integer> variants = new ArrayList<>();
-//
-//        // сначала одна купюра
-//        for (int a : BILLS) {
-//            if (a >= need) {
-//                variants.add(a);
-//            }
-//        }
-//
-//        if (!variants.isEmpty()) {
-//            return chooseNatural(variants);
-//        }
-//
-//
-//        // две купюры
-//        variants.clear();
-//
-//        for (int a : BILLS) {
-//            for (int b : BILLS) {
-//
-//                int sum = a + b;
-//
-//                if (sum >= need) {
-//                    variants.add(sum);
-//                }
-//            }
-//        }
-//
-//
-//        if (!variants.isEmpty()) {
-//            return Collections.min(variants);
-//        }
-//
-//
-//        // три купюры
-//        variants.clear();
-//
-//        for (int a : BILLS) {
-//            for (int b : BILLS) {
-//                for (int c : BILLS) {
-//
-//                    int sum = a + b + c;
-//
-//                    if (sum >= need) {
-//                        variants.add(sum);
-//                    }
-//                }
-//            }
-//        }
-//
-//        return Collections.min(variants);
-//    }
-//
-//    private static int chooseNatural(List<Integer> variants) {
-//
-//        // сортируем от маленькой к большой
-//        Collections.sort(variants);
-//
-//        double r = RANDOM.nextDouble();
-//
-//        if (r < 0.8) {
-//            return variants.get(0); // самая маленькая
-//        }
-//
-//        if (r < 0.95 && variants.size() > 1) {
-//            return variants.get(1); // следующая
-//        }
-//
-//        return variants.get(RANDOM.nextInt(variants.size()));
-//    }
-//
-//
-//
-//    public static void main(String[] args) {
-//        double[] prices = {
-//            3.90,
-//            5.90,
-//            8.90,
-//            18.90,
-//            15.90,
-//            25.90,
-//            39.50,
-//            107.00,
-//            55.00,
-//            65.00,
-//            123.00
-//        };
-//
-//        for (int i = 0; i < 5; i++) {
-//            System.out.println("---- попытка " + (i + 1));
-//
-//            for (double price : prices) {
-//                System.out.printf("%.2f -> %d%n",
-//                    price,
-//                    generatePaidAmount(price));
-//            }
-//        }
-//    }
-//}

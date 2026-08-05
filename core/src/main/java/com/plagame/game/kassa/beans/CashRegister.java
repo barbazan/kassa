@@ -18,14 +18,18 @@ import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.components.ModelLabel;
+import com.plagame.game.kassa.enums.AchievementInfo;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.CashPaymentGenerator;
 import com.plagame.game.kassa.utils.NumberFormat;
 import com.plagame.game.kassa.utils.SoundUtil;
 
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Дмитрий Малышев on 21.07.2026.
@@ -35,12 +39,11 @@ import java.util.Map;
  */
 public class CashRegister extends Group {
 
-    private static final float EPS = 0.001f;
     private static final int MAX_PRICE_LENGTH = 8;
     public float terminalWidth, terminalHeight;
-    public float totalCost; // это стоимость продуктов, которую должен оплатить покупатель
-    public float payedSum;  // сколько дали налички
-    public float givingSum; // сколько я даю сдачи
+    public int totalCost; // это стоимость продуктов, которую должен оплатить покупатель
+    public int payedSum;  // сколько дали налички
+    public int givingSum; // сколько я даю сдачи
     public String terminalValue = ""; // это число то что ввели кнопками на терминале
     public Group kassa, terminal;
     private Table tableRight;
@@ -50,6 +53,7 @@ public class CashRegister extends Group {
     private LinkedList<Image> dollarsImagesList = new LinkedList<>();
     public boolean isProcessPayment;
     public int cardType;
+    private Set<String> paymentTypes = new HashSet<>(); // способы оплаты наличка или карта, нужно для достижений
 
     public CashRegister() {
         this(null);
@@ -153,8 +157,8 @@ public class CashRegister extends Group {
         Label givingLabel = new ModelLabel("", new Label.LabelStyle(FONT_DEFAULT, Color.YELLOW)) {
             @Override
             protected String getValue() {
-                float change = payedSum - totalCost; //сдачи сколько нужно
-                if(givingSum + EPS >= change) {
+                int change = payedSum - totalCost; //сдачи сколько нужно
+                if(givingSum == change) {
                     setColor(Color.GREEN);
                 } else {
                     setColor(Color.YELLOW);
@@ -343,8 +347,13 @@ public class CashRegister extends Group {
                         if(totalCost > 0 && totalCostStr.equals("$" + terminalValue)) {
                             SoundUtil.playTerminalOkSound();
                             try {
-                                float terminalPayedSum = Float.parseFloat(terminalValue);
+                                int terminalPayedSum = 0;
+                                String[] parts = terminalValue.split("\\.");
+                                int dol = Integer.parseInt(parts[0]);
+                                int cent = parts.length > 1 ? Integer.parseInt((parts[1] + "00").substring(0, 2)) : 0;
+                                terminalPayedSum = dol * 100 + cent;
                                 User.get().changeDollars(terminalPayedSum); // начислить игроку terminalPayedSum
+                                addAchievementsProgress(true); // добавляем прогресс всем очивкам связанными с этим событием расчета картой
                                 User.get().saveUser();
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -404,7 +413,7 @@ public class CashRegister extends Group {
         return btn;
     }
 
-    private String formatTotalCost(float cost) {
+    private String formatTotalCost(int cost) {
         if(cost == 0) {
             return "--.--";
         }
@@ -558,37 +567,59 @@ public class CashRegister extends Group {
         return scale;
     }
 
-    private float getDollarValue(int i) {
-        int value = 1;
-        if(i == 1) {
-            value = 1;
-        } else if(i == 2) {
-            value = 5;
-        } else if(i == 3) {
-            value = 10;
-        } else if(i == 4) {
-            value = 20;
-        } else if(i == 5) {
-            value = 50;
+    private int getDollarValue(int index) {
+        switch(index) {
+            case 1: return 1_00;
+            case 2: return 5_00;
+            case 3: return 10_00;
+            case 4: return 20_00;
+            case 5: return 50_00;
         }
-        return value;
+        return 0;
     }
 
-    private float getCoinValue(int i) {
-        float value = 0.01f;
-        if(i == 1) {
-            value = 0.01f;
-        } else if(i == 2) {
-            value = 0.05f;
-        } else if(i == 3) {
-            value = 0.10f;
-        } else if(i == 4) {
-            value = 0.20f;
-        } else if(i == 5) {
-            value = 0.50f;
+    private int getCoinValue(int index) {
+        switch(index) {
+            case 1: return 1;
+            case 2: return 5;
+            case 3: return 10;
+            case 4: return 20;
+            case 5: return 50;
         }
-        return value;
+        return 0;
     }
+
+//    private float getDollarValue(int i) {
+//        int value = 1;
+//        if(i == 1) {
+//            value = 1;
+//        } else if(i == 2) {
+//            value = 5;
+//        } else if(i == 3) {
+//            value = 10;
+//        } else if(i == 4) {
+//            value = 20;
+//        } else if(i == 5) {
+//            value = 50;
+//        }
+//        return value;
+//    }
+
+//    private float getCoinValue(int i) {
+//        float value = 0.01f;
+//        if(i == 1) {
+//            value = 0.01f;
+//        } else if(i == 2) {
+//            value = 0.05f;
+//        } else if(i == 3) {
+//            value = 0.10f;
+//        } else if(i == 4) {
+//            value = 0.20f;
+//        } else if(i == 5) {
+//            value = 0.50f;
+//        }
+//        return value;
+//    }
 
     private void initCards() {
         for(int i = 1; i <= 5; i++) {
@@ -616,7 +647,7 @@ public class CashRegister extends Group {
             @Override
             public void act(float delta) {
                 float change = payedSum - totalCost; //сдачи сколько нужно
-                if(isProcessPayment && cardType == 0 && givingSum + EPS >= change) {
+                if(isProcessPayment && cardType == 0 && givingSum >= change) {
 //                    setDisabled(false);
                     kassaBtnOk.setColor(Color.WHITE);
                 } else {
@@ -632,11 +663,12 @@ public class CashRegister extends Group {
         btnOk.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                float change = payedSum - totalCost; //сдачи сколько нужно
-                if(isProcessPayment && cardType == 0 && givingSum + EPS >= change) {
+                int change = payedSum - totalCost; //сдачи сколько нужно
+                if(isProcessPayment && cardType == 0 && givingSum >= change) {
                     SoundUtil.playKassaClickSound();
                     User.get().changeDollars(payedSum); // начислить игроку payedSum
                     User.get().changeDollars(-givingSum); //списать с игрока givingSum
+                    addAchievementsProgress(false); // добавляем прогресс всем очивкам связанными с этим событием рассчета на кассе
                     User.get().saveUser();
                     finishPayment();
                     GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
@@ -704,4 +736,54 @@ public class CashRegister extends Group {
         }
         dollarsImagesList.clear();
     }
+
+    private void addAchievementsProgress(boolean isCard) {
+        if(isCard) {
+            paymentTypes.add("card");
+        } else {
+            paymentTypes.add("cash");
+        }
+
+        User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_1, 1);
+
+        if(!AchievementInfo.ACHIEVEMENT_INFO_2.isComplete()) {
+            User.get().achievments.put(AchievementInfo.ACHIEVEMENT_INFO_2.type, paymentTypes.size());
+        }
+
+        if(!AchievementInfo.ACHIEVEMENT_INFO_3.isComplete()) {
+            User.get().achievments.put(AchievementInfo.ACHIEVEMENT_INFO_3.type, User.get().dollars);
+        }
+
+        User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_4, 1);
+
+        User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_5, 1);
+
+        if(!isCard) { // только если наличка, по карте всегда точный рассчет
+            int change = payedSum - totalCost; //сдачи сколько нужно
+            boolean isExactly = givingSum == change;
+            if(isExactly) {
+                User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_6, 1);
+            }
+        }
+
+        //todo ACHIEVEMENT_INFO_7
+
+        if(totalCost > 50) {
+            User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_8, 1);
+        }
+
+        if(totalCost > 100) {
+            User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_9, 1);
+        }
+
+        if(totalCost > 500) {
+            User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_10, 1);
+        }
+
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        if (hour >= 21) { // После 21:00
+            User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_11, 1);
+        }
+    }
+
 }

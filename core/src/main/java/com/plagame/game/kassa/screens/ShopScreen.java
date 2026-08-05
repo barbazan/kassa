@@ -5,7 +5,6 @@ import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_SMALL;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_BIG_TOYZ;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
-import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_2_COLOR;
 import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_3_COLOR;
 
 import com.badlogic.gdx.InputProcessor;
@@ -24,7 +23,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
-import com.plagame.game.kassa.components.HeaderPanel;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.AssetUtil;
 import com.plagame.game.kassa.utils.NumberFormat;
@@ -36,13 +34,15 @@ import com.plagame.game.kassa.utils.SoundUtil;
  */
 public class ShopScreen extends BaseScreen {
 
+    private static final int UNLOCK_START_PRICE = 45 * 100; // 45 долларов в центах
+
     public ShopScreen() {
         init();
     }
 
     private void init() {
         stage.clear();
-        stage.addActor(new HeaderPanel());
+//        stage.addActor(new HeaderPanel());
         float width = GameApplication.get().minScreenSize * 0.99f;
         float height = GameApplication.get().screenHeight * 0.99f;
         float pad = width / 20;
@@ -53,8 +53,7 @@ public class ShopScreen extends BaseScreen {
 
         Label totalLabel = new Label("МАГАЗИН", new Label.LabelStyle(FONT_VERY_BIG_TOYZ, Color.WHITE)); //todo I18N
         totalLabel.setAlignment(Align.center);
-        float padTop = GameApplication.get().isPortrait() ? pad * 3 : pad / 2;
-        dialogTable.add(totalLabel).align(Align.left).pad(pad / 2).padTop(padTop).fill();
+        dialogTable.add(totalLabel).align(Align.left).pad(pad / 2).padTop(pad).fill();
         dialogTable.row();
 
         for(int i = 1; i <= ProductInfo.values().length; i+=4) {
@@ -140,7 +139,7 @@ public class ShopScreen extends BaseScreen {
         productsTable.addActor(soldTable);
 
         if(User.get().isFullVersionBuyed || ProductInfo.UNLOCK_PRODUCT_LIST.contains(ProductInfo.getByType(index))) { // кнопку "Купить" показываем если куплена полная версия или продукт входи в начальный анлокнутый набор
-            int unlockPrice = (int)(45 * Math.pow(index - ProductInfo.START_PRODUCT_LIST.size(), 1.5));
+            int unlockPrice = (int)(UNLOCK_START_PRICE * Math.pow(index - ProductInfo.START_PRODUCT_LIST.size(), 1.5));
             Button buyBtn = createBuyBtn(unlockPrice, tableHeight * 0.65f);
             buyBtn.setPosition(productsTable.getWidth() - buyBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - buyBtn.getHeight() - pad);
             buyBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
@@ -292,7 +291,7 @@ public class ShopScreen extends BaseScreen {
         return createCostPanel(productInfo.cost);
     }
 
-    private Table createCostPanel(float cost) {
+    private Table createCostPanel(int cost) {
         Table costTable = new Table();
         Label costLabel = new Label(NumberFormat.formatCost(cost), new Label.LabelStyle(FONT_HEADER, Color.DARK_GRAY));
         costLabel.setAlignment(Align.center);

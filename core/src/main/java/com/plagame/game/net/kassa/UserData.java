@@ -5,6 +5,7 @@ import com.plagame.game.integration.platform.service.api.model.LeaderboardEntry;
 import com.plagame.game.kassa.beans.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,7 @@ public class UserData {
     public int id;
     public String secret;
     public String login;
-    public float dollars; // игровая валюта
+    public int dollars; // игровая валюта
     public int day; // игровой день
     public long lastLoginTime;
     public boolean isAdHide;
@@ -25,7 +26,7 @@ public class UserData {
     public List<Purchase> purchaseList = new ArrayList<>(); // оплаченые покупки
     public List<LeaderboardEntry> ratingMaxDollars = new ArrayList<>(); // рейтинг
     public HashSet<Integer> buyedProducts = new HashSet<>(); // купленные продукты
-    public HashSet<Integer> achievments = new HashSet<>(); // достижения
+    public HashMap<Integer, Integer> achievments = new HashMap<>(); // достижения
 
     public UserData apply(User user) {
         this.id = user.id;
