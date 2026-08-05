@@ -47,9 +47,6 @@ public enum CustomerInfo {
     CUSTOMER_INFO_40(40),
     CUSTOMER_INFO_41(41),
     CUSTOMER_INFO_42(42),
-    CUSTOMER_INFO_43(43),
-    CUSTOMER_INFO_44(44),
-    CUSTOMER_INFO_45(45),
     ;
 
     public static final List<CustomerInfo> UNLOCK_CUSTOMER_LIST = Arrays.asList(
