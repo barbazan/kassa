@@ -25,6 +25,7 @@ public class UserData {
     public List<Purchase> purchaseList = new ArrayList<>(); // оплаченые покупки
     public List<LeaderboardEntry> ratingMaxDollars = new ArrayList<>(); // рейтинг
     public HashSet<Integer> buyedProducts = new HashSet<>(); // купленные продукты
+    public HashSet<Integer> achievments = new HashSet<>(); // достижения
 
     public UserData apply(User user) {
         this.id = user.id;
@@ -37,6 +38,7 @@ public class UserData {
         this.isBuyFull = user.isFullVersionBuyed;
         this.buyedProducts = user.buyedProducts;
         this.purchasedProducts = user.purchasedProducts;
+        this.achievments = user.achievments;
         return this;
     }
 

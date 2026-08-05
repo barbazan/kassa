@@ -39,7 +39,7 @@ public class BuyFullVersionScreen extends BaseScreen {
             int num = 1 + GameConfig.random.nextInt(1);
             textureRegion = new TextureRegion(new Texture("images/full_version_bg_v_" + num + ".jpg"));
         } else {
-            int num = 1 + GameConfig.random.nextInt(2);
+            int num = 1 + GameConfig.random.nextInt(1);
             textureRegion = new TextureRegion(new Texture("images/full_version_bg_h_" + num + ".jpg"));
         }
         Image bgImage = getImage(textureRegion);

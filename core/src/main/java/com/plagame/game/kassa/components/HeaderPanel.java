@@ -62,6 +62,17 @@ public class HeaderPanel extends Table {
         });
         innerTable.add(dollarsGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.left).pad(pad).fill();
 
+        Image ahieveImage = new Image(ATLAS_1.findRegion("icon_v"));
+        ahieveImage.setSize(iconSize, iconSize);
+        ahieveImage.addListener(new ActorGestureListener() {
+            @Override
+            public void tap(InputEvent event, float x, float y, int count, int button) {
+                SoundUtil.playClickSound();
+                GameApplication.get().setAchievementsScreen();
+            }
+        });
+        innerTable.add(ahieveImage).size(ahieveImage.getWidth(), ahieveImage.getHeight()).align(Align.center).padRight(pad).fill();
+
         Image settingsImage = new Image(ATLAS_1.findRegion("icon_settings"));
         settingsImage.setSize(iconSize, iconSize);
         settingsImage.addListener(new ActorGestureListener() {

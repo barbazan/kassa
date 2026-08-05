@@ -18,7 +18,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.plagame.game.kassa.beans.User;
-import com.plagame.game.kassa.screens.BuyFullVersionScreen;
+import com.plagame.game.kassa.screens.AchievementsScreen;import com.plagame.game.kassa.screens.BuyFullVersionScreen;
 import com.plagame.game.kassa.screens.DayCompleteScreen;
 import com.plagame.game.kassa.screens.NextDayScreen;
 import com.plagame.game.kassa.screens.ProductPlacementScreen;
@@ -57,6 +57,7 @@ public class GameApplication extends Game {
     private DayCompleteScreen dayCompleteScreen;
     private NextDayScreen nextDayScreen;
     private BuyFullVersionScreen buyFullVersionScreen;
+    private AchievementsScreen achievementsScreen;
     private SettingsScreen settingsScreen;
     public static BitmapFont FONT_DEFAULT, FONT_HEADER, FONT_DIALOG_HEADER, FONT_DIALOG_BUTTON, FONT_RATING, FONT_BIG, FONT_VERY_BIG, FONT_SMALL, FONT_VERY_SMALL;
     public static BitmapFont FONT_BIG_TOYZ, FONT_VERY_BIG_TOYZ;
@@ -120,7 +121,8 @@ public class GameApplication extends Game {
 
     private void goToFirstScreen() {
 //        setSettingsScreen();
-        setShopScreen();
+//        setShopScreen();
+        setAchievementsScreen();
 //        setProductPlacementScreen();
 //        setBuyFullVersionScreen();
 //        setGameScreen();
@@ -178,6 +180,15 @@ public class GameApplication extends Game {
         buyFullVersionScreen = new BuyFullVersionScreen();
         setScreen(buyFullVersionScreen);
         setInputProcessor(buyFullVersionScreen.getInputProcessor());
+    }
+
+    public void setAchievementsScreen() {
+        if(achievementsScreen != null) {
+            achievementsScreen.dispose();
+        }
+        achievementsScreen = new AchievementsScreen();
+        setScreen(achievementsScreen);
+        setInputProcessor(achievementsScreen.getInputProcessor());
     }
 
     public void setSettingsScreen() {

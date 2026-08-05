@@ -11,5 +11,6 @@ public class ENUM_MAPS {
 
     public static final Map<Integer, CustomerInfo> CUSTOMER_INFO_MAP = new HashMap<>();
     public static final Map<Integer, ProductInfo> PRODUCT_INFO_MAP = new HashMap<>();
+    public static final Map<Integer, AchievementInfo> ACHIEVEMENT_INFO_MAP = new HashMap<>();
 
 }

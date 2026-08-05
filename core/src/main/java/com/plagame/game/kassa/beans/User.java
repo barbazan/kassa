@@ -34,6 +34,7 @@ public class User {
     public boolean soundOn = true;
     public boolean musicOn = true;
     public HashSet<Integer> buyedProducts = new HashSet<>();
+    public HashSet<Integer> achievments = new HashSet<>();
     public HashSet<String> purchasedProducts = new HashSet<>();
     public long loginDayCount;
     public boolean isAdHide;
@@ -72,6 +73,7 @@ public class User {
         this.isAdHide = userData.isAdHide;
         this.isFullVersionBuyed = userData.isBuyFull;
         this.buyedProducts = new HashSet<>(userData.buyedProducts);
+        this.achievments = new HashSet<>(userData.achievments);
         this.purchasedProducts = new HashSet<>(userData.purchasedProducts);
         return this;
     }
@@ -135,6 +137,10 @@ public class User {
             int leaderboardScore = (int)dollars;
             GameApplication.get().platform.leaderboard().submitScore(GameConfig.LEADERBOARD_MAX_DOLLARS_NAME, leaderboardScore, NumberFormat.format(leaderboardScore));
         }
+    }
+
+    public boolean hasAchievment(int type) {
+        return achievments.contains(type);
     }
 
     public boolean isAuthorized() {
