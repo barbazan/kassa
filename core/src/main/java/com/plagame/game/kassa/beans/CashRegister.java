@@ -20,6 +20,7 @@ import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.components.ModelLabel;
 import com.plagame.game.kassa.enums.AchievementInfo;
 import com.plagame.game.kassa.enums.ProductInfo;
+import com.plagame.game.kassa.utils.ActionsUtil;
 import com.plagame.game.kassa.utils.CashPaymentGenerator;
 import com.plagame.game.kassa.utils.NumberFormat;
 import com.plagame.game.kassa.utils.SoundUtil;
@@ -738,6 +739,7 @@ public class CashRegister extends Group {
     }
 
     private void addAchievementsProgress(boolean isCard) {
+        int completeAchievements = User.get().completeAchievments.size();
         if(isCard) {
             paymentTypes.add("card");
         } else {
@@ -750,7 +752,7 @@ public class CashRegister extends Group {
             User.get().achievments.put(AchievementInfo.ACHIEVEMENT_INFO_2.type, paymentTypes.size());
         }
 
-        if(!AchievementInfo.ACHIEVEMENT_INFO_3.isComplete()) {
+        if(!AchievementInfo.ACHIEVEMENT_INFO_3.isComplete() && GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) { // Достичь положительного баланса кассы по итогам дня.
             User.get().achievments.put(AchievementInfo.ACHIEVEMENT_INFO_3.type, User.get().dollars);
         }
 
@@ -784,6 +786,14 @@ public class CashRegister extends Group {
         if (hour >= 21) { // После 21:00
             User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_11, 1);
         }
+
+        User.get().fillCompleteAchievements();
+
+        if(completeAchievements != User.get().completeAchievments.size()) {
+            Image image = GameApplication.get().getGameScreen().headerPanel.achieveImage;
+            ActionsUtil.addForeverScaleAction(image);
+        }
+
     }
 
 }

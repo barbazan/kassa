@@ -161,7 +161,7 @@ public class SettingsScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                GameApplication.get().setGameScreen();
+                GameApplication.get().setOldGameScreen();
             }
         });
         return redButton;

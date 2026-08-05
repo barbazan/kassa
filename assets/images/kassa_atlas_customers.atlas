@@ -6,7 +6,7 @@ filter: Nearest,Nearest
 repeat: none
 customer_1
   rotate: false
-  xy: 1087, 233
+  xy: 2222, 137
   size: 519, 1164
   orig: 519, 1164
   offset: 0, 0
@@ -20,63 +20,63 @@ customer_10
   index: -1
 customer_11
   rotate: false
-  xy: 1537, 2308
+  xy: 1562, 2308
   size: 290, 819
   orig: 290, 819
   offset: 0, 0
   index: -1
 customer_12
   rotate: false
-  xy: 3257, 1267
+  xy: 3548, 1267
   size: 463, 1000
   orig: 463, 1000
   offset: 0, 0
   index: -1
 customer_13
   rotate: false
-  xy: 1608, 199
+  xy: 1087, 273
   size: 563, 1112
   orig: 563, 1112
   offset: 0, 0
   index: -1
 customer_14
   rotate: false
-  xy: 1212, 1399
+  xy: 1503, 1387
   size: 431, 907
   orig: 431, 907
   offset: 0, 0
   index: -1
 customer_15
   rotate: false
-  xy: 2910, 1281
+  xy: 3201, 1279
   size: 345, 988
   orig: 345, 988
   offset: 0, 0
   index: -1
 customer_16
   rotate: false
-  xy: 1829, 2296
+  xy: 1854, 2296
   size: 309, 831
   orig: 309, 831
   offset: 0, 0
   index: -1
 customer_17
   rotate: false
-  xy: 2020, 1313
+  xy: 2311, 1312
   size: 295, 970
   orig: 295, 970
   offset: 0, 0
   index: -1
 customer_18
   rotate: false
-  xy: 2317, 1312
+  xy: 2608, 1303
   size: 304, 970
   orig: 304, 970
   offset: 0, 0
   index: -1
 customer_19
   rotate: false
-  xy: 2623, 1303
+  xy: 2914, 1303
   size: 285, 970
   orig: 285, 970
   offset: 0, 0
@@ -90,14 +90,14 @@ customer_2
   index: -1
 customer_20
   rotate: false
-  xy: 2173, 189
+  xy: 1652, 199
   size: 568, 1112
   orig: 568, 1112
   offset: 0, 0
   index: -1
 customer_21
   rotate: false
-  xy: 1645, 1324
+  xy: 1936, 1313
   size: 373, 970
   orig: 373, 970
   offset: 0, 0
@@ -111,7 +111,7 @@ customer_22
   index: -1
 customer_23
   rotate: false
-  xy: 3218, 2271
+  xy: 3243, 2271
   size: 271, 856
   orig: 271, 856
   offset: 0, 0
@@ -125,7 +125,7 @@ customer_24
   index: -1
 customer_25
   rotate: false
-  xy: 3491, 2269
+  xy: 3516, 2269
   size: 304, 858
   orig: 304, 858
   offset: 0, 0
@@ -160,7 +160,7 @@ customer_29
   index: -1
 customer_3
   rotate: false
-  xy: 2471, 2284
+  xy: 2496, 2284
   size: 279, 843
   orig: 279, 843
   offset: 0, 0
@@ -181,7 +181,7 @@ customer_31
   index: -1
 customer_32
   rotate: false
-  xy: 1218, 2314
+  xy: 1243, 2312
   size: 317, 815
   orig: 317, 815
   offset: 0, 0
@@ -202,7 +202,7 @@ customer_34
   index: -1
 customer_35
   rotate: false
-  xy: 2743, 1
+  xy: 2743, 13
   size: 672, 1264
   orig: 672, 1264
   offset: 0, 0
@@ -237,7 +237,7 @@ customer_39
   index: -1
 customer_4
   rotate: false
-  xy: 2140, 2285
+  xy: 2165, 2285
   size: 329, 842
   orig: 329, 842
   offset: 0, 0
@@ -266,13 +266,13 @@ customer_42
 customer_5
   rotate: false
   xy: 962, 2329
-  size: 254, 800
-  orig: 254, 800
+  size: 279, 800
+  orig: 279, 800
   offset: 0, 0
   index: -1
 customer_6
   rotate: false
-  xy: 2752, 2275
+  xy: 2777, 2275
   size: 464, 852
   orig: 464, 852
   offset: 0, 0
@@ -293,7 +293,7 @@ customer_8
   index: -1
 customer_9
   rotate: false
-  xy: 3797, 2217
+  xy: 1212, 1400
   size: 289, 910
   orig: 289, 910
   offset: 0, 0

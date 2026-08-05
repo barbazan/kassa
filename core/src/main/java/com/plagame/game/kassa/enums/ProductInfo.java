@@ -174,6 +174,13 @@ public enum ProductInfo {
         PRODUCT_INFO_13, PRODUCT_INFO_14, PRODUCT_INFO_15, PRODUCT_INFO_16,
         PRODUCT_INFO_17, PRODUCT_INFO_18, PRODUCT_INFO_19, PRODUCT_INFO_20
     );
+    public static final List<ProductInfo> RARE_PRODUCT_LIST = Arrays.asList( // редкие товары  (всё золото, дубайский шоколад, карандаш, механическая точилка, нить для зубов, лобстер и морской ёж, зелёная бутылка вина, миндальное и кокосовое молоко)
+        PRODUCT_INFO_9  ,
+        PRODUCT_INFO_10 , PRODUCT_INFO_11 , PRODUCT_INFO_12 , PRODUCT_INFO_34 ,
+        PRODUCT_INFO_36 , PRODUCT_INFO_97 , PRODUCT_INFO_105, PRODUCT_INFO_108,
+        PRODUCT_INFO_118, PRODUCT_INFO_121, PRODUCT_INFO_127, PRODUCT_INFO_128,
+        PRODUCT_INFO_129, PRODUCT_INFO_130, PRODUCT_INFO_131, PRODUCT_INFO_132
+    );
 
     public final int type;
     public final int cost;

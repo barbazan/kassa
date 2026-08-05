@@ -15,6 +15,7 @@ import com.plagame.game.net.kassa.UserData;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Дмитрий Малышев on 11.04.2026.
@@ -41,6 +42,7 @@ public class User {
     public boolean isAdHide;
     public boolean isFullVersionBuyed;
     public Map<String, Integer> rankMap = new HashMap<>(); // никуда не сохраняем, живет в рамках одной игровой снессии
+    public transient Set<Integer> completeAchievments = new HashSet<>();
 
     public User() {
         super();
@@ -77,6 +79,14 @@ public class User {
         this.achievments = new HashMap<>(userData.achievments);
         this.purchasedProducts = new HashSet<>(userData.purchasedProducts);
         return this;
+    }
+
+    public void fillCompleteAchievements() {
+        for(AchievementInfo achievementInfo : AchievementInfo.values()) {
+            if(achievementInfo.isComplete()) {
+                completeAchievments.add(achievementInfo.type);
+            }
+        }
     }
 
     public String getDollarsAsString() {

@@ -5,8 +5,10 @@ import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
+import com.plagame.game.kassa.utils.ActionsUtil;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 
@@ -23,6 +26,7 @@ import com.plagame.game.kassa.utils.SoundUtil;
  */
 public class HeaderPanel extends Table {
 
+    public Image achieveImage;
     private float headerWidth, headerHeight, pad, iconSize;
 
     public HeaderPanel() {
@@ -59,16 +63,17 @@ public class HeaderPanel extends Table {
         });
         innerTable.add(dollarsGroup).size(dollarsGroup.getWidth(), dollarsGroup.getHeight()).align(Align.left).pad(pad).fill();
 
-        Image ahieveImage = new Image(ATLAS_1.findRegion("icon_v"));
-        ahieveImage.setSize(iconSize, iconSize);
-        ahieveImage.addListener(new ActorGestureListener() {
+        achieveImage = new Image(ATLAS_1.findRegion("icon_v"));
+        achieveImage.setSize(iconSize, iconSize);
+        achieveImage.setOrigin(achieveImage.getWidth() / 2, achieveImage.getHeight() / 2);
+        achieveImage.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
                 GameApplication.get().setAchievementsScreen();
             }
         });
-        innerTable.add(ahieveImage).size(ahieveImage.getWidth(), ahieveImage.getHeight()).align(Align.center).padRight(pad).fill();
+        innerTable.add(achieveImage).size(achieveImage.getWidth(), achieveImage.getHeight()).align(Align.center).padRight(pad).fill();
 
         Image settingsImage = new Image(ATLAS_1.findRegion("icon_settings"));
         settingsImage.setSize(iconSize, iconSize);

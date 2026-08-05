@@ -5,6 +5,7 @@ import static com.plagame.game.kassa.GameConfig.SHOW_FPS;
 import com.badlogic.gdx.InputProcessor;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.GameScene;
+import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.components.HeaderPanel;
 import com.plagame.game.kassa.stages.UIStage;
 import com.plagame.game.kassa.utils.AssetUtil;
@@ -27,6 +28,7 @@ public class GameScreen extends BaseScreen {
     }
 
     private void init() {
+        User.get().fillCompleteAchievements();
         initHeaderPanel();
 //        uiStage = new UIStage();
         if(gameScene == null) {

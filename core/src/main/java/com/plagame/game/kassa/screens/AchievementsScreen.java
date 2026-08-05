@@ -31,6 +31,7 @@ public class AchievementsScreen extends BaseScreen {
 
     public AchievementsScreen() {
         init();
+        GameApplication.get().getGameScreen().headerPanel.achieveImage.clearActions();
     }
 
     private void init() {
@@ -134,7 +135,7 @@ public class AchievementsScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                GameApplication.get().setGameScreen();
+                GameApplication.get().setOldGameScreen();
                 super.tap(event, x, y, count, button);
             }
         });

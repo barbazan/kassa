@@ -137,6 +137,13 @@ public class GameApplication extends Game {
         setInputProcessor(gameScreen.getInputProcessor());
     }
 
+    public void setOldGameScreen() {
+        if(gameScreen != null) {
+            setScreen(gameScreen);
+            setInputProcessor(gameScreen.getInputProcessor());
+        }
+    }
+
     public void setShopScreen() {
         if(shopScreen != null) {
             shopScreen.dispose();
