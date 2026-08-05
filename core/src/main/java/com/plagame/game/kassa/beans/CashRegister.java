@@ -25,7 +25,7 @@ import com.plagame.game.kassa.utils.CashPaymentGenerator;
 import com.plagame.game.kassa.utils.NumberFormat;
 import com.plagame.game.kassa.utils.SoundUtil;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -786,7 +786,7 @@ public class CashRegister extends Group {
             User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_10, 1);
         }
 
-        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int hour = new Date().getHours();
         if (hour >= 21) { // После 21:00
             User.get().addAchievementProgress(AchievementInfo.ACHIEVEMENT_INFO_11, 1);
         }

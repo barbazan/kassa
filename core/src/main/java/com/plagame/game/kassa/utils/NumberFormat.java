@@ -21,7 +21,9 @@ public class NumberFormat {
             return String.valueOf(dollars / 100);
         }
 
-        return String.format(Locale.US, "%.2f", dollars / 100.0);
+        int whole = dollars / 100;
+        int cents = Math.abs(dollars % 100);
+        return whole + "." + (cents < 10 ? "0" : "") + cents;
     }
 
 //    public static String formatCost(float cost) {

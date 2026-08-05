@@ -12,7 +12,6 @@ import com.plagame.game.integration.platform.service.yandex.YandexPlatformServic
 
 /** Launches the GWT application. */
 public class GwtLauncher extends GwtApplication {
-    private static final TargetPlatform TARGET_PLATFORM = TargetPlatform.HTML_YANDEX;
 
     @Override
         public GwtApplicationConfiguration getConfig () {

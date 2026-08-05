@@ -21,11 +21,11 @@ public class YandexBridge {
     }
 
     private static native void exportOnUserLoaded() /*-{
-        $wnd.YandexBridge_onUserLoaded = $entry(@com.plagame.game.kassa.yandex.YandexBridge::onUserLoaded(Ljava/lang/String;));
+        $wnd.YandexBridge_onUserLoaded = $entry(@com.plagame.game.integration.yandex.YandexBridge::onUserLoaded(Ljava/lang/String;));
     }-*/;
 
     public static native void registerCallbacks() /*-{
-        $wnd.YandexBridge_onUserLoaded = $entry(@com.plagame.game.kassa.yandex.YandexBridge::onUserLoaded(Ljava/lang/String;));
+        $wnd.YandexBridge_onUserLoaded = $entry(@com.plagame.game.integration.yandex.YandexBridge::onUserLoaded(Ljava/lang/String;));
     }-*/;
 
     // --- JS методы ---
@@ -46,14 +46,14 @@ public class YandexBridge {
     // Проверка (без диалога)
     public static native void checkAuth(PlayerCallback callback) /*-{
         $wnd.getPlayerString(function(data) {
-            callback.@com.plagame.game.kassa.yandex.YandexBridge.PlayerCallback::onResult(Ljava/lang/String;)(data);
+            callback.@com.plagame.game.integration.yandex.YandexBridge.PlayerCallback::onResult(Ljava/lang/String;)(data);
         });
     }-*/;
 
     // Авторизация (с диалогом)
     public static native void authorizePlayer(PlayerCallback callback) /*-{
         $wnd.authorizePlayer(function(data) {
-            callback.@com.plagame.game.kassa.yandex.YandexBridge.PlayerCallback::onResult(Ljava/lang/String;)(data);
+            callback.@com.plagame.game.integration.yandex.YandexBridge.PlayerCallback::onResult(Ljava/lang/String;)(data);
         });
     }-*/;
 
@@ -117,7 +117,7 @@ public class YandexBridge {
     public static native void getYandexPlayer(Consumer<YandexPlayer> onPlayer) /*-{
         if ($wnd.ysdk) {
             $wnd.ysdk.getPlayer().then(function(player) {
-                var javaPlayer = @com.plagame.game.kassa.yandex.YandexPlayer::new()();
+                var javaPlayer = @com.plagame.game.integration.yandex.YandexPlayer::new()();
                 javaPlayer.id = player.id;
                 javaPlayer.login = player.login;
                 onPlayer.@java.util.function.Consumer::accept(Ljava/lang/Object;)(javaPlayer);

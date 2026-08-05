@@ -21,7 +21,7 @@ public class GameConfig {
     public static final boolean RELEASE_BUILD = false;
     public static final String LEADERBOARD_MAX_DOLLARS_NAME = "maxDollars5";
 
-    public static TargetPlatform TARGET_PLATFORM = TargetPlatform.LOCAL;
+    public static TargetPlatform TARGET_PLATFORM = TargetPlatform.HTML_YANDEX;
 
     public static final Json JSON = new Json();
     public static final Random random = new Random();

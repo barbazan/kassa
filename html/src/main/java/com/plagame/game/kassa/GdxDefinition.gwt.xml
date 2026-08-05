@@ -14,7 +14,7 @@
   <inherits name="com.badlogic.gdx.physics.box2d.box2d-gwt" />
   <inherits name="com.github.czyzby.websocket.GdxWebSocket" />
   <inherits name="com.github.czyzby.websocket.GdxWebSocketGwt" />
-  <inherits name="com.plagame.game.kassa.GameApplication" />
+  <inherits name="com.plagame.game.Core" />
 
   <!-- You must change this if you rename packages later, or rename GwtLauncher. -->
   <entry-point class="com.plagame.game.kassa.gwt.GwtLauncher" />

@@ -32,7 +32,7 @@ public class YandexSDK {
 
         function focusLater() {
             $wnd.setTimeout(function() {
-                @com.plagame.game.kassa.yandex.YandexSDK::focusCanvas()();
+                @com.plagame.game.integration.yandex.YandexSDK::focusCanvas()();
             }, 50);
         }
 
@@ -58,7 +58,7 @@ public class YandexSDK {
     public static native void showRewardedVideo(Runnable onRewarded, Runnable onSkipped) /*-{
         function focusLater() {
             $wnd.setTimeout(function() {
-                @com.plagame.game.kassa.yandex.YandexSDK::focusCanvas()();
+                @com.plagame.game.integration.yandex.YandexSDK::focusCanvas()();
             }, 50);
         }
 
@@ -162,11 +162,11 @@ public class YandexSDK {
                         console.log("Purchase successful: ", purchase);
 
                         // Создаём объект Purchase для Java
-                        var javaPurchase = @com.plagame.game.kassa.yandex.YandexModels.Purchase::new()();
+                        var javaPurchase = @com.plagame.game.integration.yandex.YandexModels.Purchase::new()();
                         javaPurchase.productID = purchase.productID; // исправлено!
                         javaPurchase.purchaseToken = purchase.purchaseToken;
 
-                        onSuccess.@com.plagame.game.kassa.yandex.PurchaseCallback::onSuccess(Lcom/plagame/game/kassa/yandex/YandexModels$Purchase;)(javaPurchase);
+                        onSuccess.@com.plagame.game.integration.yandex.PurchaseCallback::onSuccess(Lcom/plagame/game/integration/yandex/YandexModels$Purchase;)(javaPurchase);
                     },
                     function(err) {
                         console.error("Purchase error: ", err);
@@ -192,21 +192,21 @@ public class YandexSDK {
                     function(products) {
                         var json = JSON.stringify(products);
                         console.log("Catalog JSON: ", json);
-                        callback.@com.plagame.game.kassa.yandex.YandexSDK.JsonCallback::onResult(Ljava/lang/String;)(json);
+                        callback.@com.plagame.game.integration.yandex.YandexSDK.JsonCallback::onResult(Ljava/lang/String;)(json);
                     },
                     function(err) {
                         console.error("getCatalog error: ", err);
-                        callback.@com.plagame.game.kassa.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)(err.message);
+                        callback.@com.plagame.game.integration.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)(err.message);
                     }
                 );
             },
             function(err) {
                 console.error("getPayments failed: ", err);
-                callback.@com.plagame.game.kassa.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)(err.message);
+                callback.@com.plagame.game.integration.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)(err.message);
             });
         } else {
             console.log("Payments not available");
-            callback.@com.plagame.game.kassa.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)("Payments not available");
+            callback.@com.plagame.game.integration.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)("Payments not available");
         }
     }-*/;
 
@@ -218,21 +218,21 @@ public class YandexSDK {
                     function(purchases) {
                         var json = JSON.stringify(purchases);
                         console.log("Purchases JSON: ", json);
-                        callback.@com.plagame.game.kassa.yandex.YandexSDK.JsonCallback::onResult(Ljava/lang/String;)(json);
+                        callback.@com.plagame.game.integration.yandex.YandexSDK.JsonCallback::onResult(Ljava/lang/String;)(json);
                     },
                     function(err) {
                         console.error("getPurchases error: ", err);
-                        callback.@com.plagame.game.kassa.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)(err.message);
+                        callback.@com.plagame.game.integration.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)(err.message);
                     }
                 );
             },
             function(err) {
                 console.error("getPayments failed: ", err);
-                callback.@com.plagame.game.kassa.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)(err.message);
+                callback.@com.plagame.game.integration.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)(err.message);
             });
         } else {
             console.log("Payments not available");
-            callback.@com.plagame.game.kassa.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)("Payments not available");
+            callback.@com.plagame.game.integration.yandex.YandexSDK.JsonCallback::onError(Ljava/lang/String;)("Payments not available");
         }
     }-*/;
 
@@ -360,7 +360,7 @@ public class YandexSDK {
     public static native void getLeaderboardEntries(String boardName, int top, int around, LeaderboardEntriesCallback cb) /*-{
         console.log("before getEntries");
         if (!$wnd.ysdk || !$wnd.ysdk.leaderboards) {
-            cb.@com.plagame.game.kassa.yandex.LeaderboardEntriesCallback::onError(Ljava/lang/String;)(
+            cb.@com.plagame.game.integration.yandex.LeaderboardEntriesCallback::onError(Ljava/lang/String;)(
                 "ysdk or leaderboards not available"
             );
             return;
@@ -381,14 +381,14 @@ public class YandexSDK {
                 console.log("SUCCESS");
                 console.log(JSON.stringify(res));
 
-                cb.@com.plagame.game.kassa.yandex.LeaderboardEntriesCallback::onSuccess(Ljava/lang/String;)(
+                cb.@com.plagame.game.integration.yandex.LeaderboardEntriesCallback::onSuccess(Ljava/lang/String;)(
                     JSON.stringify(res)
                 );
             }))
             ["catch"]($entry(function(err) {
                 console.error("RAW ERROR:", err);
 
-                cb.@com.plagame.game.kassa.yandex.LeaderboardEntriesCallback::onError(Ljava/lang/String;)(
+                cb.@com.plagame.game.integration.yandex.LeaderboardEntriesCallback::onError(Ljava/lang/String;)(
                     String(err)
                 );
             }));

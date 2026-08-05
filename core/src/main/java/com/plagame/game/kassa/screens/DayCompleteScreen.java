@@ -35,6 +35,7 @@ public class DayCompleteScreen extends BaseScreen {
                 Actions.run(new Runnable() {
                     @Override
                     public void run() {
+                        GameApplication.get().platform.ads().showFullscreenAdv();
                         GameApplication.get().setShopScreen();
                     }
                 })

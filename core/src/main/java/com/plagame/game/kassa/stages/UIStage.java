@@ -145,12 +145,12 @@ public class UIStage extends BaseStage {
         return false;
     }
 
-    public void checkFullscreenAdv() {
-        if(GameApplication.get().platform.isAdsAvailable()) {
-            if(!GameApplication.get().platform.ads().isFullscreenAdCooldown() && !User.get().isAdHide) {
-                GameApplication.get().platform.ads().showFullscreenAdv();
-            }
-        }
-    }
+//    public void checkFullscreenAdv() {
+//        if(GameApplication.get().platform.isAdsAvailable()) {
+//            if(!GameApplication.get().platform.ads().isFullscreenAdCooldown() && !User.get().isAdHide) {
+//                GameApplication.get().platform.ads().showFullscreenAdv();
+//            }
+//        }
+//    }
 
 }

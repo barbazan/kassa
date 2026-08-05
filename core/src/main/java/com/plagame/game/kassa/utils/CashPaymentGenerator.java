@@ -165,15 +165,21 @@ public final class CashPaymentGenerator {
 
             int paidAmount = bills.stream().mapToInt(Integer::intValue).sum();
 
-            System.out.printf(
-                "%.2f -> %.2f %s%n",
-                price / 100.0,
-                paidAmount / 100.0,
-                bills.stream()
-                    .map(v -> String.format("%.0f", v / 100.0))
-                    .collect(Collectors.toList())
+            System.out.println(
+                formatMoney(price) + " -> " +
+                    formatMoney(paidAmount) + " " +
+                    bills.stream()
+                        .map(v -> Integer.toString(v / 100))
+                        .collect(Collectors.toList())
             );
         }
+    }
+
+    private static String formatMoney(int cents) {
+        int dollars = cents / 100;
+        int cent = cents % 100;
+
+        return dollars + "." + (cent < 10 ? "0" : "") + cent;
     }
 }
 
