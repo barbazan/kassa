@@ -40,7 +40,7 @@ public class User {
     public HashMap<Integer, Integer> achievments = new HashMap();
     public long loginDayCount;
     public boolean isAdHide;
-    public boolean isFullVersionBuyed;
+    private boolean isFullVersionBuyed;
     public Map<String, Integer> rankMap = new HashMap<>(); // никуда не сохраняем, живет в рамках одной игровой снессии
     public transient Set<Integer> completeAchievments = new HashSet<>();
 
@@ -202,6 +202,11 @@ public class User {
 
     public static User deserialize(byte[] data) {
         return ByteArrayUserSerializer.deserialize(data);
+    }
+
+    public boolean isFullVersionBuyed() {
+//        return true;
+        return isFullVersionBuyed;
     }
 
     @Override

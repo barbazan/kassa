@@ -70,7 +70,7 @@ public enum CustomerInfo {
     }
 
     public static CustomerInfo getRandom() {
-        if(User.get().isFullVersionBuyed) {
+        if(User.get().isFullVersionBuyed()) {
             return getRandom(Arrays.asList(values()));
         } else {
             return getRandom(UNLOCK_CUSTOMER_LIST);

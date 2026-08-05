@@ -138,9 +138,8 @@ public class ShopScreen extends BaseScreen {
         soldTable.setVisible(User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
         productsTable.addActor(soldTable);
 
-        if(User.get().isFullVersionBuyed || ProductInfo.UNLOCK_PRODUCT_LIST.contains(ProductInfo.getByType(index))) { // кнопку "Купить" показываем если куплена полная версия или продукт входи в начальный анлокнутый набор
+        if(User.get().isFullVersionBuyed() || ProductInfo.UNLOCK_PRODUCT_LIST.contains(ProductInfo.getByType(index))) { // кнопку "Купить" показываем если куплена полная версия или продукт входи в начальный анлокнутый набор
             int unlockPrice = (int)(UNLOCK_START_PRICE * Math.pow(index - ProductInfo.START_PRODUCT_LIST.size(), 1.5));
-            System.out.println("----------------------unlockPrice = " + unlockPrice);
             Button buyBtn = createBuyBtn(unlockPrice, tableHeight * 0.65f);
             buyBtn.setPosition(productsTable.getWidth() - buyBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - buyBtn.getHeight() - pad);
             buyBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
