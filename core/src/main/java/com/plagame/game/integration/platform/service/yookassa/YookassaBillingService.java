@@ -64,7 +64,7 @@ public class YookassaBillingService extends BaseBillingService {
     private void loadCatalog() {
         products.clear();
         for(BillingProduct billingProduct : BillingCatalog.values()) {
-            String price = Math.round(billingProduct.gold * 0.08f) + " RUB";
+            String price = Math.round(billingProduct.gold * 0.1f) + " RUB";
             billingProduct = billingProduct.withPrice(price);
             products.put(billingProduct.id, billingProduct);
         }

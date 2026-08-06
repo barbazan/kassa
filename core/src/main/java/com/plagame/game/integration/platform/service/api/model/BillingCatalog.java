@@ -96,17 +96,17 @@ public final class BillingCatalog {
 //            "700 TST"
 //        ));
 
-        add(new BillingProduct(
-            PRODUCT_HIDE_ADV,
-            0,
-            "Отключить рекламу",
-            "Отключить рекламу",
-            "99 TST"
-        ));
+//        add(new BillingProduct(
+//            PRODUCT_HIDE_ADV,
+//            0,
+//            "Отключить рекламу",
+//            "Отключить рекламу",
+//            "99 TST"
+//        ));
 
         add(new BillingProduct(
             PRODUCT_FULL_VERSION,
-            0,
+            3990,
             "Полная версия игры",
             "Полная версия игры: 132 товара и 42 персонажа",
             "399 TST"
@@ -123,7 +123,7 @@ public final class BillingCatalog {
 
     public static BillingProduct getByGold(int gold) { // возвращает BillingProduct по количеству золота (Ярик не присылает sku(productId), поэтому определяем BillingProduct по кол-ву игровой валюты)
         for(BillingProduct billingProduct : PRODUCTS.values()) {
-            if(billingProduct.gold == gold) {
+            if(billingProduct.id.equals(PRODUCT_FULL_VERSION)) { // только один продукт у нас PRODUCT_FULL_VERSION
                 return billingProduct;
             }
         }

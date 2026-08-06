@@ -92,21 +92,30 @@ public class BuyFullVersionScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
+                System.out.println("---------------User.get().isAuthorized() = " + User.get().isAuthorized());
                 if(User.get().isAuthorized()) {
                     GameApplication.get().platform.billing().buyFullVersion();
+                    GameApplication.get().setBuyFullVersionScreen();
                 }
                 super.tap(event, x, y, count, button);
             }
         });
 
-        Label label = new Label("Купить полную версию" +
-            " \n всего за 399 руб", new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY));
-        label.setAlignment(Align.center);
-        button.add(label).align(Align.center).pad(pad * 1.1f).fill();
-        button.setSize(label.getWidth() * 1.11f, label.getHeight() * 1.9f);
-        button.setPosition(GameApplication.get().screenWidth / 2 - button.getWidth() / 2, pad * 2);
-        stage.addActor(button);
-
+        if(User.get().isFullVersionBuyed()) {
+            Label label = new Label("Вы уже купили " +
+                "\nполную версию", new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY));
+            label.setAlignment(Align.center);
+            label.setPosition(GameApplication.get().screenWidth / 2 - label.getWidth() / 2, pad);
+            stage.addActor(label);
+        } else {
+            Label label = new Label("Купить полную версию" +
+                " \n всего за 399 руб", new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY));
+            label.setAlignment(Align.center);
+            button.add(label).align(Align.center).pad(pad * 1.1f).fill();
+            button.setSize(label.getWidth() * 1.11f, label.getHeight() * 1.9f);
+            button.setPosition(GameApplication.get().screenWidth / 2 - button.getWidth() / 2, pad * 2);
+            stage.addActor(button);
+        }
     }
 
     @Override

@@ -18,10 +18,10 @@ public class GameConfig {
 
     public static final boolean GUI_DEBUG = false;
     public static final boolean SHOW_FPS = false;
-    public static final boolean RELEASE_BUILD = false;
-    public static final String LEADERBOARD_MAX_DOLLARS_NAME = "maxDollars5";
+    public static final boolean RELEASE_BUILD = false; // влияет на какой сервер коннектится локальный или боевой //todo
+    public static final String LEADERBOARD_MAX_DOLLARS_NAME = "maxDollars";
 
-    public static TargetPlatform TARGET_PLATFORM = TargetPlatform.HTML_YANDEX;
+    public static TargetPlatform TARGET_PLATFORM = TargetPlatform.ANDROID_RUSTORE;
 
     public static final Json JSON = new Json();
     public static final Random random = new Random();

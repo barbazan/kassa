@@ -10,7 +10,7 @@ import com.plagame.game.kassa.serialize.JsonUserSerializer;
 import com.plagame.game.kassa.utils.FileUtil;
 import com.plagame.game.kassa.utils.FileUtilHtml;
 import com.plagame.game.kassa.utils.NumberFormat;
-import com.plagame.game.net.kassa.UserData;
+import com.plagame.game.net.kassa.KassaUserData;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +31,7 @@ public class User {
     public int location = 1; // локация LocationInfo
     public int day = 1; // игровая валюта
     public int dollars = 250_00; // игровая валюта доллары, хранятся в центах, чтобы без флота
+    public int maxKassaDollars; // Максимальное кол-во долларов у игрока (для рейтинга)
     public long lastSaveTime = System.currentTimeMillis(); // последнее время сохранения, чтобы часто не сохранять
     public long lastLoginTime = System.currentTimeMillis();
     public boolean soundOn = true;
@@ -66,11 +67,12 @@ public class User {
         return instance;
     }
 
-    public User apply(UserData userData) {
+    public User apply(KassaUserData userData) {
         this.id = userData.id;
         this.secret = userData.secret;
         this.login = userData.login;
         this.dollars = userData.dollars;
+        this.maxKassaDollars = userData.maxKassaDollars;
         this.day = userData.day;
         this.lastLoginTime = userData.lastLoginTime;
         this.isAdHide = userData.isAdHide;

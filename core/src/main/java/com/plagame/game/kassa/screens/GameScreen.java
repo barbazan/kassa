@@ -53,7 +53,7 @@ public class GameScreen extends BaseScreen {
             fpsRate.render();
         }
         GameApplication.get().batchEnd();
-//        checkConnect();
+        checkConnect();
     }
 
 
@@ -77,11 +77,11 @@ public class GameScreen extends BaseScreen {
         init();
     }
 
-//    private void checkConnect() {
-//        if(GameApplication.get().networkWebSocketClient.isDisconnected()) {
-//            GameApplication.get().networkWebSocketClient.tryReconnect();
-//        }
-//    }
+    private void checkConnect() {
+        if(GameApplication.get().networkWebSocketClient.isDisconnected()) {
+            GameApplication.get().networkWebSocketClient.tryReconnect();
+        }
+    }
 
     private void initHeaderPanel() {
         headerPanel = new HeaderPanel();

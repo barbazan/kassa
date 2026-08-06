@@ -207,14 +207,14 @@ public class KassaNetworkWebSocketClient {
                     case NET_ACTION_LOAD_USER:
                         System.out.println("========= GET LOAD USER PACKET =========== packet = " + packet);
                         if(authorized) {
-                            User.get().apply(packet.userData).saveUser();
+                            User.get().apply(packet.kassaUserData).saveUser();
                         }
                         break;
                     case NET_ACTION_CHECK_PURCHASES:
                         System.out.println("========= GET CHECK PURCHASES PACKET =========== packet = " + packet);
                         if(authorized) {
-                            User.get().apply(packet.userData);
-                            List<Purchase> purchaseList = packet.userData.purchaseList;
+                            User.get().apply(packet.kassaUserData);
+                            List<Purchase> purchaseList = packet.kassaUserData.purchaseList;
                             if(purchaseList != null && !purchaseList.isEmpty()) {
                                 for(Purchase purchase : purchaseList) {
                                     if(!User.get().isPurchasedToken(purchase.token)) {
@@ -235,9 +235,9 @@ public class KassaNetworkWebSocketClient {
                     case NET_ACTION_GET_RATING:
                         System.out.println("========= GET RATING PACKET =========== packet = " + packet + ", authorized = " + authorized);
                         if(authorized) {
-                            System.out.println("packet.userData = " + packet.userData);
-                            if(packet.userData != null) {
-                                List<LeaderboardEntry> ratingList = packet.userData.ratingMaxDollars;
+                            System.out.println("packet.userData = " + packet.kassaUserData);
+                            if(packet.kassaUserData != null) {
+                                List<LeaderboardEntry> ratingList = packet.kassaUserData.ratingMaxDollars;
                                 System.out.println("ratingList.size() = " + ratingList.size());
                                 GameApplication.get().platform.leaderboard().setLeaderboard(ratingList);
                             }
@@ -267,7 +267,7 @@ public class KassaNetworkWebSocketClient {
         if(RELEASE_BUILD) {
             newWebSocket = WebSockets.newSocket("wss://mir-game.ru/kassaws");
         } else {
-            newWebSocket = WebSockets.newSocket("ws://192.168.0.8:8889/");
+            newWebSocket = WebSockets.newSocket("ws://192.168.0.8:8886/");
         }
         newWebSocket.setSendGracefully(true);
         newWebSocket.setUseTcpNoDelay(true);

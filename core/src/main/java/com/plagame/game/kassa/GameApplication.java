@@ -99,7 +99,7 @@ public class GameApplication extends Game {
             bgMusic = assetManager.get(MUSIC_BG_FILENAME, Music.class);
             bgMusic.setVolume(DEFAULT_MUSIC_VOLUME);
             bgMusic.setLooping(true);
-            if(User.get().musicOn) {
+            if(User.get().musicOn && GameApplication.get().bgMusic != null) {
                 GameApplication.get().bgMusic.play();
             }
         }
@@ -282,7 +282,7 @@ public class GameApplication extends Game {
     @Override
     public void pause() {
         super.pause();
-        if(User.get().musicOn) {
+        if(User.get().musicOn && GameApplication.get().bgMusic != null) {
             GameApplication.get().bgMusic.pause();
         }
     }
@@ -290,7 +290,7 @@ public class GameApplication extends Game {
     @Override
     public void resume() {
         super.resume();
-        if(User.get().musicOn) {
+        if(User.get().musicOn && GameApplication.get().bgMusic != null) {
             GameApplication.get().bgMusic.play();
         }
     }

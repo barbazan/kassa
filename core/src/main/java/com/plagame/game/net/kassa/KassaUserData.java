@@ -10,15 +10,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class UserData {
+public class KassaUserData {
 
     private static final Json JSON = new Json();
 
     public int id;
     public String secret;
     public String login;
-    public int dollars; // игровая валюта
     public int day; // игровой день
+    public int dollars; // игровая валюта
+    public int maxKassaDollars; // Максимальное кол-во долларов у игрока (для рейтинга)
     public long lastLoginTime;
     public boolean isAdHide;
     public boolean isBuyFull;
@@ -28,12 +29,13 @@ public class UserData {
     public HashSet<Integer> buyedProducts = new HashSet<>(); // купленные продукты
     public HashMap<Integer, Integer> achievments = new HashMap<>(); // достижения
 
-    public UserData apply(User user) {
+    public KassaUserData apply(User user) {
         this.id = user.id;
         this.secret = user.secret;
         this.login = user.login;
-        this.dollars = user.dollars;
         this.day = user.day;
+        this.dollars = user.dollars;
+        this.maxKassaDollars = user.maxKassaDollars;
         this.lastLoginTime = user.lastLoginTime;
         this.isAdHide = user.isAdHide;
         this.isBuyFull = user.isFullVersionBuyed();
@@ -47,7 +49,7 @@ public class UserData {
         return JSON.toJson(this);
     }
 
-    public static UserData deserializeFromString(String str) {
-        return JSON.fromJson(UserData.class, str);
+    public static KassaUserData deserializeFromString(String str) {
+        return JSON.fromJson(KassaUserData.class, str);
     }
 }

@@ -22,7 +22,7 @@ public class KassaNetworkPacket implements Serializable {
     public int action;
     public int userId;
     public String secret;
-    public UserData userData;
+    public KassaUserData kassaUserData;
 
     public KassaNetworkPacket() { // нельзя удалять используется в com.badlogic.gdx.utils.Json
         super();
@@ -44,7 +44,7 @@ public class KassaNetworkPacket implements Serializable {
         System.out.println("--------------createSaveUserPacket--------------new KassaNetworkPacket() ");
         KassaNetworkPacket networkPacket = new KassaNetworkPacket(NET_ACTION_SAVE_USER);
         networkPacket.userId = User.get().id;
-        networkPacket.userData = new UserData().apply(User.get());
+        networkPacket.kassaUserData = new KassaUserData().apply(User.get());
         return networkPacket;
     }
 
@@ -83,7 +83,7 @@ public class KassaNetworkPacket implements Serializable {
                 "action=" + action +
                 ", userId=" + userId +
                 ", secret='" + secret + '\'' +
-                ", userData='" + userData + '\'' +
+                ", kassaUserData='" + kassaUserData + '\'' +
                 '}';
     }
 
