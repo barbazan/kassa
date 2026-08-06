@@ -12,88 +12,89 @@ public final class BillingCatalog {
 
     private static final Map<String, BillingProduct> PRODUCTS = new LinkedHashMap<>();
     public static final String PRODUCT_HIDE_ADV = "shop_hide_adv";
+    public static final String PRODUCT_FULL_VERSION = "full_version";
 
     static {
 
-        add(new BillingProduct(
-            "shop_gold_1",
-            100,
-            "100",
-            "100 gold",
-            "10 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_gold_2",
-            500,
-            "500",
-            "500 gold",
-            "50 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_gold_3",
-            1000,
-            "1000",
-            "1000 gold",
-            "100 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_gold_4",
-            2500,
-            "2500",
-            "2500 gold",
-            "220 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_gold_5",
-            5000,
-            "5000",
-            "5000 gold",
-            "420 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_gold_6",
-            25000,
-            "25000",
-            "25000 gold",
-            "2000 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_action_1",
-            200,
-            "200",
-            "200 gold",
-            "50 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_action_2",
-            1500,
-            "1500",
-            "1500 gold",
-            "125 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_action_3",
-            3000,
-            "3000",
-            "3000 gold",
-            "350 TST"
-        ));
-
-        add(new BillingProduct(
-            "shop_action_4",
-            6000,
-            "6000",
-            "6000 gold",
-            "700 TST"
-        ));
+//        add(new BillingProduct(
+//            "shop_gold_1",
+//            100,
+//            "100",
+//            "100 gold",
+//            "10 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_gold_2",
+//            500,
+//            "500",
+//            "500 gold",
+//            "50 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_gold_3",
+//            1000,
+//            "1000",
+//            "1000 gold",
+//            "100 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_gold_4",
+//            2500,
+//            "2500",
+//            "2500 gold",
+//            "220 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_gold_5",
+//            5000,
+//            "5000",
+//            "5000 gold",
+//            "420 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_gold_6",
+//            25000,
+//            "25000",
+//            "25000 gold",
+//            "2000 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_action_1",
+//            200,
+//            "200",
+//            "200 gold",
+//            "50 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_action_2",
+//            1500,
+//            "1500",
+//            "1500 gold",
+//            "125 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_action_3",
+//            3000,
+//            "3000",
+//            "3000 gold",
+//            "350 TST"
+//        ));
+//
+//        add(new BillingProduct(
+//            "shop_action_4",
+//            6000,
+//            "6000",
+//            "6000 gold",
+//            "700 TST"
+//        ));
 
         add(new BillingProduct(
             PRODUCT_HIDE_ADV,
@@ -101,6 +102,14 @@ public final class BillingCatalog {
             "Отключить рекламу",
             "Отключить рекламу",
             "99 TST"
+        ));
+
+        add(new BillingProduct(
+            PRODUCT_FULL_VERSION,
+            0,
+            "Полная версия игры",
+            "Полная версия игры: 132 товара и 42 персонажа",
+            "399 TST"
         ));
     }
 

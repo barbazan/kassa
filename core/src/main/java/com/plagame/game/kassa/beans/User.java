@@ -209,6 +209,10 @@ public class User {
         return isFullVersionBuyed;
     }
 
+    public void setFullVersionBuyed(boolean fullVersionBuyed) {
+        isFullVersionBuyed = fullVersionBuyed;
+    }
+
     @Override
     public String toString() {
         return "User{" +

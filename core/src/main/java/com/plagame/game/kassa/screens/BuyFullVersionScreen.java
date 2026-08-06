@@ -1,5 +1,7 @@
 package com.plagame.game.kassa.screens;
 
+import static com.plagame.game.integration.platform.service.api.model.BillingCatalog.PRODUCT_FULL_VERSION;
+import static com.plagame.game.integration.platform.service.api.model.BillingCatalog.PRODUCT_HIDE_ADV;
 import static com.plagame.game.kassa.GameApplication.FONT_BIG_TOYZ;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 
@@ -11,12 +13,18 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.plagame.game.integration.platform.service.api.model.BillingProduct;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
+import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.utils.SoundUtil;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Дмитрий Малышев on 01.08.2026.
@@ -84,7 +92,9 @@ public class BuyFullVersionScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                // todo
+                if(User.get().isAuthorized()) {
+                    GameApplication.get().platform.billing().buyFullVersion();
+                }
                 super.tap(event, x, y, count, button);
             }
         });

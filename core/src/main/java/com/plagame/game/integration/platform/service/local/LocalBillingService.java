@@ -33,6 +33,12 @@ public class LocalBillingService extends BaseBillingService {
     }
 
     @Override
+    public void buyFullVersion() {
+        User.get().setFullVersionBuyed(true);
+        User.get().saveUser();
+    }
+
+    @Override
     public void restorePurchases() {
         GameApplication.get().networkWebSocketClient.sendCheckPurchasesPacket();
     }

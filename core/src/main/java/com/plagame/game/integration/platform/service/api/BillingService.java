@@ -39,6 +39,11 @@ public interface BillingService {
     void buyHideAdv();
 
     /**
+     * Купить полную версию игры.
+     */
+    void buyFullVersion();
+
+    /**
      * Проверить незавершенные покупки
      * (Google/RuStore/Yandex делают это по-разному).
      */

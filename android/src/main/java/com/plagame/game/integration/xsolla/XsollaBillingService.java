@@ -80,6 +80,13 @@ class XsollaBillingService extends BaseBillingService {
     }
 
     @Override
+    public void buyFullVersion() {
+        if (ready && mBillingClient != null) {
+            purchase(BillingCatalog.PRODUCT_FULL_VERSION);
+        }
+    }
+
+    @Override
     public void restorePurchases() {
         if (ready && mBillingClient != null) {
             checkPendingPurchases();

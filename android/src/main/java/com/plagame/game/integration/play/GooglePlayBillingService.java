@@ -216,6 +216,14 @@ public class GooglePlayBillingService extends BaseBillingService implements Purc
     }
 
     @Override
+    public void buyFullVersion() {
+        BillingProduct p = BillingCatalog.get(BillingCatalog.PRODUCT_FULL_VERSION);
+        if (p != null) {
+            purchase(p);
+        }
+    }
+
+    @Override
     public void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
             Log.d("GoogleBilling", "Purchase canceled");

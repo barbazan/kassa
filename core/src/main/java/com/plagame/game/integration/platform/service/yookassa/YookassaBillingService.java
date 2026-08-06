@@ -42,6 +42,16 @@ public class YookassaBillingService extends BaseBillingService {
     }
 
     @Override
+    public void buyFullVersion() {
+        BillingProduct product = products.get(BillingCatalog.PRODUCT_FULL_VERSION);
+        if (product == null) {
+            System.err.println("Full version product not loaded yet");
+            return;
+        }
+        purchase(product);
+    }
+
+    @Override
     public void restorePurchases() {
         GameApplication.get().networkWebSocketClient.sendCheckPurchasesPacket();
     }

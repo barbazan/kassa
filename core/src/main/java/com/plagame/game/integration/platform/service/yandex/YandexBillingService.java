@@ -51,6 +51,17 @@ public class YandexBillingService extends BaseBillingService {
         purchase(product);
     }
 
+    @Override
+    public void buyFullVersion() {
+        BillingProduct product = products.get(BillingCatalog.PRODUCT_FULL_VERSION);
+        if (product == null) {
+            System.err.println("Full version product not loaded yet");
+            return;
+        }
+        purchase(product);
+
+    }
+
     private void purchaseInternal(BillingProduct product) {
         YandexSDK.purchase(
             product.id,

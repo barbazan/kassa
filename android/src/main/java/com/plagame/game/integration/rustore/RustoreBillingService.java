@@ -36,6 +36,11 @@ public class RustoreBillingService extends BaseBillingService {
     }
 
     @Override
+    public void buyFullVersion() {
+        //todo
+    }
+
+    @Override
     public void restorePurchases() {
 
         checkPurchases();

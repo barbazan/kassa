@@ -57,7 +57,7 @@ public class CustomerCortege extends Group {
             } else {
                 y = startY;
             }
-            img.setOrigin(img.getWidth() / 2, img.getHeight() / 2);
+            img.setOrigin(img.getWidth() / 2, 0);
             img.setPosition(x, y);
             float scaleDelta = 0.04f;
             float duration = 1.1f + GameConfig.random.nextFloat();
@@ -162,7 +162,7 @@ public class CustomerCortege extends Group {
         if(GameApplication.get().isPortrait()) {
             return getHeight() * 0.07f;
         } else {
-            return 0;
+            return 20;
         }
     }
 
