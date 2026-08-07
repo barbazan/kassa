@@ -198,7 +198,22 @@ public enum ProductInfo {
     }
 
     public static ProductInfo getRandom() {
-        return getRandom(User.get().buyedProducts);
+        HashSet<Integer> alowedProducts = new HashSet<>(User.get().buyedProducts);
+        if(User.get().hasAdvGoods()) {
+            Set<Integer> adSet = new HashSet<>();
+            for(int i = User.get().advGoodIndex; i < User.get().advGoodIndex + 4; i++) {
+                adSet.add(i);
+            }
+            alowedProducts.addAll(adSet);
+        }
+        return getRandom(alowedProducts);
+    }
+
+    public static int getRandomAdvProductType() {
+        int count = User.get().buyedProducts.size();
+        int rnd = 1 + GameConfig.random.nextInt(3); // не больше чем на 3 товара вперед можно открывать рекламой
+        int result = count / 4 + rnd;
+        return 1 + result * 4;
     }
 
     private static ProductInfo getRandom(Set<Integer> productList) {

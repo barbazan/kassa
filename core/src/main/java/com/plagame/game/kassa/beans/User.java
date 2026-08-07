@@ -5,7 +5,6 @@ import static com.plagame.game.kassa.enums.ProductInfo.START_PRODUCT_LIST;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.enums.AchievementInfo;
-import com.plagame.game.kassa.serialize.ByteArrayUserSerializer;
 import com.plagame.game.kassa.serialize.JsonUserSerializer;
 import com.plagame.game.kassa.utils.FileUtil;
 import com.plagame.game.kassa.utils.FileUtilHtml;
@@ -42,7 +41,9 @@ public class User {
     public long loginDayCount;
     public boolean isAdHide;
     private boolean isFullVersionBuyed;
-    public Map<String, Integer> rankMap = new HashMap<>(); // никуда не сохраняем, живет в рамках одной игровой снессии
+    public int advGoodIndex; // анлоченые за рекламу товары
+    public long advGoodsEndTime; // когда заканчиваются анлоченые за рекламу продукты
+    public transient Map<String, Integer> rankMap = new HashMap<>(); // никуда не сохраняем, живет в рамках одной игровой снессии
     public transient Set<Integer> completeAchievments = new HashSet<>();
 
     public User() {
@@ -77,6 +78,8 @@ public class User {
         this.lastLoginTime = userData.lastLoginTime;
         this.isAdHide = userData.isAdHide;
         this.isFullVersionBuyed = userData.isBuyFull;
+        this.advGoodIndex = userData.advGoodIndex;
+        this.advGoodsEndTime = userData.advGoodsEndTime;
         this.buyedProducts = new HashSet<>(userData.buyedProducts);
         this.achievments = new HashMap<>(userData.achievments);
         this.purchasedProducts = new HashSet<>(userData.purchasedProducts);
@@ -199,11 +202,13 @@ public class User {
     }
 
     public byte[] serialize() {
-        return ByteArrayUserSerializer.serialize(this);
+        return toJson().getBytes();
+//        return ByteArrayUserSerializer.serialize(this);
     }
 
     public static User deserialize(byte[] data) {
-        return ByteArrayUserSerializer.deserialize(data);
+        return fromJson(new String(data));
+//        return ByteArrayUserSerializer.deserialize(data);
     }
 
     public boolean isFullVersionBuyed() {
@@ -213,6 +218,14 @@ public class User {
 
     public void setFullVersionBuyed(boolean fullVersionBuyed) {
         isFullVersionBuyed = fullVersionBuyed;
+    }
+
+    public boolean hasAdvGoods() {
+        return advGoodIndex > 0 && advGoodsEndTime > System.currentTimeMillis();
+    }
+
+    public long getAdvGoodsTimeleft() {
+        return advGoodsEndTime - System.currentTimeMillis();
     }
 
     @Override

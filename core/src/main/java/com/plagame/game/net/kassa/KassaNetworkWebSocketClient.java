@@ -1,6 +1,5 @@
 package com.plagame.game.net.kassa;
 
-import static com.plagame.game.kassa.GameConfig.RELEASE_BUILD;
 import static com.plagame.game.net.kassa.KassaNetworkPacket.NET_ACTION_CHECK_PURCHASES;
 import static com.plagame.game.net.kassa.KassaNetworkPacket.NET_ACTION_GET_RATING;
 import static com.plagame.game.net.kassa.KassaNetworkPacket.NET_ACTION_LOAD_USER;
@@ -9,6 +8,7 @@ import static com.plagame.game.net.kassa.KassaNetworkPacket.NET_ACTION_LOGIN;
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
+import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
 import com.plagame.game.integration.platform.service.api.model.BillingCatalog;
@@ -264,10 +264,10 @@ public class KassaNetworkWebSocketClient {
 
     private WebSocket createNewWebSocket() {
         WebSocket newWebSocket;
-        if(RELEASE_BUILD) {
-            newWebSocket = WebSockets.newSocket("wss://mir-game.ru/kassaws");
-        } else {
+        if(GameApplication.get().platform.getPlatform() == TargetPlatform.LOCAL) {
             newWebSocket = WebSockets.newSocket("ws://192.168.0.8:8886/");
+        } else {
+            newWebSocket = WebSockets.newSocket("wss://mir-game.ru/kassaws");
         }
         newWebSocket.setSendGracefully(true);
         newWebSocket.setUseTcpNoDelay(true);

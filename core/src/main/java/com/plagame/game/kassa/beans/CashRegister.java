@@ -369,11 +369,6 @@ public class CashRegister extends Group {
                         }
                     } else {
                         SoundUtil.playWrongClickSound();
-                        if(GameApplication.get().getGameScreen().gameScene.customerCortege.customerList.isEmpty()) { //todo remove
-                            moveCameraSlowlyBack();
-                            hideCard();
-                            GameApplication.get().getGameScreen().gameScene.nextDay(); //todo remove
-                        }
                      }
                     super.tap(event, x, y, count, button);
                 }

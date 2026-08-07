@@ -23,6 +23,8 @@ public class KassaUserData {
     public long lastLoginTime;
     public boolean isAdHide;
     public boolean isBuyFull;
+    public int advGoodIndex; // анлоченые за рекламу товары
+    public long advGoodsEndTime = System.currentTimeMillis(); // когда заканчиваются анлоченые за рекламу продукты
     public Set<String> purchasedProducts = new HashSet<>(); // запурчайсеные токены
     public List<Purchase> purchaseList = new ArrayList<>(); // оплаченые покупки
     public List<LeaderboardEntry> ratingMaxDollars = new ArrayList<>(); // рейтинг
@@ -39,6 +41,8 @@ public class KassaUserData {
         this.lastLoginTime = user.lastLoginTime;
         this.isAdHide = user.isAdHide;
         this.isBuyFull = user.isFullVersionBuyed();
+        this.advGoodIndex = user.advGoodIndex;
+        this.advGoodsEndTime = user.advGoodsEndTime;
         this.buyedProducts = user.buyedProducts;
         this.purchasedProducts = user.purchasedProducts;
         this.achievments = user.achievments;

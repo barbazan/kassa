@@ -21,12 +21,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.plagame.game.integration.platform.service.api.model.PlatformCallback;
+import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
 import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.beans.User;
+import com.plagame.game.kassa.components.ModelLabel;
 import com.plagame.game.kassa.enums.ProductInfo;
 import com.plagame.game.kassa.utils.AssetUtil;
 import com.plagame.game.kassa.utils.NumberFormat;
 import com.plagame.game.kassa.utils.SoundUtil;
+import com.plagame.game.kassa.utils.Time;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Дмитрий Малышев on 27.07.2026.
@@ -35,6 +43,7 @@ import com.plagame.game.kassa.utils.SoundUtil;
 public class ShopScreen extends BaseScreen {
 
     private static final int UNLOCK_START_PRICE = 45 * 100; // 45 долларов в центах
+    private List<ProductInfo> advGoodList = new ArrayList<>();
 
     public ShopScreen() {
         init();
@@ -55,6 +64,12 @@ public class ShopScreen extends BaseScreen {
         totalLabel.setAlignment(Align.center);
         dialogTable.add(totalLabel).align(Align.left).pad(pad / 2).padTop(pad).fill();
         dialogTable.row();
+
+        if(!User.get().isFullVersionBuyed() && GameApplication.get().platform.isAdsAvailable()) { // если не куплена полная версия, то можно за просмотр рекламы на время разблокировать товары
+            Table advGoodTable = createAdvGoodsTable(width * 0.96f);
+            dialogTable.add(advGoodTable).size(advGoodTable.getWidth(), advGoodTable.getHeight()).align(Align.center).expandX().fill();
+            dialogTable.row();
+        }
 
         for(int i = 1; i <= ProductInfo.values().length; i+=4) {
             Table goodTable = createGoodsTable(i,width * 0.96f);
@@ -97,6 +112,93 @@ public class ShopScreen extends BaseScreen {
         stage.dispose();
     }
 
+    private Table createAdvGoodsTable(float tableWidth) {
+        if(advGoodList.isEmpty()) {
+            advGoodList = createAdvProductList();
+        }
+        float tableHeight = tableWidth / 2.90f;
+        float imageHeight = tableHeight * 0.9f;
+        float pad = imageHeight / 10;
+        Table productsTable = new Table();
+        productsTable.setSize(tableWidth, tableHeight);
+//        productsTable.setDebug(true);
+        productsTable.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("panel_goods_bg_2")));
+        productsTable.pad(pad / 2);
+
+        productsTable.add().expandX();
+
+        int index = advGoodList.get(0).type;
+        for(int i = index; i < index + 4; i++) {
+            ProductInfo productInfo = ProductInfo.getByType(i);
+            TextureRegion textureRegion = productInfo.getTextureRegion();
+            Vector2 vector2 = calcImageSize(textureRegion, imageHeight);
+            Group group = new Group();
+            group.setSize(tableHeight * 0.49f, tableHeight);
+
+            Table costPanel = createCostPanel(productInfo);
+            costPanel.setPosition(group.getWidth() / 2 - costPanel.getWidth() / 2, pad * 0.75f);
+            group.addActor(costPanel);
+
+            Image productImage = new Image(productInfo.getTextureRegion());
+            productImage.setSize(vector2.x, vector2.y);
+            productImage.setScale(1.1f);
+            productImage.setPosition(group.getWidth() / 2 - productImage.getWidth() / 2, costPanel.getHeight() + (group.getHeight() - costPanel.getHeight()) / 2 - productImage.getHeight() / 2);
+            group.addActor(productImage);
+
+            float padLeft = i == 0 ? pad * 3 : 0;
+            productsTable.add(group).align(Align.center).pad(0, padLeft, pad / 2, pad / 2).expandX().fill();
+        }
+
+        productsTable.add().size(imageHeight * 0.55f).expandX();
+
+        // табличка "Продано" показываем если товар разблокирован за рекламу
+        Group unlockedTable = createUnlockedTable(tableHeight * 0.65f);
+        unlockedTable.setPosition(productsTable.getWidth() - unlockedTable.getWidth() - pad * 3 / 2, productsTable.getHeight() - unlockedTable.getHeight() + pad);
+        unlockedTable.setVisible(User.get().hasAdvGoods());
+        productsTable.addActor(unlockedTable);
+
+        if(!User.get().isFullVersionBuyed()) {
+            Button watchAdvBtn = new Button(new TextureRegionDrawable(ATLAS_1.findRegion("btn_watch_adv")));
+            float btnHeight = tableHeight * 0.60f;
+            float h = btnHeight;
+            float w = btnHeight;
+            watchAdvBtn.setSize(w, h);
+            watchAdvBtn.setPosition(productsTable.getWidth() - watchAdvBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - watchAdvBtn.getHeight() - pad);
+            watchAdvBtn.setVisible(!User.get().hasAdvGoods());
+            watchAdvBtn.addListener(new ActorGestureListener() {
+                @Override
+                public void tap(InputEvent event, float x, float y, int count, int button) {
+                    SoundUtil.playClickSound();
+                    if(GameApplication.get().platform.isAdsAvailable()) {
+                        GameApplication.get().platform.ads().showRewardedVideo(new PlatformCallback<String>() {
+                            @Override
+                            public void onSuccess(String value) {
+                                User.get().advGoodIndex = index;
+                                User.get().advGoodsEndTime = System.currentTimeMillis() + Time.HOUR_MILLIS;
+                                User.get().saveUser();
+                                GameApplication.get().setShopScreen();
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                // do nothing
+                            }
+                        });
+                    } else if(GameConfig.TARGET_PLATFORM.equals(TargetPlatform.LOCAL)) {
+                        User.get().advGoodIndex = index;
+                        User.get().advGoodsEndTime = System.currentTimeMillis() + Time.HOUR_MILLIS;
+                        User.get().saveUser();
+                        GameApplication.get().setShopScreen();
+                    }
+                    super.tap(event, x, y, count, button);
+                }
+            });
+            productsTable.addActor(watchAdvBtn);
+        }
+
+        return productsTable;
+    }
+
     private Table createGoodsTable(int index, float tableWidth) {
         float tableHeight = tableWidth / 2.90f;
         float imageHeight = tableHeight * 0.9f;
@@ -135,14 +237,14 @@ public class ShopScreen extends BaseScreen {
         // табличка "Продано" показываем если товар куплен
         Group soldTable = createSoldTable(tableHeight * 0.65f);
         soldTable.setPosition(productsTable.getWidth() - soldTable.getWidth() - pad * 3 / 2, productsTable.getHeight() - soldTable.getHeight() + pad);
-        soldTable.setVisible(User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
+        soldTable.setVisible(User.get().buyedProducts.contains(index));
         productsTable.addActor(soldTable);
 
         if(User.get().isFullVersionBuyed() || ProductInfo.UNLOCK_PRODUCT_LIST.contains(ProductInfo.getByType(index))) { // кнопку "Купить" показываем если куплена полная версия или продукт входи в начальный анлокнутый набор
             int unlockPrice = ((int)(45 * Math.pow(index - ProductInfo.START_PRODUCT_LIST.size(), 1.5))) * 100;
             Button buyBtn = createBuyBtn(unlockPrice, tableHeight * 0.65f);
             buyBtn.setPosition(productsTable.getWidth() - buyBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - buyBtn.getHeight() - pad);
-            buyBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
+            buyBtn.setVisible(!User.get().buyedProducts.contains(index));
             buyBtn.addListener(new ActorGestureListener() {
                 @Override
                 public void tap(InputEvent event, float x, float y, int count, int button) {
@@ -163,7 +265,7 @@ public class ShopScreen extends BaseScreen {
             // кнопку "купить полную версию" показываем если продукт не куплен
             Button unlockBtn = createRedBtn(tableHeight * 0.65f);
             unlockBtn.setPosition(productsTable.getWidth() - unlockBtn.getWidth() - 2 * pad / 3, productsTable.getHeight() - unlockBtn.getHeight() - pad);
-            unlockBtn.setVisible(!User.get().buyedProducts.contains(ProductInfo.getByType(index).type));
+            unlockBtn.setVisible(!User.get().buyedProducts.contains(index));
             productsTable.addActor(unlockBtn);
         }
 
@@ -285,6 +387,47 @@ public class ShopScreen extends BaseScreen {
         group.setRotation(-30);
 
         return group;
+    }
+
+    private Group createUnlockedTable(float groupHeight) {
+        float h = groupHeight;
+        float w = h;
+        Group group = new Group();
+        group.setSize(w, h);
+        Image image = new Image(ATLAS_1.findRegion("sold_table"));
+        image.setSize(w, h);
+        image.setOrigin(image.getWidth() / 2, image.getHeight() / 2);
+        image.setScale(1.1f);
+        image.setPosition(group.getWidth() / 2 - image.getWidth() / 2, group.getHeight() / 2- image.getHeight() / 2);
+        group.addActor(image);
+
+        Label label = new ModelLabel("00:00", new Label.LabelStyle(FONT_SMALL, Color.DARK_GRAY)) {
+            @Override
+            protected String getValue() {
+                if(User.get().hasAdvGoods()) {
+                    return new Time(User.get().getAdvGoodsTimeleft()).toStringInHumanFormat();
+                }
+                return "00:00";
+            }
+        };
+        label.setAlignment(Align.center);
+        label.setPosition(group.getWidth() / 2 - label.getWidth() / 2, group.getHeight() * 0.675f - label.getHeight() / 2);
+        group.addActor(label);
+        group.setRotation(-30);
+
+        return group;
+    }
+
+    private List<ProductInfo> createAdvProductList() {
+        System.out.println(" ------------------- createAdvProductList" );
+        System.out.println(" ------------------- User.get().hasAdvGoods() = " + User.get().hasAdvGoods());
+        int index = User.get().hasAdvGoods() ? User.get().advGoodIndex : ProductInfo.getRandomAdvProductType();
+        System.out.println(" ------------------- User.get().hasAdvGoods() index = " + index);
+        List<ProductInfo> list = new ArrayList<>();
+        for(int i = index; i < index + 4; i++) {
+            list.add(ProductInfo.getByType(i));
+        }
+        return list;
     }
 
     private Table createCostPanel(ProductInfo productInfo) {
