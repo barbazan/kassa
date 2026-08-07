@@ -11,7 +11,7 @@ import java.util.Random;
  * ================== ВАЖНО!!!! Этот конфиг должен быть одинаковый на клиенте и на сервере ==================
  */
 public class GameConfig {
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.10";
     public static final float DEFAULT_MUSIC_VOLUME = 0.10f;
     public static final float DEFAULT_SOUND_VOLUME = 0.2f;
     public static final float DEFAULT_CLICK_VOLUME = 0.2f;
@@ -20,7 +20,7 @@ public class GameConfig {
     public static final boolean SHOW_FPS = false;
     public static final String LEADERBOARD_MAX_DOLLARS_NAME = "maxDollars";
 
-    public static TargetPlatform TARGET_PLATFORM = TargetPlatform.HTML_YANDEX;
+    public static TargetPlatform TARGET_PLATFORM = TargetPlatform.ANDROID_RUSTORE;
 
     public static final Json JSON = new Json();
     public static final Random random = new Random();
