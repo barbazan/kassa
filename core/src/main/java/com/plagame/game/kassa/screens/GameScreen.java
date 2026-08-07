@@ -24,11 +24,11 @@ public class GameScreen extends BaseScreen {
     public GameScreen() {
         super();
         init();
+        initHeaderPanel();
     }
 
     private void init() {
         User.get().fillCompleteAchievements();
-        initHeaderPanel();
 //        uiStage = new UIStage();
         if(gameScene == null) {
             gameScene = new GameScene();

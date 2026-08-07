@@ -355,15 +355,15 @@ public class CashRegister extends Group {
                                 int cent = parts.length > 1 ? Integer.parseInt((parts[1] + "00").substring(0, 2)) : 0;
                                 terminalPayedSum = dol * 100 + cent;
                                 User.get().changeDollars(terminalPayedSum); // начислить игроку terminalPayedSum
-                                addAchievementsProgress(true); // добавляем прогресс всем очивкам связанными с этим событием расчета картой
-                                User.get().saveUser();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            finishPayment();
                             GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
-                            moveCameraSlowlyBack();
+                            addAchievementsProgress(true); // добавляем прогресс всем очивкам связанными с этим событием расчета картой
+                            User.get().saveUser();
+                            finishPayment();
                             hideCard();
+                            moveCameraSlowlyBack();
                         } else {
                             SoundUtil.playWrongClickSound();
                         }
@@ -665,10 +665,10 @@ public class CashRegister extends Group {
                     SoundUtil.playKassaClickSound();
                     User.get().changeDollars(payedSum); // начислить игроку payedSum
                     User.get().changeDollars(-givingSum); //списать с игрока givingSum
+                    GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
                     addAchievementsProgress(false); // добавляем прогресс всем очивкам связанными с этим событием рассчета на кассе
                     User.get().saveUser();
                     finishPayment();
-                    GameApplication.get().getGameScreen().gameScene.customerCortege.nextCustomer();
                     moveCameraSlowlyBack();
                 } else {
                     SoundUtil.playWrongClickSound();
@@ -792,7 +792,6 @@ public class CashRegister extends Group {
             Image image = GameApplication.get().getGameScreen().headerPanel.achieveImage;
             ActionsUtil.addForeverScaleAction(image);
         }
-
     }
 
 }

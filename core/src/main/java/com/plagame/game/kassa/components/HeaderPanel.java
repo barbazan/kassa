@@ -16,8 +16,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
+import com.plagame.game.kassa.enums.CustomerInfo;
 import com.plagame.game.kassa.utils.ActionsUtil;
 import com.plagame.game.kassa.utils.SoundUtil;
+import com.sun.tools.javac.file.CacheFSInfo;
+
+import java.util.LinkedList;
 
 
 /**
@@ -69,8 +73,13 @@ public class HeaderPanel extends Table {
         achieveImage.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                SoundUtil.playClickSound();
-                GameApplication.get().setAchievementsScreen();
+                LinkedList<CustomerInfo> customerList = GameApplication.get().getGameScreen().gameScene.customerCortege.customerList;
+                if(!customerList.isEmpty()) {
+                    SoundUtil.playClickSound();
+                    achieveImage.clearActions();
+                    achieveImage.setSize(iconSize, iconSize);
+                    GameApplication.get().setAchievementsScreen();
+                }
             }
         });
         innerTable.add(achieveImage).size(achieveImage.getWidth(), achieveImage.getHeight()).align(Align.center).padRight(pad).fill();
