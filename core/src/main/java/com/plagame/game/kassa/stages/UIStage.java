@@ -29,7 +29,6 @@ public class UIStage extends BaseStage {
     public RatingDialog ratingDialog;
     private Image noAdsIcon;
     private final List<Rectangle> buttonsRectangleList = new ArrayList<>();
-    private boolean isPurchasesChecked;
 
     public UIStage() {
         super();
@@ -90,7 +89,6 @@ public class UIStage extends BaseStage {
 
     private void processTouch() {
         if (Gdx.input.justTouched() || Gdx.input.isTouched()) {
-            checkPurchases();
             float x = Gdx.input.getX();
             float y = Gdx.graphics.getHeight() - Gdx.input.getY();
             if(!isDialog) {
@@ -99,12 +97,6 @@ public class UIStage extends BaseStage {
         }
     }
 
-    private void checkPurchases() {
-        if(!isPurchasesChecked) {
-            GameApplication.get().platform.billing().restorePurchases(); // сразу после первого клика пытаемся покупки проверить с моего сервера
-            isPurchasesChecked = true;
-        }
-    }
     private void touchAction(float x, float y) {
         // todo
     }

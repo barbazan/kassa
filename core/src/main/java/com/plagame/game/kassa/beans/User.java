@@ -59,7 +59,7 @@ public class User {
                     if (instance == null) {
                         instance = new User();
                         instance.buyedProducts.addAll(START_PRODUCT_LIST);
-                        instance.saveUserLocal();
+                        instance.saveUser();
                     }
                 }
             }
@@ -175,8 +175,8 @@ public class User {
             instance.musicOn = cloudUser.musicOn;
             instance.loginDayCount = cloudUser.loginDayCount;
             instance.isAdHide = cloudUser.isAdHide;
-            instance.buyedProducts = new HashSet<>(cloudUser.buyedProducts);
-            instance.purchasedProducts = new HashSet<>(cloudUser.purchasedProducts);
+            instance.buyedProducts.addAll(cloudUser.buyedProducts);
+            instance.purchasedProducts.addAll(cloudUser.purchasedProducts);
             instance.saveUserLocal(); // сохраняем локально
         } else { // иначе сохраняем локально то что пришло из облака
             instance = cloudUser;

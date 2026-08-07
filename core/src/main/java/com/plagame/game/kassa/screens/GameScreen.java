@@ -18,21 +18,18 @@ import com.plagame.game.kassa.utils.FPSRate;
  */
 public class GameScreen extends BaseScreen {
 
-//    public UIStage uiStage;
     private FPSRate fpsRate;
     public GameScene gameScene;
     public HeaderPanel headerPanel;
+    private boolean isPurchasesChecked;
 
     public GameScreen() {
         super();
         init();
-        initHeaderPanel();
-        addNetIndicator();
     }
 
     private void init() {
         User.get().fillCompleteAchievements();
-//        uiStage = new UIStage();
         if(gameScene == null) {
             gameScene = new GameScene();
         }
@@ -41,14 +38,15 @@ public class GameScreen extends BaseScreen {
         if(SHOW_FPS && GameApplication.get().FONT_VERY_SMALL != null) {
             fpsRate = new FPSRate();
         }
+        initHeaderPanel();
+        addNetIndicator();
+        checkPurchases();
     }
 
     @Override
     public void render(float delta) {
         AssetUtil.clearScreen();
         super.render(delta); // тут сцена отрисовывается на стейдже экторами
-
-//        uiStage.render(delta);
 
         GameApplication.get().batchBegin();
         if(fpsRate != null) {
@@ -107,6 +105,13 @@ public class GameScreen extends BaseScreen {
         imageGreen.setPosition(imageRed.getX(), imageRed.getY());
         stage.addActor(imageGreen);
 
+    }
+
+    private void checkPurchases() {
+        if(!isPurchasesChecked) {
+            GameApplication.get().platform.billing().restorePurchases(); // сразу после первого клика пытаемся покупки проверить с моего сервера
+            isPurchasesChecked = true;
+        }
     }
 
 }

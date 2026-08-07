@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.beans.User;
@@ -87,6 +88,10 @@ public class BuyFullVersionScreen extends BaseScreen {
                 SoundUtil.playClickSound();
                 if(User.get().isAuthorized()) {
                     GameApplication.get().platform.billing().buyFullVersion();
+                } else if(GameConfig.TARGET_PLATFORM == TargetPlatform.LOCAL) {
+                    User.get().setFullVersionBuyed(true);
+                    User.get().saveUser();
+                    GameApplication.get().setBuyFullVersionScreen();
                 }
                 super.tap(event, x, y, count, button);
             }

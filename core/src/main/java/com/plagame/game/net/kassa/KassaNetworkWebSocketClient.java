@@ -8,12 +8,13 @@ import static com.plagame.game.net.kassa.KassaNetworkPacket.NET_ACTION_LOGIN;
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketListener;
 import com.github.czyzby.websocket.WebSockets;
-import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
-import com.plagame.game.kassa.GameApplication;
-import com.plagame.game.kassa.beans.User;
 import com.plagame.game.integration.platform.service.api.model.BillingCatalog;
 import com.plagame.game.integration.platform.service.api.model.BillingProduct;
 import com.plagame.game.integration.platform.service.api.model.LeaderboardEntry;
+import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
+import com.plagame.game.kassa.GameApplication;
+import com.plagame.game.kassa.GameConfig;
+import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.utils.Time;
 
 import java.util.List;
@@ -213,7 +214,6 @@ public class KassaNetworkWebSocketClient {
                     case NET_ACTION_CHECK_PURCHASES:
                         System.out.println("========= GET CHECK PURCHASES PACKET =========== packet = " + packet);
                         if(authorized) {
-                            User.get().apply(packet.kassaUserData);
                             List<Purchase> purchaseList = packet.kassaUserData.purchaseList;
                             if(purchaseList != null && !purchaseList.isEmpty()) {
                                 for(Purchase purchase : purchaseList) {
@@ -264,7 +264,7 @@ public class KassaNetworkWebSocketClient {
 
     private WebSocket createNewWebSocket() {
         WebSocket newWebSocket;
-        if(GameApplication.get().platform.getPlatform() == TargetPlatform.LOCAL) {
+        if(GameConfig.TARGET_PLATFORM == TargetPlatform.LOCAL) {
             newWebSocket = WebSockets.newSocket("ws://192.168.0.8:8886/");
         } else {
             newWebSocket = WebSockets.newSocket("wss://mir-game.ru/kassaws");

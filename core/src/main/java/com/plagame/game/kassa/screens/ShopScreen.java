@@ -184,7 +184,7 @@ public class ShopScreen extends BaseScreen {
                                 // do nothing
                             }
                         });
-                    } else if(GameConfig.TARGET_PLATFORM.equals(TargetPlatform.LOCAL)) {
+                    } else if(GameConfig.TARGET_PLATFORM == TargetPlatform.LOCAL) {
                         User.get().advGoodIndex = index;
                         User.get().advGoodsEndTime = System.currentTimeMillis() + Time.HOUR_MILLIS;
                         User.get().saveUser();
