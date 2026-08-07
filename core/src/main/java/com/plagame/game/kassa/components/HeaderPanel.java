@@ -5,10 +5,8 @@ import static com.plagame.game.kassa.GameApplication.FONT_HEADER;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -17,9 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.enums.CustomerInfo;
-import com.plagame.game.kassa.utils.ActionsUtil;
 import com.plagame.game.kassa.utils.SoundUtil;
-import com.sun.tools.javac.file.CacheFSInfo;
 
 import java.util.LinkedList;
 
