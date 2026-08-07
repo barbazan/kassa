@@ -1,8 +1,10 @@
 package com.plagame.game.kassa.screens;
 
 import static com.plagame.game.kassa.GameConfig.SHOW_FPS;
+import static com.plagame.game.kassa.Resources.ATLAS_1;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.GameScene;
 import com.plagame.game.kassa.beans.User;
@@ -25,6 +27,7 @@ public class GameScreen extends BaseScreen {
         super();
         init();
         initHeaderPanel();
+        addNetIndicator();
     }
 
     private void init() {
@@ -85,6 +88,25 @@ public class GameScreen extends BaseScreen {
     private void initHeaderPanel() {
         headerPanel = new HeaderPanel();
         stage.addActor(headerPanel);
+    }
+
+    private void addNetIndicator() {
+        Image imageRed = new Image(ATLAS_1.findRegion("icon_circle_red"));
+        imageRed.setSize(10, 10);
+        imageRed.setPosition(0, GameApplication.get().screenHeight - imageRed.getHeight());
+        stage.addActor(imageRed);
+
+        Image imageGreen = new Image(ATLAS_1.findRegion("icon_circle_green")) {
+            @Override
+            public void act(float delta) {
+                setVisible(GameApplication.get().networkWebSocketClient.isConnected());
+                super.act(delta);
+            }
+        };
+        imageGreen.setSize(imageRed.getWidth(), imageRed.getHeight());
+        imageGreen.setPosition(imageRed.getX(), imageRed.getY());
+        stage.addActor(imageGreen);
+
     }
 
 }

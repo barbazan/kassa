@@ -106,7 +106,7 @@ public final class BillingCatalog {
 
         add(new BillingProduct(
             PRODUCT_FULL_VERSION,
-            3990,
+            1,
             "Полная версия игры",
             "Полная версия игры: 132 товара и 42 персонажа",
             "399 TST"

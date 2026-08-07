@@ -87,7 +87,6 @@ public class BuyFullVersionScreen extends BaseScreen {
                 SoundUtil.playClickSound();
                 if(User.get().isAuthorized()) {
                     GameApplication.get().platform.billing().buyFullVersion();
-                    GameApplication.get().setBuyFullVersionScreen();
                 }
                 super.tap(event, x, y, count, button);
             }

@@ -10,7 +10,7 @@ import com.badlogic.gdx.Net;
 public class HttpUtil {
 
     public static void sendYookassaRedirectHttpRequest(int userId, int amount) {
-        String url = "https://gamedev.mobi/yookassa_redirect?game=mir-game.ru&user=" + userId + "&quantity=" + amount;
+        String url = "https://gamedev.mobi/yookassa_redirect?game=six&user=" + userId + "&quantity=" + amount;
         Gdx.net.openURI(url);
 //        sendHttpRequest(url);
     }

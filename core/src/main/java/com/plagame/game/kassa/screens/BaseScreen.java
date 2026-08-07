@@ -1,11 +1,14 @@
 package com.plagame.game.kassa.screens;
 
+import static com.plagame.game.kassa.Resources.ATLAS_1;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.utils.AssetUtil;
