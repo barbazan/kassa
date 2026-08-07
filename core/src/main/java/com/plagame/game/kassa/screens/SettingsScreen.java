@@ -5,6 +5,7 @@ import static com.plagame.game.kassa.GameApplication.FONT_DIALOG_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_RATING;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_SMALL;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
+import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_COLOR;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.utils.Align;
 import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.GameConfig;
 import com.plagame.game.kassa.beans.User;
+import com.plagame.game.kassa.utils.AssetUtil;
 import com.plagame.game.kassa.utils.SoundUtil;
 
 
@@ -41,13 +43,14 @@ public class SettingsScreen extends BaseScreen {
     }
 
     private void init() {
-        float tableWidth = GameApplication.get().screenWidth;
+        stage.clear();
+        float tableWidth = GameApplication.get().minScreenSize;
         float tableHeight = GameApplication.get().screenHeight;
         pad = tableWidth / 40;
         Table table = new Table();
 //        table.setDebug(true);
         table.setSize(tableWidth, tableHeight);
-        table.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("bar_bg")));
+//        table.setBackground(new TextureRegionDrawable(ATLAS_1.findRegion("bar_bg")));
         table.align(Align.top);
 
         Label titleLabel = new Label("Настройки", new Label.LabelStyle(FONT_DIALOG_HEADER, Color.YELLOW)); // todo i18n
@@ -84,8 +87,6 @@ public class SettingsScreen extends BaseScreen {
         Table t1 = new Table();
         t1.setWidth(tableWidth);
 
-//        t1.add().expandX();
-
         Label newNickLabel = new Label("Новый ник:", new Label.LabelStyle(FONT_DIALOG_BUTTON, Color.WHITE)); // todo i18n
         newNickLabel.setAlignment(Align.center);
         t1.add(newNickLabel).align(Align.center).fill().padLeft(pad * 2);
@@ -97,21 +98,16 @@ public class SettingsScreen extends BaseScreen {
             new TextureRegionDrawable(ATLAS_1.findRegion("cursor")),
             new TextureRegionDrawable(ATLAS_1.findRegion("button_action_buy")),
             bgTexture));
-//        nameEditField.setSize(bgTexture.getMinWidth(), bgTexture.getMinHeight());
         loginEditField.setMaxLength(30);
         loginEditField.setAlignment(Align.center);
-//        nameEditField.setScale(2);
-//        nameEditField.setHeight(200);
         t1.add(loginEditField).align(Align.left).pad(pad).padTop(0).expandX().fill();
         stage.setKeyboardFocus(loginEditField);
-
-//        t1.add().expandX();
 
         table.add(t1).expandX().fill().pad(pad);
         table.row();
 
         Button nickButton = createChangeNickButton("Сменить ник"); // todo i18n
-        table.add(nickButton).expandX().pad(pad).padTop(0);
+        table.add(nickButton).size(nickButton.getWidth(), nickButton.getHeight()).expandX().pad(pad).padTop(0);
         table.row();
 
         float imageSize = tableWidth / 5;
@@ -130,12 +126,24 @@ public class SettingsScreen extends BaseScreen {
         table.row();
 
         Button closeButton = createCloseButton("Закрыть"); // todo i18n
-        table.add(closeButton).expandX().pad(pad);
+        table.add(closeButton).size(closeButton.getWidth(), closeButton.getHeight()).expandX().pad(pad);
         table.row();
 
         table.setSize(GameApplication.get().minScreenSize, GameApplication.get().screenHeight);
         table.setPosition(GameApplication.get().screenWidth / 2 - tableWidth / 2, GameApplication.get().screenHeight / 2 - tableHeight / 2);
         stage.addActor(table);
+    }
+
+    @Override
+    public void render(float delta) {
+        AssetUtil.clearScreen(LOADING_SCREEN_BG_COLOR.color);
+        super.render(delta);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        init();
     }
 
     @Override
@@ -149,7 +157,7 @@ public class SettingsScreen extends BaseScreen {
     }
 
     private Button createCloseButton(String text) {
-        TextureRegionDrawable buttonImage = new TextureRegionDrawable(ATLAS_1.findRegion("button_white"));
+        TextureRegionDrawable buttonImage = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
         Button.ButtonStyle style = new Button.ButtonStyle();
         style.up = buttonImage;     // по умолчанию
         style.disabled = buttonImage;  // при нажатии (опционально)
@@ -164,11 +172,12 @@ public class SettingsScreen extends BaseScreen {
                 GameApplication.get().setOldGameScreen();
             }
         });
+        redButton.setSize(label.getWidth() * 1.5f, label.getHeight() * 2.5f);
         return redButton;
     }
 
     private Button createChangeNickButton(String text) {
-        TextureRegionDrawable buttonImage = new TextureRegionDrawable(ATLAS_1.findRegion("button_white"));
+        TextureRegionDrawable buttonImage = new TextureRegionDrawable(ATLAS_1.findRegion("button_green"));
         Button.ButtonStyle style = new Button.ButtonStyle();
         style.up = buttonImage;     // по умолчанию
         style.disabled = buttonImage;  // при нажатии (опционально)
@@ -190,6 +199,7 @@ public class SettingsScreen extends BaseScreen {
                 }
             }
         });
+        redButton.setSize(label.getWidth() * 1.5f, label.getHeight() * 2.5f);
         return redButton;
     }
 

@@ -275,7 +275,8 @@ public class CustomerCortege extends Group {
                 targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.kassa.getHeight() * 0.6f;
             } else {
                 targetZoom = cashRegister.kassa.getHeight() / GameApplication.get().screenHeight;
-                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() * 1.75f;
+                targetX = GameApplication.get().camera.position.x * targetZoom;
+//                targetX = cashRegister.getParent().getX() + cashRegister.getX() + cashRegister.kassa.getWidth() * 1.75f;
                 targetY = cashRegister.getParent().getY() + cashRegister.getY() + cashRegister.getHeight() * 0.50f;
             }
             getParent().addAction(

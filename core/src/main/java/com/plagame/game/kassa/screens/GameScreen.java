@@ -7,7 +7,6 @@ import com.plagame.game.kassa.GameApplication;
 import com.plagame.game.kassa.beans.GameScene;
 import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.components.HeaderPanel;
-import com.plagame.game.kassa.stages.UIStage;
 import com.plagame.game.kassa.utils.AssetUtil;
 import com.plagame.game.kassa.utils.FPSRate;
 
