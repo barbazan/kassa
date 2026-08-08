@@ -21,11 +21,11 @@ public class GameScreen extends BaseScreen {
     private FPSRate fpsRate;
     public GameScene gameScene;
     public HeaderPanel headerPanel;
-    private boolean isPurchasesChecked;
 
     public GameScreen() {
         super();
         init();
+        addNetIndicator();
     }
 
     private void init() {
@@ -39,8 +39,6 @@ public class GameScreen extends BaseScreen {
             fpsRate = new FPSRate();
         }
         initHeaderPanel();
-        addNetIndicator();
-        checkPurchases();
     }
 
     @Override
@@ -54,6 +52,7 @@ public class GameScreen extends BaseScreen {
         }
         GameApplication.get().batchEnd();
         checkConnect();
+        checkPurchases();
     }
 
 
@@ -84,6 +83,9 @@ public class GameScreen extends BaseScreen {
     }
 
     private void initHeaderPanel() {
+        if(headerPanel != null) {
+            headerPanel.remove();
+        }
         headerPanel = new HeaderPanel();
         stage.addActor(headerPanel);
     }
@@ -105,13 +107,6 @@ public class GameScreen extends BaseScreen {
         imageGreen.setPosition(imageRed.getX(), imageRed.getY());
         stage.addActor(imageGreen);
 
-    }
-
-    private void checkPurchases() {
-        if(!isPurchasesChecked) {
-            GameApplication.get().platform.billing().restorePurchases(); // сразу после первого клика пытаемся покупки проверить с моего сервера
-            isPurchasesChecked = true;
-        }
     }
 
 }

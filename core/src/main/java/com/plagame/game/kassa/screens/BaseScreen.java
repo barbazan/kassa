@@ -25,6 +25,7 @@ public abstract class BaseScreen implements Screen {
     public Sprite background;
     public float screenWidth;
     public float screenHeight;
+    public boolean isPurchasesChecked;
 
     public BaseScreen() {
         skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
@@ -68,6 +69,13 @@ public abstract class BaseScreen implements Screen {
             GameApplication.get().camera.position.y - bgHeight / 2f
         );
         return bgSprite;
+    }
+
+    protected void checkPurchases() {
+        if(!isPurchasesChecked) {
+            GameApplication.get().platform.billing().restorePurchases(); // сразу после первого клика пытаемся покупки проверить с моего сервера
+            isPurchasesChecked = true;
+        }
     }
 
     protected void clearScreen() {

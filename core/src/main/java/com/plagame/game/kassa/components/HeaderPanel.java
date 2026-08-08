@@ -85,8 +85,13 @@ public class HeaderPanel extends Table {
         settingsImage.addListener(new ActorGestureListener() {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
-                SoundUtil.playClickSound();
-                GameApplication.get().setSettingsScreen();
+                LinkedList<CustomerInfo> customerList = GameApplication.get().getGameScreen().gameScene.customerCortege.customerList;
+                if(!customerList.isEmpty()) {
+                    SoundUtil.playClickSound();
+                    achieveImage.clearActions();
+                    achieveImage.setSize(iconSize, iconSize);
+                    GameApplication.get().setSettingsScreen();
+                }
             }
         });
         innerTable.add(settingsImage).size(settingsImage.getWidth(), settingsImage.getHeight()).align(Align.center).fill();

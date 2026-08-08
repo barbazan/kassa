@@ -87,6 +87,7 @@ public class BuyFullVersionScreen extends BaseScreen {
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
                 if(User.get().isAuthorized()) {
+                    isPurchasesChecked = false;
                     GameApplication.get().platform.billing().buyFullVersion();
                 } else if(GameConfig.TARGET_PLATFORM == TargetPlatform.LOCAL) {
                     User.get().setFullVersionBuyed(true);
@@ -112,6 +113,12 @@ public class BuyFullVersionScreen extends BaseScreen {
             button.setPosition(GameApplication.get().screenWidth / 2 - button.getWidth() / 2, pad * 2);
             stage.addActor(button);
         }
+    }
+
+    @Override
+    public void render(float delta) {
+        checkPurchases();
+        super.render(delta);
     }
 
     @Override
