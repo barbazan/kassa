@@ -2,7 +2,6 @@ package com.plagame.game.kassa.screens;
 
 import static com.plagame.game.kassa.GameApplication.FONT_DIALOG_BUTTON;
 import static com.plagame.game.kassa.GameApplication.FONT_DIALOG_HEADER;
-import static com.plagame.game.kassa.GameApplication.FONT_RATING;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_SMALL;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 import static com.plagame.game.kassa.enums.ColorInfo.LOADING_SCREEN_BG_COLOR;
@@ -58,57 +57,57 @@ public class SettingsScreen extends BaseScreen {
         table.add(titleLabel).expandX().pad(pad).padTop(pad * 2);
         table.row();
 
-        Label versionLabel = new Label("v." + GameConfig.VERSION + " " + GameConfig.TARGET_PLATFORM.getShortName(), new Label.LabelStyle(FONT_VERY_SMALL, Color.LIGHT_GRAY));
+        Label versionLabel = new Label("версия: " + GameConfig.VERSION + " " + GameConfig.TARGET_PLATFORM.getShortName(), new Label.LabelStyle(FONT_VERY_SMALL, Color.LIGHT_GRAY));
         versionLabel.setAlignment(Align.center);
         table.add(versionLabel);
         table.row();
 
-        Label idLabel = new Label("ID игрока: " + User.get().id, new Label.LabelStyle(FONT_DIALOG_BUTTON, Color.WHITE)); // todo i18n
-        idLabel.setAlignment(Align.center);
-        table.add(idLabel).expandX().pad(pad);
-        table.row();
-
-        Table t2 = new Table();
-        t2.add().expandX();
-
-        Label nickLabel1 = new Label("Ник: ", new Label.LabelStyle(FONT_DIALOG_BUTTON, Color.WHITE)); // todo i18n
-        nickLabel1.setAlignment(Align.right);
-        t2.add(nickLabel1).align(Align.right).fill();
-
-        Label nickLabel2 = new Label(User.get().login, new Label.LabelStyle(FONT_RATING, Color.YELLOW)); // todo i18n
-        nickLabel2.setAlignment(Align.left);
-        t2.add(nickLabel2).align(Align.left).fill();
-
-        t2.add().expandX();
-
-        table.add(t2).align(Align.center).fill();
-        table.row();
-
-        Table t1 = new Table();
-        t1.setWidth(tableWidth);
-
-        Label newNickLabel = new Label("Новый ник:", new Label.LabelStyle(FONT_DIALOG_BUTTON, Color.WHITE)); // todo i18n
-        newNickLabel.setAlignment(Align.center);
-        t1.add(newNickLabel).align(Align.center).fill().padLeft(pad * 2);
-
-        TextureRegionDrawable bgTexture = new TextureRegionDrawable(ATLAS_1.findRegion("button_action_buy_disable"));
-        bgTexture.setMinWidth(tableWidth / 2);
-        bgTexture.setMinHeight(bgTexture.getMinWidth() / 6);
-        loginEditField = new TextField(User.get().login, new TextField.TextFieldStyle(FONT_RATING, Color.WHITE,
-            new TextureRegionDrawable(ATLAS_1.findRegion("cursor")),
-            new TextureRegionDrawable(ATLAS_1.findRegion("button_action_buy")),
-            bgTexture));
-        loginEditField.setMaxLength(30);
-        loginEditField.setAlignment(Align.center);
-        t1.add(loginEditField).align(Align.left).pad(pad).padTop(0).expandX().fill();
-        stage.setKeyboardFocus(loginEditField);
-
-        table.add(t1).expandX().fill().pad(pad);
-        table.row();
-
-        Button nickButton = createChangeNickButton("Сменить ник"); // todo i18n
-        table.add(nickButton).size(nickButton.getWidth(), nickButton.getHeight()).expandX().pad(pad).padTop(0);
-        table.row();
+//        Label idLabel = new Label("ID игрока: " + User.get().id, new Label.LabelStyle(FONT_DIALOG_BUTTON, Color.WHITE)); // todo i18n
+//        idLabel.setAlignment(Align.center);
+//        table.add(idLabel).expandX().pad(pad);
+//        table.row();
+//
+//        Table t2 = new Table();
+//        t2.add().expandX();
+//
+//        Label nickLabel1 = new Label("Ник: ", new Label.LabelStyle(FONT_DIALOG_BUTTON, Color.WHITE)); // todo i18n
+//        nickLabel1.setAlignment(Align.right);
+//        t2.add(nickLabel1).align(Align.right).fill();
+//
+//        Label nickLabel2 = new Label(User.get().login, new Label.LabelStyle(FONT_RATING, Color.YELLOW)); // todo i18n
+//        nickLabel2.setAlignment(Align.left);
+//        t2.add(nickLabel2).align(Align.left).fill();
+//
+//        t2.add().expandX();
+//
+//        table.add(t2).align(Align.center).fill();
+//        table.row();
+//
+//        Table t1 = new Table();
+//        t1.setWidth(tableWidth);
+//
+//        Label newNickLabel = new Label("Новый ник:", new Label.LabelStyle(FONT_DIALOG_BUTTON, Color.WHITE)); // todo i18n
+//        newNickLabel.setAlignment(Align.center);
+//        t1.add(newNickLabel).align(Align.center).fill().padLeft(pad * 2);
+//
+//        TextureRegionDrawable bgTexture = new TextureRegionDrawable(ATLAS_1.findRegion("button_action_buy_disable"));
+//        bgTexture.setMinWidth(tableWidth / 2);
+//        bgTexture.setMinHeight(bgTexture.getMinWidth() / 6);
+//        loginEditField = new TextField(User.get().login, new TextField.TextFieldStyle(FONT_RATING, Color.WHITE,
+//            new TextureRegionDrawable(ATLAS_1.findRegion("cursor")),
+//            new TextureRegionDrawable(ATLAS_1.findRegion("button_action_buy")),
+//            bgTexture));
+//        loginEditField.setMaxLength(30);
+//        loginEditField.setAlignment(Align.center);
+//        t1.add(loginEditField).align(Align.left).pad(pad).padTop(0).expandX().fill();
+//        stage.setKeyboardFocus(loginEditField);
+//
+//        table.add(t1).expandX().fill().pad(pad);
+//        table.row();
+//
+//        Button nickButton = createChangeNickButton("Сменить ник"); // todo i18n
+//        table.add(nickButton).size(nickButton.getWidth(), nickButton.getHeight()).expandX().pad(pad).padTop(0);
+//        table.row();
 
         float imageSize = tableWidth / 5;
         Table t = new Table();

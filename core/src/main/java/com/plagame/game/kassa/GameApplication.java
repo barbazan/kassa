@@ -85,11 +85,9 @@ public class GameApplication extends Game {
 //        printTextureMaxSize();
         initFonts();
         initWebSocketClient();
-        this.platform.init(new DefaultPurchaseListener()); // Инициализация всех сервисов в том числе сервиса покупок. Например загрузка каталога товаров. //todo попробовать перенести в finishLoading
     }
 
     public void finishLoading() {
-        this.platform.notifyLoadingReady();
         if(!resourcesAssigned) {
             System.out.println("------------- FINISH_LOADING -------------");
             Resources.assignResources();
@@ -103,6 +101,8 @@ public class GameApplication extends Game {
                 GameApplication.get().bgMusic.play();
             }
         }
+        this.platform.init(new DefaultPurchaseListener()); // Инициализация всех сервисов, в том числе сервиса покупок. Например, загрузка каталога товаров.
+        this.platform.notifyLoadingReady();
     }
 
     @Override

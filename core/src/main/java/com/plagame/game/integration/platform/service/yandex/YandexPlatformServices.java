@@ -8,6 +8,7 @@ import com.plagame.game.integration.platform.service.api.LeaderboardService;
 import com.plagame.game.integration.platform.service.api.PlatformServices;
 import com.plagame.game.integration.platform.service.api.model.PurchaseListener;
 import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
+import com.plagame.game.integration.platform.service.local.LocalLeaderboardService;
 import com.plagame.game.integration.yandex.YandexBridge;
 import com.plagame.game.integration.yandex.YandexSDK;
 
@@ -19,7 +20,7 @@ public class YandexPlatformServices implements PlatformServices {
 
     private final BillingService billingService = new YandexBillingService();
     private final CloudSaveService cloudSaveService = new YandexCloudSaveService();
-    private final LeaderboardService leaderboardService = new YandexLeaderboardService();
+    private final LeaderboardService leaderboardService = new LocalLeaderboardService();
     private final AdsService adsService = new YandexAdsService();
     private final I18nService i18nService = new YandexI18nService();
 
@@ -68,7 +69,7 @@ public class YandexPlatformServices implements PlatformServices {
 
     @Override
     public boolean isLeaderboardAvailable() {
-        return true;
+        return false;
     }
 
     @Override
