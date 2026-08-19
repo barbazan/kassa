@@ -59,10 +59,10 @@ public class BuyFullVersionScreen extends BaseScreen {
     }
 
     private void initButtons() {
-        float pad = GameApplication.get().minScreenSize / 20;
+        float pad = GameApplication.get().minScreenSize / 25;
         TextureRegionDrawable buttonCloseTexture = new TextureRegionDrawable(ATLAS_1.findRegion("button_close"));
         Button buttonClose = new Button(new TextureRegionDrawable(ATLAS_1.findRegion("button_close")));
-        buttonClose.setSize(pad * 4, pad * 4);
+        buttonClose.setSize(pad * 3, pad * 3);
         buttonClose.setPosition(pad, GameApplication.get().screenHeight - buttonClose.getHeight() - pad);
         buttonClose.addListener(new ActorGestureListener() {
             @Override

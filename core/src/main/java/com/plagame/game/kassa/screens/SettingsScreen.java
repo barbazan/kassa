@@ -1,5 +1,6 @@
 package com.plagame.game.kassa.screens;
 
+import static com.plagame.game.kassa.GameApplication.FONT_BIG_TOYZ;
 import static com.plagame.game.kassa.GameApplication.FONT_DIALOG_BUTTON;
 import static com.plagame.game.kassa.GameApplication.FONT_DIALOG_HEADER;
 import static com.plagame.game.kassa.GameApplication.FONT_VERY_SMALL;
@@ -161,7 +162,7 @@ public class SettingsScreen extends BaseScreen {
         style.up = buttonImage;     // по умолчанию
         style.disabled = buttonImage;  // при нажатии (опционально)
         Button redButton = new Button(style);
-        Label label = new Label(text, new Label.LabelStyle(FONT_DIALOG_BUTTON, Color.WHITE));
+        Label label = new Label(text, new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY));
         label.setAlignment(Align.center);
         redButton.add(label).align(Align.center).pad(pad * 1.3f).fill();
         redButton.addListener(new ActorGestureListener() {

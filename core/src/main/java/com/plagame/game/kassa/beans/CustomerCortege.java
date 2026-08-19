@@ -41,6 +41,7 @@ public class CustomerCortege extends Group {
         setSize(width, height);
         float startX = getStartX();
         float startY = getStartY();
+        float minH = GameApplication.get().screenHeight * 0.65f;
         float maxH = GameApplication.get().screenHeight * 0.90f;
         float prevX = startX;
         for(int i = 0; i < customerList.size(); i++) {
@@ -49,6 +50,10 @@ public class CustomerCortege extends Group {
             if(img.getHeight() > maxH) { // если чел больше чем макс высота, то нужно уменьшить
                 float w = img.getWidth() * maxH / img.getHeight();
                 img.setSize(w, maxH);
+            }
+            if(img.getHeight() < minH) { // если чел меньше чем мин высота, то нужно увеличить
+                float w = img.getWidth() * minH / img.getHeight();
+                img.setSize(w, minH);
             }
             float x = prevX + img.getWidth() * 0.01f;
             float y;
