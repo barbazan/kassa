@@ -84,8 +84,9 @@ public class LoadingScreen extends BaseScreen {
             int rnd = 1 + GameConfig.random.nextInt(2);
             return "images/loading_bg_v_" + rnd + ".jpg";
         } else {
-            int rnd = 1 + GameConfig.random.nextInt(2);
-            return "images/loading_bg_h_" + rnd + ".jpg";
+//            int rnd = 1 + GameConfig.random.nextInt(2);
+//            return "images/loading_bg_h_" + rnd + ".jpg";
+            return "images/loading_bg_h_1.jpg";
         }
     }
 }
