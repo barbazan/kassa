@@ -170,3 +170,6 @@ Thumbs.db
 /images/keystore/private_key.pepk
 /images/keystore/readme.txt
 /images/keystore/zombie-rush-keystore.jks
+
+## Python deployment helpers:
+__pycache__/

@@ -7,9 +7,11 @@
     <link href="styles.css" rel="stylesheet" type="text/css">
     <script src="soundmanager2-setup.js"></script>
     <script src="soundmanager2-jsmin.js"></script>
+    <script src="vk-billing.js"></script>
     <!-- Yandex Games SDK -->
     <script src="/sdk.js"></script>
     <script>
+        if (typeof YaGames !== "undefined" && !/(?:^|[?&])vk_app_id=/.test(window.location.search)) {
         YaGames.init()
         .then(ysdk => {
             window.ysdk = ysdk; // сохранить глобально
@@ -19,6 +21,7 @@
             console.log('Язык игрока:', window.ysdk_lang); // например "ru" или "en")
 
         });
+        }
     </script>
     <script>
         window.getPlayerString = function(callback) {

@@ -20,7 +20,7 @@ public class GameConfig {
     public static final boolean SHOW_FPS = false;
     public static final String LEADERBOARD_MAX_DOLLARS_NAME = "maxDollars";
 
-    public static TargetPlatform TARGET_PLATFORM = TargetPlatform.HTML_YANDEX;
+    public static TargetPlatform TARGET_PLATFORM = TargetPlatform.HTML_VK;
 
     public static final Json JSON = new Json();
     public static final Random random = new Random();

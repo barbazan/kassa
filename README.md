@@ -37,3 +37,11 @@ Useful Gradle tasks and flags:
 
 Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
 For example, `core:clean` removes `build` folder only from the `core` project.
+
+## VK Billing
+
+Оплата через VK: [инструкция подключения](docs/vk-billing.md).
+
+## Выкладка веб-версии
+
+После push в `master` GitHub Actions собирает и публикует игру только при `GameConfig.TARGET_PLATFORM = TargetPlatform.HTML_VK`: [настройка доступа и инструкция](docs/github-actions-web-deploy.md).

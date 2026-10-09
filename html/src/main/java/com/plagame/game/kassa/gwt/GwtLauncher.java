@@ -9,6 +9,8 @@ import com.plagame.game.integration.platform.service.api.PlatformServices;
 import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
 import com.plagame.game.integration.platform.service.local.LocalPlatformServices;
 import com.plagame.game.integration.platform.service.yandex.YandexPlatformServices;
+import com.plagame.game.integration.platform.service.vk.VKPlatformServices;
+import com.plagame.game.integration.vk.VKSDK;
 
 /** Launches the GWT application. */
 public class GwtLauncher extends GwtApplication {
@@ -27,6 +29,9 @@ public class GwtLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener() {
+            if (VKSDK.isVKEnvironment()) {
+                GameConfig.TARGET_PLATFORM = TargetPlatform.HTML_VK;
+            }
             PlatformServices platformServices = createPlatformServices(GameConfig.TARGET_PLATFORM);
             return new GameApplication(platformServices);
         }
@@ -35,6 +40,8 @@ public class GwtLauncher extends GwtApplication {
             switch (targetPlatform) {
                 case HTML_YANDEX:
                     return new YandexPlatformServices();
+                case HTML_VK:
+                    return new VKPlatformServices();
 //                case HTML_XSOLLA:
 //                    return new XsollaPlatformServices(this);
                 case LOCAL:

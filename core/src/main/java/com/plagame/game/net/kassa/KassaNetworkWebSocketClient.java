@@ -18,6 +18,9 @@ import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.utils.Time;
 
 import java.util.List;
+import com.badlogic.gdx.utils.Timer;
+import com.plagame.game.integration.platform.service.api.model.PlatformCallback;
+import static com.plagame.game.net.kassa.KassaNetworkPacket.NET_ACTION_PREPARE_VK_PURCHASE;
 
 /**
  * Created by Дмитрий Малышев on 16.11.2023.
@@ -32,6 +35,9 @@ public class KassaNetworkWebSocketClient {
     public static WebSocket webSocket;
     private static KassaNetworkPacket userPacket; // пакет для отправки чтоб каждый раз new не делать
     public volatile boolean authorized;
+    private PlatformCallback<String> pendingVKPurchase;
+    private String pendingVKRequestId;
+    private Timer.Task pendingVKTimeout;
     private long lastReconnectTime = System.currentTimeMillis() - NETWORK_RECONNECT_INTERVAL;
     private long lastSaveUserTime = System.currentTimeMillis();
 
@@ -96,7 +102,7 @@ public class KassaNetworkWebSocketClient {
     }
 
     public void sendLoginPacket() {
-        if(!authorized) {
+        if(!authorized && isConnected()) {
             KassaNetworkPacket packet = KassaNetworkPacket.createLoginPacket();
             System.out.println("====> OUT LoginPacket = " + packet);
             webSocket.send(packet.serializeToString());
@@ -131,6 +137,43 @@ public class KassaNetworkWebSocketClient {
             if(packet != null) {
                 sendPacketNow(packet);
             }
+        }
+    }
+
+    public void prepareVKPurchase(String productId, String launchParams, PlatformCallback<String> callback) {
+        if (!authorized || !isConnected()) {
+            callback.onError("Game server is unavailable");
+            return;
+        }
+        if (pendingVKPurchase != null) {
+            callback.onError("VK purchase is already pending");
+            return;
+        }
+        final String requestId = GameConfig.randomId();
+        pendingVKPurchase = callback;
+        pendingVKRequestId = requestId;
+        pendingVKTimeout = Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                if (requestId.equals(pendingVKRequestId)) {
+                    completeVKPurchase(null, "VK purchase preparation timed out");
+                }
+            }
+        }, 15);
+        sendPacketNow(KassaNetworkPacket.createVKPurchasePacket(productId, launchParams, requestId));
+    }
+
+    private void completeVKPurchase(String item, String error) {
+        PlatformCallback<String> callback = pendingVKPurchase;
+        pendingVKPurchase = null;
+        pendingVKRequestId = null;
+        if (pendingVKTimeout != null) pendingVKTimeout.cancel();
+        pendingVKTimeout = null;
+        if (callback == null) return;
+        if (error != null || item == null || item.isEmpty()) {
+            callback.onError(error == null ? "VK item is missing" : error);
+        } else {
+            callback.onSuccess(item);
         }
     }
 
@@ -193,6 +236,11 @@ public class KassaNetworkWebSocketClient {
         if (packet != null) {
             try {
                 switch (packet.action) {
+                    case NET_ACTION_PREPARE_VK_PURCHASE:
+                        if (pendingVKRequestId != null && pendingVKRequestId.equals(packet.vkRequestId)) {
+                            completeVKPurchase(packet.vkItem, packet.vkError);
+                        }
+                        break;
                     case NET_ACTION_LOGIN:
                         System.out.println("========= GET LOGIN PACKET =========== packet = " + packet);
                         System.out.println("========= SET NEW ID and SECRET =========== packet.userId = " + packet.userId + ", packet.secret = " + packet.secret);
@@ -203,6 +251,9 @@ public class KassaNetworkWebSocketClient {
                         }
                         User.get().saveUser();
                         authorized = true;
+                        if (GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK) {
+                            GameApplication.get().platform.billing().restorePurchases();
+                        }
                         sendGetRatingPacket(); // сразу после логина рейтинг запрашиваем
                         break;
                     case NET_ACTION_LOAD_USER:
@@ -212,6 +263,10 @@ public class KassaNetworkWebSocketClient {
                         }
                         break;
                     case NET_ACTION_CHECK_PURCHASES:
+                        // Login and server pushes may arrive before platform.init sets the listener.
+                        // VKBillingService will request the ledger again when its catalog is ready.
+                        if (GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK
+                            && !GameApplication.get().platform.billing().isCatalogLoaded()) break;
                         System.out.println("========= GET CHECK PURCHASES PACKET =========== packet = " + packet);
                         if(authorized) {
                             List<Purchase> purchaseList = packet.kassaUserData.purchaseList;
@@ -277,7 +332,9 @@ public class KassaNetworkWebSocketClient {
             public boolean onOpen(WebSocket webSocket) {
                 System.out.println(" ========================== onOpen ============================ ");
                 System.out.println("webSocket.getState() = " + webSocket.getState());
-                if(!authorized) {
+                if (KassaNetworkWebSocketClient.webSocket != webSocket) return false;
+                authorized = false;
+                if(isConnected()) {
                     System.out.println("Authorizing...");
                     sendLoginPacket();
                 }
@@ -287,11 +344,16 @@ public class KassaNetworkWebSocketClient {
             @Override
             public boolean onClose(WebSocket webSocket, int closeCode, String reason) {
                 System.out.println(" ========================== onClose ============================ ");
+                if (KassaNetworkWebSocketClient.webSocket == webSocket) {
+                    authorized = false;
+                    completeVKPurchase(null, "Game server connection was closed");
+                }
                 return false;
             }
 
             @Override
             public boolean onMessage(WebSocket webSocket, String message) {
+                if (KassaNetworkWebSocketClient.webSocket != webSocket) return false;
                 if(NETWORK_DEBUG) {
                     System.out.println("<==== IN message = " + message);
                 }

@@ -17,20 +17,21 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.plagame.game.kassa.beans.User;
-import com.plagame.game.kassa.screens.AchievementsScreen;import com.plagame.game.kassa.screens.BuyFullVersionScreen;
-import com.plagame.game.kassa.screens.DayCompleteScreen;
-import com.plagame.game.kassa.screens.NextDayScreen;
-import com.plagame.game.kassa.screens.ProductPlacementScreen;
-import com.plagame.game.kassa.screens.ShopScreen;
-import com.plagame.game.net.kassa.KassaNetworkWebSocketClient;
 import com.plagame.game.integration.platform.service.api.PlatformServices;
 import com.plagame.game.integration.platform.service.api.model.DefaultPurchaseListener;
+import com.plagame.game.kassa.beans.User;
 import com.plagame.game.kassa.pools.ParticlePool;
+import com.plagame.game.kassa.screens.AchievementsScreen;
+import com.plagame.game.kassa.screens.BuyFullVersionScreen;
+import com.plagame.game.kassa.screens.DayCompleteScreen;
 import com.plagame.game.kassa.screens.GameScreen;
 import com.plagame.game.kassa.screens.LoadingScreen;
+import com.plagame.game.kassa.screens.NextDayScreen;
+import com.plagame.game.kassa.screens.ProductPlacementScreen;
 import com.plagame.game.kassa.screens.SettingsScreen;
+import com.plagame.game.kassa.screens.ShopScreen;
 import com.plagame.game.kassa.utils.FontGenerator;
+import com.plagame.game.net.kassa.KassaNetworkWebSocketClient;
 
 /**
  * Created by Дмитрий Малышев on 09.04.2024.
@@ -108,6 +109,9 @@ public class GameApplication extends Game {
     @Override
     public void render () {
         try {
+            if (networkWebSocketClient != null && networkWebSocketClient.isDisconnected()) {
+                networkWebSocketClient.tryReconnect();
+            }
             super.render();
         } catch (Exception e) {
             e.printStackTrace();

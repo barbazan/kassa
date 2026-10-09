@@ -105,8 +105,10 @@ public class BuyFullVersionScreen extends BaseScreen {
             label.setPosition(GameApplication.get().screenWidth / 2 - label.getWidth() / 2, pad);
             stage.addActor(label);
         } else {
-            Label label = new Label("Купить полную версию" +
-                " \n всего за 399 руб", new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY));
+            String priceText = GameConfig.TARGET_PLATFORM == TargetPlatform.HTML_VK
+                ? " \n всего за 50 VK" : " \n всего за 399 руб";
+            Label label = new Label("Купить полную версию" + priceText,
+                new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY));
             label.setAlignment(Align.center);
             button.add(label).align(Align.center).pad(pad * 1.1f).fill();
             button.setSize(label.getWidth() * 1.11f, label.getHeight() * 1.9f);
