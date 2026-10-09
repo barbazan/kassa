@@ -86,7 +86,7 @@ public class BuyFullVersionScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                if(User.get().isAuthorized()) {
+                if(GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK || User.get().isAuthorized()) {
                     isPurchasesChecked = false;
                     GameApplication.get().platform.billing().buyFullVersion();
                 } else if(GameConfig.TARGET_PLATFORM == TargetPlatform.LOCAL) {

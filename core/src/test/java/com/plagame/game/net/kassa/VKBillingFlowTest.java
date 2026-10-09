@@ -91,6 +91,42 @@ public class VKBillingFlowTest {
         Gdx.files = oldFiles;
     }
 
+    @Test public void buyButtonReportsDisconnectedServerInsteadOfIgnoringTheClick() {
+        billing.buyFullVersion();
+        assertEquals(1, billing.errors.size());
+        assertTrue(billing.errors.get(0).contains("соединения"));
+        assertEquals(0, billing.initializations);
+        assertEquals(0, current().count(KassaNetworkPacket.NET_ACTION_PREPARE_VK_PURCHASE));
+    }
+
+    @Test public void buyButtonRetriesFailedCatalogInitializationAndPreparesOrder() {
+        authorize();
+        billing.ready(false);
+        billing.failInitialization = true;
+        billing.buyFullVersion();
+        assertFalse(billing.isCatalogLoaded());
+        assertEquals(1, billing.errors.size());
+        billing.failInitialization = false;
+        billing.buyFullVersion();
+        assertTrue(billing.isCatalogLoaded());
+        assertEquals(2, billing.initializations);
+        assertEquals(1, current().count(KassaNetworkPacket.NET_ACTION_PREPARE_VK_PURCHASE));
+        assertFalse(user.isFullVersionBuyed());
+    }
+
+    @Test public void repeatedClicksShareInitializationAndDoNotPrepareDuplicateOrders() {
+        authorize();
+        billing.ready(false);
+        billing.holdInitialization = true;
+        billing.buyFullVersion();
+        billing.buyFullVersion();
+        assertEquals(1, billing.initializations);
+        assertEquals(0, current().count(KassaNetworkPacket.NET_ACTION_PREPARE_VK_PURCHASE));
+        billing.initializationCallback.onSuccess("ready");
+        billing.buyFullVersion();
+        assertEquals(1, current().count(KassaNetworkPacket.NET_ACTION_PREPARE_VK_PURCHASE));
+    }
+
     @Test public void reconnectLogsInAndRestoresPurchasesEvenOutsideGameScreen() throws Exception {
         authorize();
         assertTrue(client.authorized);
@@ -213,6 +249,20 @@ public class VKBillingFlowTest {
     }
     private static class ReadyBilling extends VKBillingService {
         int grants;
+        int initializations;
+        boolean failInitialization;
+        boolean holdInitialization;
+        PlatformCallback<String> initializationCallback;
+        final List<String> errors = new ArrayList<>();
+        @Override protected void initializeVK(PlatformCallback<String> callback) {
+            initializations++;
+            initializationCallback = callback;
+            if (holdInitialization) return;
+            if (failInitialization) callback.onError("VK initialization timed out");
+            else callback.onSuccess("ready");
+        }
+        @Override protected String getVKLaunchParams() { return "?signed-test-launch"; }
+        @Override protected void showPurchaseError(String message) { errors.add(message); }
         ReadyBilling() { ready(true); }
         void ready(boolean value) { catalogLoaded = value; }
         @Override public void consume(com.plagame.game.integration.platform.service.api.model.BillingProduct product) {

@@ -9,7 +9,12 @@
     <script src="soundmanager2-jsmin.js"></script>
     <script src="vk-billing.js"></script>
     <!-- Yandex Games SDK -->
-    <script src="/sdk.js"></script>
+    <script>
+        // Keep synchronous Yandex SDK loading for its platform, skip it inside VK.
+        if (!/(?:^|[?&])vk_app_id=/.test(window.location.search)) {
+            document.write('<script src="/sdk.js"><\/script>');
+        }
+    </script>
     <script>
         if (typeof YaGames !== "undefined" && !/(?:^|[?&])vk_app_id=/.test(window.location.search)) {
         YaGames.init()

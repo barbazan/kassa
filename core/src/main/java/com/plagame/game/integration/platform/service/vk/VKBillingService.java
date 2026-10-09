@@ -17,15 +17,10 @@ public class VKBillingService extends BaseBillingService {
     public void init() {
         catalogLoaded = false;
         products.clear();
-        VKSDK.init(new PlatformCallback<String>() {
+        initializeVK(new PlatformCallback<String>() {
             @Override
             public void onSuccess(String value) {
-                // VK obtains the actual price from the server's get_item handler.
-                BillingProduct fullVersion = BillingCatalog.get(BillingCatalog.PRODUCT_FULL_VERSION);
-                if (fullVersion != null) {
-                    products.put(fullVersion.id, fullVersion.withPrice("Цена в окне VK"));
-                }
-                catalogLoaded = !products.isEmpty();
+                loadProducts();
                 restorePurchases();
             }
 
@@ -36,22 +31,68 @@ public class VKBillingService extends BaseBillingService {
         });
     }
 
+    private void loadProducts() {
+        // VK obtains the actual price from the server's get_item handler.
+        BillingProduct fullVersion = BillingCatalog.get(BillingCatalog.PRODUCT_FULL_VERSION);
+        if (fullVersion != null) {
+            products.put(fullVersion.id, fullVersion.withPrice("Цена в окне VK"));
+        }
+        catalogLoaded = !products.isEmpty();
+    }
+
+    @Override
+    public void purchase(final String productId) {
+        if (purchasePending) return;
+        if (!BillingCatalog.PRODUCT_FULL_VERSION.equals(productId)) {
+            purchaseFailed("Unsupported VK product");
+            return;
+        }
+        GameApplication game = GameApplication.get();
+        if (game == null || game.networkWebSocketClient == null
+            || !game.networkWebSocketClient.isConnected() || !game.networkWebSocketClient.authorized) {
+            showPurchaseError("Нет соединения с игровым сервером. Дождитесь подключения и нажмите «Купить» ещё раз.");
+            return;
+        }
+        if (!catalogLoaded) {
+            // A failed startup initialization must not permanently disable the buy button.
+            purchasePending = true;
+            initializeVK(new PlatformCallback<String>() {
+                @Override
+                public void onSuccess(String value) {
+                    loadProducts();
+                    purchasePending = false;
+                    purchase(productId);
+                }
+
+                @Override
+                public void onError(String error) {
+                    purchaseFailed(error);
+                }
+            });
+            return;
+        }
+        purchase(products.get(productId));
+    }
+
     @Override
     public void purchase(BillingProduct product) {
         if (!catalogLoaded || product == null || !products.containsKey(product.id)) {
-            System.err.println("VK product is not loaded");
+            purchaseFailed("VK product is not loaded");
             return;
         }
         if (purchasePending) return;
         if (purchaseListener == null) {
-            System.err.println("VK purchase listener is not set");
+            purchaseFailed("VK purchase listener is not set");
             return;
         }
         GameApplication game = GameApplication.get();
-        if (game == null || game.networkWebSocketClient == null) return;
+        if (game == null || game.networkWebSocketClient == null) {
+            purchaseFailed("Game server is unavailable");
+            return;
+        }
         purchasePending = true;
         // The server signs an item bound to both the game account and the VK buyer.
-        game.networkWebSocketClient.prepareVKPurchase(product.id, VKSDK.getLaunchParams(), new PlatformCallback<String>() {
+        game.networkWebSocketClient.prepareVKPurchase(product.id, getVKLaunchParams(), new PlatformCallback<String>() {
             @Override
             public void onSuccess(String item) {
                 VKSDK.purchase(item, new PlatformCallback<String>() {
@@ -76,10 +117,22 @@ public class VKBillingService extends BaseBillingService {
         });
     }
 
+    protected void initializeVK(PlatformCallback<String> callback) {
+        VKSDK.init(callback);
+    }
+
+    protected String getVKLaunchParams() {
+        return VKSDK.getLaunchParams();
+    }
+
+    protected void showPurchaseError(String message) {
+        VKSDK.alert(message);
+    }
+
     private void purchaseFailed(String error) {
         purchasePending = false;
         System.err.println("VK purchase failed: " + error);
-        VKSDK.alert("Не удалось начать оплату VK. Попробуйте позже.");
+        showPurchaseError("Не удалось начать оплату VK. Попробуйте ещё раз или перезагрузите игру.");
     }
 
     @Override

@@ -34,10 +34,11 @@
         if (!ready) {
             ready = loadBridge().then(function (bridge) {
                 return withTimeout(bridge.send('VKWebAppInit', {}), 'VK initialization timed out').then(function () {
-                    if (!bridge.supports('VKWebAppShowOrderBox')) {
-                        throw new Error('VK purchases are unavailable on this platform');
-                    }
-                    return bridge;
+                    return withTimeout(bridge.supportsAsync('VKWebAppShowOrderBox'),
+                        'VK payment support check timed out').then(function (supported) {
+                        if (!supported) throw new Error('VK purchases are unavailable on this platform');
+                        return bridge;
+                    });
                 });
             }).catch(function (error) {
                 ready = null;
