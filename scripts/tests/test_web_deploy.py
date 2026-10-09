@@ -1,5 +1,6 @@
 """Exercise packaging and rollback in a temporary directory, without SSH or HTTP."""
 from contextlib import nullcontext
+from datetime import datetime, timezone
 import hashlib
 import importlib.util
 import io
@@ -98,6 +99,7 @@ class WebDeploymentTests(unittest.TestCase):
         self.assertEqual('previous version', (self.target / 'index.html').read_text())
         self.assertTrue((self.target / 'obsolete.js').exists())
         self.assertFalse((self.root / '.git' / 'kassa-web-deployed.json').exists())
+        self.assertFalse((self.target / 'deployment.json').exists())
 
     def test_success_publishes_verified_files_and_preserves_gitignore(self):
         self.deploy()
@@ -106,6 +108,14 @@ class WebDeploymentTests(unittest.TestCase):
         self.assertEqual('*', (self.target / '.gitignore').read_text())
         state = json.loads((self.root / '.git' / 'kassa-web-deployed.json').read_text())
         self.assertEqual({'commit': SHA, 'run': 2, 'attempt': 1}, state)
+        deployment = json.loads((self.target / 'deployment.json').read_text())
+        self.assertEqual(SHA, deployment['commit'])
+        self.assertEqual(2, deployment['run'])
+        self.assertIsNotNone(datetime.fromisoformat(deployment['deployedAt']).tzinfo)
+        self.assertLess(abs((datetime.now(timezone.utc) - datetime.fromisoformat(deployment['deployedAt'])).total_seconds()), 10)
+        game = json.loads((self.target / 'game.json').read_text(encoding='utf-8'))
+        self.assertEqual('Касса', game['name'])
+        self.assertTrue((self.target / game['icon']).is_file())
         self.assertEqual(1, len(list((self.root / '.kassa-web-backups').glob('*.tar.gz'))))
 
     def test_public_probe_failure_rolls_back_and_remains_failed(self):
@@ -113,6 +123,24 @@ class WebDeploymentTests(unittest.TestCase):
             self.deploy(verify_error=RuntimeError('public probe failed'))
         self.assert_previous_version()
         self.assertEqual(2, self.calls)
+
+    def test_failed_deployment_restores_previous_success_timestamp(self):
+        old = json.dumps({'commit': 'b' * 40, 'deployedAt': '2026-10-01T00:00:00Z'})
+        (self.target / 'deployment.json').write_text(old)
+        with self.assertRaisesRegex(RuntimeError, 'public probe'):
+            self.deploy(verify_error=RuntimeError('public probe failed'))
+        self.assertEqual(old, (self.target / 'deployment.json').read_text())
+        self.assertEqual('previous version', (self.target / 'index.html').read_text())
+
+    def test_failure_to_record_success_rolls_back_the_game_and_timestamp(self):
+        old = json.dumps({'commit': 'b' * 40, 'deployedAt': '2026-10-01T00:00:00Z'})
+        (self.target / 'deployment.json').write_text(old)
+        with patch.object(receiver.os, 'replace', side_effect=OSError('record unavailable')):
+            with self.assertRaisesRegex(OSError, 'record unavailable'):
+                self.deploy()
+        self.assertEqual(old, (self.target / 'deployment.json').read_text())
+        self.assertEqual('previous version', (self.target / 'index.html').read_text())
+        self.assertFalse((self.root / '.git' / 'kassa-web-deployed.json').exists())
 
     def test_partial_transfer_failure_rolls_back(self):
         self.sync_failure = True

@@ -61,3 +61,9 @@ python3 scripts/tests/test_web_deploy.py
 Тесты работают во временной папке, без SSH и реальных платежей. Проверяются успешная выкладка, восстановление после неполной передачи и ошибки сайта, неверный хеш и коммит, опасные пути и ссылки, устаревшие запуски, повторная попытка и отсутствие файлов servlet-контейнера в веб-пакете.
 
 Основа настройки: [GitHub Actions deployments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/control-deployments), [Actions secrets](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets).
+
+## Список игр в админке
+
+Сборка также содержит `game.json` с названием, платформой, репозиторием и иконкой `game-icon.png` (из `images/icon.png`). После успешных публичных проверок серверный выкладчик записывает `deployment.json` с точным временем UTC. При ошибке эти данные откатываются вместе с игрой. В админке mir-server они отображаются на `/admin/my-games`.
+
+После изменения `receive-web-deploy.py` обновите установленную серверную копию через `scripts/setup-web-deploy.ps1 -Install` перед следующей выкладкой. Обычный push обновляет саму игру, но не установленный SSH-выкладчик.

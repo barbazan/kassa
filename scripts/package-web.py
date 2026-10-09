@@ -23,6 +23,8 @@ def package(dist, output, sha, run, attempt):
         raise ValueError('VK billing is missing from index.html')
     output.parent.mkdir(parents=True, exist_ok=True)
     metadata = json.dumps({'commit': sha, 'run': int(run), 'attempt': int(attempt)}, sort_keys=True).encode('utf-8')
+    game = json.dumps({'name': 'Касса', 'platform': 'VK', 'icon': 'game-icon.png',
+                       'repository': 'barbazan/kassa'}, ensure_ascii=False).encode('utf-8')
     with tarfile.open(output, 'w:gz') as archive:
         for path in sorted(dist.rglob('*')):
             relative = path.relative_to(dist)
@@ -30,8 +32,13 @@ def package(dist, output, sha, run, attempt):
                 continue
             if path.is_symlink():
                 raise ValueError('Symlinks are not allowed: ' + str(relative))
-            if path.is_file() and relative.as_posix() != 'release.json':
+            if path.is_file() and relative.as_posix() not in ('release.json', 'game.json', 'game-icon.png', 'deployment.json'):
                 archive.add(path, arcname=relative.as_posix(), recursive=False)
+        icon = Path(__file__).resolve().parents[1] / 'images' / 'icon.png'
+        archive.add(icon, arcname='game-icon.png', recursive=False)
+        game_entry = tarfile.TarInfo('game.json')
+        game_entry.size, game_entry.mode, game_entry.mtime = len(game), 0o644, int(time.time())
+        archive.addfile(game_entry, io.BytesIO(game))
         entry = tarfile.TarInfo('release.json')
         entry.size, entry.mode, entry.mtime = len(metadata), 0o644, int(time.time())
         archive.addfile(entry, io.BytesIO(metadata))

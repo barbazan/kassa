@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Forced SSH command for the kassa web deployment key; installed outside Git."""
 from contextlib import contextmanager
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -160,6 +161,12 @@ def deploy(root, site_url, command, stream):
             try:
                 sync_files(new, target)
                 verify_public_files(new, site_url)
+                # Written only after the public probes pass; rollback restores the old record.
+                deployment = work / 'deployment.json'
+                deployment.write_text(json.dumps({'commit': sha, 'run': run, 'attempt': attempt,
+                    'deployedAt': datetime.now(timezone.utc).isoformat()}) + '\n')
+                deployment.chmod(0o644)
+                os.replace(deployment, target / 'deployment.json')
                 state = work / 'deployed.json'
                 state.write_text(json.dumps({'commit': sha, 'run': run, 'attempt': attempt}) + '\n')
                 os.replace(state, state_path)
