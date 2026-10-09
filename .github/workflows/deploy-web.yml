@@ -1,0 +1,94 @@
+name: Deploy web version
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kassa-web-production
+  cancel-in-progress: false
+
+jobs:
+  platform:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      is_vk: ${{ steps.target.outputs.is_vk }}
+    steps:
+      - name: Check out the pushed commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check the configured platform
+        id: target
+        run: python3 scripts/check-web-platform.py
+
+  deploy:
+    needs: platform
+    if: github.ref == 'refs/heads/master' && needs.platform.outputs.is_vk == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out the pushed commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Java 17
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Test the browser bridge
+        run: node --test html/test/vk-billing.test.cjs
+
+      - name: Test deployment and rollback
+        run: python3 scripts/tests/test_web_deploy.py
+
+      - name: Test and build the web version
+        run: bash ./gradlew :core:test :html:dist --no-daemon --console=plain
+
+      - name: Package the verified build
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_RUN: ${{ github.run_number }}
+          DEPLOY_ATTEMPT: ${{ github.run_attempt }}
+        run: python3 scripts/package-web.py html/build/dist build/kassa-web.tar.gz "$DEPLOY_SHA" "$DEPLOY_RUN" "$DEPLOY_ATTEMPT"
+
+      - name: Upload and deploy the web version
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_RUN: ${{ github.run_number }}
+          DEPLOY_ATTEMPT: ${{ github.run_attempt }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$DEPLOY_SSH_KEY" || -z "$DEPLOY_KNOWN_HOSTS" ]]; then
+            echo '::error::Add DEPLOY_SSH_KEY and DEPLOY_KNOWN_HOSTS to the kassa repository Actions secrets.'
+            exit 1
+          fi
+          umask 077
+          mkdir -p "$RUNNER_TEMP/kassa-web-ssh"
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$RUNNER_TEMP/kassa-web-ssh/id_ed25519"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$RUNNER_TEMP/kassa-web-ssh/known_hosts"
+          archive_hash="$(sha256sum build/kassa-web.tar.gz)"
+          archive_hash="${archive_hash%% *}"
+          ssh -i "$RUNNER_TEMP/kassa-web-ssh/id_ed25519" \
+            -o UserKnownHostsFile="$RUNNER_TEMP/kassa-web-ssh/known_hosts" \
+            -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=15 \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+            codex@194.87.101.68 "deploy-web $DEPLOY_SHA $archive_hash $DEPLOY_RUN $DEPLOY_ATTEMPT" \
+            < build/kassa-web.tar.gz
+
+      - name: Remove temporary SSH credentials
+        if: always()
+        run: rm -f "$RUNNER_TEMP/kassa-web-ssh/id_ed25519" "$RUNNER_TEMP/kassa-web-ssh/known_hosts"
