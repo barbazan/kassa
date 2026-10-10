@@ -133,3 +133,15 @@ test('Yandex SDK is skipped inside VK and stays synchronous on other platforms',
         if (expected) assert.equal(writes[0], '<script src="/sdk.js"></script>');
     }
 });
+
+
+test('enforces the VK item limit before opening payment and allows a valid retry', async () => {
+    const env = setup(() => Promise.resolve({status: 'cancel'}));
+    for (const item of [null, undefined, 123, '', 'x'.repeat(65), 'vk1.' + 'x'.repeat(102)]) {
+        await assert.rejects(env.api.purchase(item), /1 to 64 characters/);
+    }
+    assert.equal(env.calls.length, 0);
+    assert.equal((await env.api.purchase('x'.repeat(64))).status, 'cancel');
+    assert.equal(env.calls.filter(call => call.method === 'VKWebAppShowOrderBox').length, 1);
+    assert.equal(env.calls[1].params.item.length, 64);
+});

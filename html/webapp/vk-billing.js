@@ -56,6 +56,10 @@
     window.kassaVKBilling = {
         init: init,
         purchase: function (item) {
+            // VK's payment API limits item identifiers to 64 characters.
+            if (typeof item !== 'string' || !item.length || item.length > 64) {
+                return Promise.reject(new Error('Invalid VK item: expected 1 to 64 characters'));
+            }
             if (purchasePending) return Promise.reject(new Error('VK purchase is already pending'));
             purchasePending = true;
             return init().then(function (bridge) {
