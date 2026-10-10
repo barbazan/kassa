@@ -124,12 +124,7 @@ public class GameApplication extends Game {
     }
 
     private void goToFirstScreen() {
-//        setSettingsScreen();
-//        setShopScreen();
-//        setAchievementsScreen();
-//        setProductPlacementScreen();
-//        setBuyFullVersionScreen();
-        setGameScreen();
+        setBuyFullVersionScreen();
     }
 
     public void setGameScreen() {

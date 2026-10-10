@@ -68,10 +68,13 @@
                 purchasePending = false;
                 focusGame();
                 if (result && result.status === 'cancel') return result;
-                if (!result || result.status !== 'success' || !result.order_id) {
+                // Current VK Bridge returns success: true; older clients use status: 'success'.
+                var successful = result && (result.success === true
+                    || (typeof result.success === 'undefined' && result.status === 'success'));
+                if (!successful || !result.order_id) {
                     throw new Error('VK purchase failed');
                 }
-                return result;
+                return { status: 'success', order_id: result.order_id };
             }, function (error) {
                 purchasePending = false;
                 focusGame();

@@ -20,10 +20,11 @@ function setup(send, supports = true) {
 }
 
 test('initializes once and sends the signed item unchanged', async () => {
-    const env = setup(() => Promise.resolve({status: 'success', order_id: '12345'}));
+    const env = setup(() => Promise.resolve({success: true, order_id: '235379722919'}));
     await Promise.all([env.api.init(), env.api.init()]);
     const result = await env.api.purchase('signed.item');
-    assert.equal(result.order_id, '12345');
+    assert.equal(result.order_id, '235379722919');
+    assert.equal(result.status, 'success');
     assert.equal(env.calls.filter(call => call.method === 'VKWebAppInit').length, 1);
     assert.equal(env.calls[1].params.type, 'item');
     assert.equal(env.calls[1].params.item, 'signed.item');
@@ -144,4 +145,24 @@ test('enforces the VK item limit before opening payment and allows a valid retry
     assert.equal((await env.api.purchase('x'.repeat(64))).status, 'cancel');
     assert.equal(env.calls.filter(call => call.method === 'VKWebAppShowOrderBox').length, 1);
     assert.equal(env.calls[1].params.item.length, 64);
+});
+
+
+test('accepts legacy success and normalizes the response for the game', async () => {
+    const env = setup(() => Promise.resolve({status: 'success', order_id: 12345}));
+    const result = await env.api.purchase('item');
+    assert.equal(result.status, 'success');
+    assert.equal(result.order_id, 12345);
+});
+
+test('rejects unsuccessful or incomplete modern replies and permits retry', async () => {
+    let outcome;
+    const env = setup(() => Promise.resolve(outcome));
+    for (outcome of [null, {}, {success: true}, {success: true, order_id: ''},
+        {success: false, order_id: '123'}, {success: 'true', order_id: '123'},
+        {success: false, status: 'success', order_id: '123'}]) {
+        await assert.rejects(env.api.purchase('item'), /failed/);
+    }
+    outcome = {success: true, order_id: '235379722919'};
+    assert.equal((await env.api.purchase('item')).status, 'success');
 });
