@@ -1,6 +1,7 @@
 package com.plagame.game.kassa.gwt;
 
 import com.badlogic.gdx.ApplicationListener;
+import com.github.czyzby.websocket.GwtWebSockets;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.plagame.game.kassa.GameApplication;
@@ -29,6 +30,7 @@ public class GwtLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener() {
+            GwtWebSockets.initiate();
             if (VKSDK.isVKEnvironment()) {
                 GameConfig.TARGET_PLATFORM = TargetPlatform.HTML_VK;
             }

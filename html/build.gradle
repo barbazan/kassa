@@ -58,6 +58,7 @@ dependencies {
   implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
   implementation "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
   implementation "com.github.MrStahlfelge.gdx-websockets:core:$websocketVersion:sources"
+  implementation "com.github.MrStahlfelge.gdx-websockets:html:$websocketVersion"
   implementation "com.github.MrStahlfelge.gdx-websockets:html:$websocketVersion:sources"
   implementation "com.google.jsinterop:jsinterop-annotations:2.1.0:sources"
   implementation project(':core')
