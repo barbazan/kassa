@@ -10,6 +10,10 @@ import shutil
 import tarfile
 import tempfile
 import unittest
+import zipfile
+import urllib.error
+from types import SimpleNamespace
+from contextlib import redirect_stdout
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -26,6 +30,7 @@ def load(name, filename):
 receiver = load('receiver', 'receive-web-deploy.py')
 packager = load('packager', 'package-web.py')
 gate = load('gate', 'check-web-platform.py')
+sender = load('sender', 'deploy-web-artifact.py')
 
 
 class PlatformSelectionTests(unittest.TestCase):
@@ -201,6 +206,115 @@ class WebDeploymentTests(unittest.TestCase):
         (self.dist / 'WEB-INF' / 'web.xml').write_text('servlet metadata')
         self.deploy()
         self.assertFalse((self.target / 'WEB-INF').exists())
+
+
+class ArtifactDeploymentTests(WebDeploymentTests):
+    # Exercise the same publication and rollback scenarios through the HTTPS path.
+    def deploy(self, data=None, run=2, attempt=1, verify_error=None, digest=None):
+        if data is None:
+            data = self.archive(run, attempt)
+        zipped = io.BytesIO()
+        with zipfile.ZipFile(zipped, 'w', zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr('kassa-web.tar.gz', data)
+        digest = digest or hashlib.sha256(data).hexdigest()
+        command = 'deploy-web-artifact %s %s %s %s' % (SHA, digest, run, attempt)
+        request = io.BytesIO(json.dumps({'url': ArtifactTransportTests.URL}).encode())
+        with patch.object(receiver, 'download_artifact', side_effect=lambda url, target: target.write_bytes(zipped.getvalue())), \
+                patch.object(receiver, 'deployment_lock', return_value=nullcontext()), \
+                patch.object(receiver, 'sync_files', side_effect=self.sync), \
+                patch.object(receiver, 'verify_public_files', side_effect=verify_error):
+            receiver.deploy(self.root, 'https://example.invalid/kassa/', command, request)
+
+
+class ArtifactTransportTests(unittest.TestCase):
+    URL = 'https://productionresultssa1.blob.core.windows.net/actions/build.zip?sig=synthetic'
+
+    def test_only_https_storage_urls_without_credentials_or_redirects_are_allowed(self):
+        self.assertEqual(self.URL, receiver.validate_artifact_url(self.URL))
+        self.assertTrue(receiver.validate_artifact_url('https://results-receiver.actions.githubusercontent.com/build'))
+        for url in ('http://127.0.0.1/', 'https://localhost/', 'https://169.254.169.254/',
+                    'https://evil.example/', self.URL.replace('.net/', '.net.evil.example/'),
+                    self.URL.replace('https://', 'https://user:pass@'), self.URL + '#fragment',
+                    self.URL.replace('.net/', '.net:8443/'), self.URL + '\n', None):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                receiver.validate_artifact_url(url)
+        self.assertIsNone(receiver.NoRedirect().redirect_request(None, None, 302, '', {}, 'http://localhost'))
+        self.assertIsNone(sender.NoRedirect().redirect_request(None, None, 302, '', {}, 'https://evil.example'))
+
+    def test_signed_url_is_not_exposed_on_http_failure(self):
+        failure = urllib.error.HTTPError(self.URL, 403, 'expired signed URL', {}, None)
+        with patch.object(receiver.urllib.request, 'build_opener') as opener:
+            opener.return_value.open.side_effect = failure
+            with self.assertRaises(receiver.DownloadError) as raised:
+                receiver.download_artifact(self.URL, Path('unused'))
+        self.assertNotIn('sig=', str(raised.exception))
+        self.assertIn('403', str(raised.exception))
+
+    def test_complete_download_incomplete_transfer_and_size_limit(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / 'artifact.zip'
+            for declared, limit, error in ((3, 10, None), (4, 10, receiver.DownloadError),
+                                           (3, 2, ValueError), (None, 2, ValueError)):
+                response = io.BytesIO(b'zip')
+                response.status = 200
+                response.headers = {} if declared is None else {'Content-Length': str(declared)}
+                with patch.object(receiver.urllib.request, 'build_opener') as opener, \
+                        patch.object(receiver, 'MAX_ARTIFACT', limit):
+                    opener.return_value.open.return_value = response
+                    if error:
+                        with self.assertRaises(error): receiver.download_artifact(self.URL, target)
+                    else:
+                        receiver.download_artifact(self.URL, target)
+                        self.assertEqual(b'zip', target.read_bytes())
+
+    def test_zip_must_contain_only_the_checked_release_tar(self):
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / 'release.tar.gz'
+            for files in ({'../kassa-web.tar.gz': b'x'}, {'kassa-web.tar.gz': b'x', 'extra': b'y'},
+                          {'kassa-web.tar.gz': b'too large'}):
+                zipped = io.BytesIO()
+                with zipfile.ZipFile(zipped, 'w') as archive:
+                    for name, data in files.items(): archive.writestr(name, data)
+                with patch.object(receiver, 'download_artifact', side_effect=lambda url, file: file.write_bytes(zipped.getvalue())), \
+                        patch.object(receiver, 'MAX_ARCHIVE', 2), self.assertRaises(ValueError):
+                    receiver.receive_artifact(io.BytesIO(json.dumps({'url': self.URL}).encode()), target, '0'*64)
+
+    def test_request_size_and_unknown_fields_are_rejected(self):
+        for request in (b'x'*20001, b'[]', b'{"url":"test","token":"must-not-send"}'):
+            with self.assertRaises(ValueError):
+                receiver.receive_artifact(io.BytesIO(request), Path('unused'), '0'*64)
+
+    def test_temporary_transport_errors_retry_with_new_urls_without_sending_token(self):
+        with tempfile.TemporaryDirectory() as folder:
+            archive = Path(folder) / 'build.tar.gz'; archive.write_bytes(b'archive')
+            with patch.object(sender, 'artifact_url', side_effect=[self.URL+'1', self.URL+'2', self.URL+'3']) as url, \
+                    patch.object(sender.subprocess, 'run', side_effect=[SimpleNamespace(returncode=255), SimpleNamespace(returncode=75), SimpleNamespace(returncode=0)]) as ssh, \
+                    patch.object(sender.time, 'sleep'):
+                sender.send(archive, 'key', 'known_hosts', SHA, '2', '1', 'owner/repo', '123', 'private-token')
+                self.assertEqual(3, url.call_count)
+                for index, call in enumerate(ssh.call_args_list, 1):
+                    self.assertNotIn('sig=', ' '.join(call.args[0]))
+                    self.assertNotIn('private-token', call.kwargs['input'].decode())
+                    self.assertEqual({'url': self.URL+str(index)}, json.loads(call.kwargs['input']))
+
+    def test_validation_failure_is_not_retried_and_retries_are_bounded(self):
+        with tempfile.TemporaryDirectory() as folder:
+            archive = Path(folder) / 'build.tar.gz'; archive.write_bytes(b'archive')
+            for code, count in ((1, 1), (255, 3), (75, 3)):
+                with patch.object(sender, 'artifact_url', return_value=self.URL), \
+                        patch.object(sender.subprocess, 'run', return_value=SimpleNamespace(returncode=code)) as ssh, \
+                        patch.object(sender.time, 'sleep'), self.assertRaises(RuntimeError):
+                    sender.send(archive, 'key', 'known_hosts', SHA, '2', '1', 'owner/repo', '123', 'private-token')
+                self.assertEqual(count, ssh.call_count)
+
+    def test_github_redirect_is_masked_and_not_followed_with_the_token(self):
+        response = urllib.error.HTTPError('https://api.github.com/', 302, '', {'Location': self.URL}, None)
+        with patch.object(sender.urllib.request, 'build_opener') as opener, redirect_stdout(io.StringIO()) as output:
+            opener.return_value.open.side_effect = response
+            self.assertEqual(self.URL, sender.artifact_url('owner/repo', '123', 'private-token'))
+            self.assertEqual(1, opener.return_value.open.call_count)
+        self.assertIn('::add-mask::', output.getvalue())
+        self.assertNotIn('private-token', output.getvalue())
 
 
 if __name__ == '__main__':

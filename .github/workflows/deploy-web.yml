@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: kassa-web-production
@@ -62,13 +63,26 @@ jobs:
           DEPLOY_ATTEMPT: ${{ github.run_attempt }}
         run: python3 scripts/package-web.py html/build/dist build/kassa-web.tar.gz "$DEPLOY_SHA" "$DEPLOY_RUN" "$DEPLOY_ATTEMPT"
 
-      - name: Upload and deploy the web version
+      - name: Store the build for HTTPS deployment
+        id: web-artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: kassa-web-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/kassa-web.tar.gz
+          archive: true
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Download and deploy the web version on the server
         env:
           DEPLOY_SHA: ${{ github.sha }}
           DEPLOY_RUN: ${{ github.run_number }}
           DEPLOY_ATTEMPT: ${{ github.run_attempt }}
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_ARTIFACT_ID: ${{ steps.web-artifact.outputs.artifact-id }}
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -80,14 +94,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/kassa-web-ssh"
           printf '%s\n' "$DEPLOY_SSH_KEY" > "$RUNNER_TEMP/kassa-web-ssh/id_ed25519"
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$RUNNER_TEMP/kassa-web-ssh/known_hosts"
-          archive_hash="$(sha256sum build/kassa-web.tar.gz)"
-          archive_hash="${archive_hash%% *}"
-          ssh -i "$RUNNER_TEMP/kassa-web-ssh/id_ed25519" \
-            -o UserKnownHostsFile="$RUNNER_TEMP/kassa-web-ssh/known_hosts" \
-            -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=15 \
-            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
-            codex@194.87.101.68 "deploy-web $DEPLOY_SHA $archive_hash $DEPLOY_RUN $DEPLOY_ATTEMPT" \
-            < build/kassa-web.tar.gz
+          python3 scripts/deploy-web-artifact.py
 
       - name: Remove temporary SSH credentials
         if: always()

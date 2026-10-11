@@ -14,16 +14,99 @@ import tarfile
 import tempfile
 import time
 import urllib.request
+import urllib.error
+from urllib.parse import urlsplit
+import zipfile
 
 PROJECT_ROOT = Path(os.environ.get('KASSA_DEPLOY_ROOT', '/home/codex/mir-server'))
 SITE_URL = os.environ.get('KASSA_DEPLOY_URL', 'https://mir-game.ru/kassa/')
 REQUIRED = ('index.html', 'vk-billing.js', 'html/html.nocache.js', 'assets/assets.txt', 'release.json')
 MAX_ARCHIVE = 200 * 1024 * 1024
 MAX_EXTRACTED = 512 * 1024 * 1024
+MAX_ARTIFACT = MAX_ARCHIVE + 1024 * 1024
+
+
+class DownloadError(Exception):
+    """A temporary HTTPS failure; safe to retry with a fresh signed URL."""
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, fp, code, message, headers, new_url):
+        return None
+
+
+def validate_artifact_url(url):
+    if not isinstance(url, str) or len(url) > 16384 or any(ord(c) <= 32 or ord(c) > 126 for c in url):
+        raise ValueError('Invalid artifact URL')
+    parts = urlsplit(url)
+    host = parts.hostname or ''
+    allowed = (re.fullmatch(r'[a-z0-9]+\.blob\.core\.windows\.net', host)
+               or re.fullmatch(r'[a-z0-9.-]+\.actions\.githubusercontent\.com', host))
+    if (parts.scheme != 'https' or not allowed or parts.port not in (None, 443)
+            or parts.username or parts.password or parts.fragment):
+        raise ValueError('Only HTTPS GitHub artifact storage URLs are allowed')
+    return url
+
+
+def download_artifact(url, destination):
+    url = validate_artifact_url(url)
+    request = urllib.request.Request(url, headers={'User-Agent': 'kassa-web-deploy'})
+    started = progress = time.monotonic()
+    total = 0
+    print('Downloading build from GitHub over HTTPS...', flush=True)
+    try:
+        # Never follow a redirect to another host or print the signed URL.
+        with urllib.request.build_opener(NoRedirect()).open(request, timeout=45) as response:
+            if response.status != 200:
+                raise DownloadError('Artifact download returned an unexpected HTTP status')
+            length = response.headers.get('Content-Length')
+            if length is not None and int(length) > MAX_ARTIFACT:
+                raise ValueError('Artifact exceeds the download limit')
+            with destination.open('wb') as output:
+                while True:
+                    chunk = response.read1(64 * 1024)
+                    if not chunk:
+                        break
+                    total += len(chunk)
+                    if total > MAX_ARTIFACT:
+                        raise ValueError('Artifact exceeds the download limit')
+                    output.write(chunk)
+                    now = time.monotonic()
+                    if now - started > 900:
+                        raise DownloadError('Artifact download exceeded 15 minutes')
+                    if now - progress >= 5:
+                        print('Downloaded %.1f MiB in %d seconds' % (total / 1024**2, now - started), flush=True)
+                        progress = now
+            if length is not None and total != int(length):
+                raise DownloadError('Artifact download was incomplete')
+    except urllib.error.HTTPError as error:
+        raise DownloadError('Artifact download HTTP status %d' % error.code) from None
+    except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
+        raise DownloadError('Artifact download connection failed (%s)' % type(error).__name__) from None
+    print('Build downloaded: %.1f MiB in %.1f seconds' % (total / 1024**2, time.monotonic() - started), flush=True)
+
+
+def receive_artifact(stream, destination, expected):
+    request = stream.read(20001)
+    if len(request) > 20000:
+        raise ValueError('Artifact request is too large')
+    metadata = json.loads(request)
+    if not isinstance(metadata, dict) or set(metadata) != {'url'}:
+        raise ValueError('Artifact request must contain only its signed URL')
+    zip_path = destination.with_suffix('.zip')
+    download_artifact(metadata['url'], zip_path)
+    with zipfile.ZipFile(zip_path) as artifact:
+        entries = artifact.infolist()
+        if (len(entries) != 1 or entries[0].filename != 'kassa-web.tar.gz'
+                or entries[0].is_dir() or entries[0].file_size > MAX_ARCHIVE
+                or entries[0].flag_bits & 1):
+            raise ValueError('Artifact must contain only kassa-web.tar.gz within the size limit')
+        with artifact.open(entries[0]) as archive:
+            receive_archive(archive, destination, expected)
 
 
 def parse_command(command):
-    match = re.fullmatch(r'deploy-web ([0-9a-f]{40}) ([0-9a-f]{64}) ([1-9][0-9]{0,12}) ([1-9][0-9]{0,12})', command)
+    match = re.fullmatch(r'deploy-web(?:-artifact)? ([0-9a-f]{40}) ([0-9a-f]{64}) ([1-9][0-9]{0,12}) ([1-9][0-9]{0,12})', command)
     if not match:
         raise ValueError('Only check and deploy-web <SHA> <archive SHA-256> <run> <attempt> are allowed')
     sha, digest, run, attempt = match.groups()
@@ -137,7 +220,10 @@ def deploy(root, site_url, command, stream):
     with tempfile.TemporaryDirectory(prefix='kassa-web-', dir=root / '.git') as temporary:
         work = Path(temporary)
         archive = work / 'release.tar.gz'
-        receive_archive(stream, archive, digest)
+        if command.startswith('deploy-web-artifact '):
+            receive_artifact(stream, archive, digest)
+        else:
+            receive_archive(stream, archive, digest)
         new = work / 'new'
         extract_files(archive, new)
         validate_release(new, sha, run, attempt)
@@ -194,6 +280,9 @@ def main():
 if __name__ == '__main__':
     try:
         main()
+    except DownloadError as error:
+        print('Web deployment download failed:', error, file=sys.stderr)
+        sys.exit(75)
     except Exception as error:
         print('Web deployment failed:', error, file=sys.stderr)
         sys.exit(1)
