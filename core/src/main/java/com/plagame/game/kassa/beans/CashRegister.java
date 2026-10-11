@@ -107,6 +107,8 @@ public class CashRegister extends Group {
 
         float btnSize = kassaWidth * 0.22f;
         float btnPad = btnSize / 10;
+        // The display follows the register size, which can shrink independently of the window height.
+        float displayFontScale = kassaWidth * 0.047f / FONT_DEFAULT.getCapHeight();
 
         Table kassaTable = new Table();
         kassaTable.setSize(kassaWidth, kassaHeight);
@@ -118,6 +120,7 @@ public class CashRegister extends Group {
 
 
         Label totalLabel = new Label("СУММА", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        totalLabel.setFontScale(displayFontScale);
         totalLabel.setAlignment(Align.center);
         tableRight.add(totalLabel).align(Align.center).pad(btnPad).colspan(3).fill();
         tableRight.row();
@@ -128,12 +131,14 @@ public class CashRegister extends Group {
                 return formatTotalCost(totalCost);
             }
         };
+        totalCostLabel.setFontScale(displayFontScale);
         totalCostLabel.setAlignment(Align.center);
         totalCostLabel.setHeight(btnSize);
         tableRight.add(totalCostLabel).align(Align.center).pad(btnPad).colspan(3).fill();
         tableRight.row();
 
         Label changeTextLabel = new Label("СДАЧА", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        changeTextLabel.setFontScale(displayFontScale);
         changeTextLabel.setAlignment(Align.left);
         tableRight.add(changeTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 7).fill();
 
@@ -147,12 +152,14 @@ public class CashRegister extends Group {
                 }
             }
         };
+        changeLabel.setFontScale(displayFontScale);
         changeLabel.setAlignment(Align.right);
         changeLabel.setHeight(btnSize);
         tableRight.add(changeLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 7).colspan(2).expandX().fill();
         tableRight.row();
 
         Label givingTextLabel = new Label("", new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        givingTextLabel.setFontScale(displayFontScale);
         givingTextLabel.setAlignment(Align.left);
         tableRight.add(givingTextLabel).align(Align.left).padLeft(btnPad * 3).padTop(btnPad * 8).fill();
 
@@ -168,6 +175,7 @@ public class CashRegister extends Group {
                 return formatTotalCost(givingSum);
             }
         };
+        givingLabel.setFontScale(displayFontScale);
         givingLabel.setAlignment(Align.right);
         givingLabel.setHeight(btnSize);
         tableRight.add(givingLabel).align(Align.right).padRight(btnPad * 3).padTop(btnPad * 8).colspan(2).expandX().fill();
@@ -207,12 +215,14 @@ public class CashRegister extends Group {
 
         float btnSize = terminalWidth * 0.22f;
         float btnPad = btnSize / 10;
+        float displayFontScale = terminalWidth * 0.095f / FONT_DEFAULT.getCapHeight();
         Table btnTable = new Table();
         btnTable.pad(btnPad * 2.9f).padTop(0);
 //        btnTable.setDebug(true);
         btnTable.setSize(terminalWidth, terminalHeight);
 
         Label totalLabel = new Label("СУММА", new Label.LabelStyle(FONT_DEFAULT, Color.BLACK));
+        totalLabel.setFontScale(displayFontScale);
         totalLabel.setAlignment(Align.center);
         btnTable.add(totalLabel).align(Align.center).pad(btnPad).colspan(3).fill();
         btnTable.row();
@@ -223,6 +233,7 @@ public class CashRegister extends Group {
                 return formatTotalCost(totalCost);
             }
         };
+        totalCostLabel.setFontScale(displayFontScale);
         totalCostLabel.setAlignment(Align.center);
         totalCostLabel.setHeight(btnSize);
         btnTable.add(totalCostLabel).align(Align.center).pad(btnPad * 2).colspan(3).fill();
@@ -241,6 +252,7 @@ public class CashRegister extends Group {
                 }
             }
         };
+        costLabel.setFontScale(displayFontScale);
         costLabel.setAlignment(Align.center);
         costLabel.setHeight(btnSize);
         btnTable.add(costLabel).align(Align.center).padBottom(btnPad).colspan(3).fill();

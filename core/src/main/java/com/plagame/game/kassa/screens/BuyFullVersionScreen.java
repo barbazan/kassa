@@ -1,6 +1,7 @@
 package com.plagame.game.kassa.screens;
 
 import static com.plagame.game.kassa.GameApplication.FONT_BIG_TOYZ;
+import static com.plagame.game.kassa.GameApplication.FONT_DEFAULT;
 import static com.plagame.game.kassa.Resources.ATLAS_1;
 
 import com.badlogic.gdx.InputProcessor;
@@ -9,9 +10,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.plagame.game.integration.platform.service.api.model.TargetPlatform;
@@ -25,14 +29,24 @@ import com.plagame.game.kassa.utils.SoundUtil;
  * Email: dmitry.malyshev@gmail.com
  */
 public class BuyFullVersionScreen extends BaseScreen {
+    private boolean purchaseRequested;
+    private Dialog purchaseSuccessDialog;
+    private Texture backgroundTexture;
 
     public BuyFullVersionScreen() {
         init();
     }
 
     private void init() {
+        stage.clear();
+        purchaseSuccessDialog = null;
+        if (backgroundTexture != null) backgroundTexture.dispose();
         addBackground();
-        initButtons();
+        if (purchaseRequested && User.get().isFullVersionBuyed()) {
+            showPurchaseSuccess();
+        } else {
+            initButtons();
+        }
     }
 
     private void addBackground() {
@@ -44,6 +58,7 @@ public class BuyFullVersionScreen extends BaseScreen {
             int num = 1 + GameConfig.random.nextInt(1);
             textureRegion = new TextureRegion(new Texture("images/full_version_bg_h_" + num + ".jpg"));
         }
+        backgroundTexture = textureRegion.getTexture();
         Image bgImage = getImage(textureRegion);
         stage.addActor(bgImage);
     }
@@ -87,12 +102,13 @@ public class BuyFullVersionScreen extends BaseScreen {
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
                 if(GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK || User.get().isAuthorized()) {
+                    purchaseRequested = true;
                     isPurchasesChecked = false;
                     GameApplication.get().platform.billing().buyFullVersion();
                 } else if(GameConfig.TARGET_PLATFORM == TargetPlatform.LOCAL) {
+                    purchaseRequested = true;
                     User.get().setFullVersionBuyed(true);
                     User.get().saveUser();
-                    GameApplication.get().setBuyFullVersionScreen();
                 }
                 super.tap(event, x, y, count, button);
             }
@@ -117,13 +133,65 @@ public class BuyFullVersionScreen extends BaseScreen {
         }
     }
 
+    private void showPurchaseSuccess() {
+        float dialogWidth = Math.min(GameApplication.get().screenWidth * 0.9f,
+            Math.min(680, GameApplication.get().screenHeight * 1.4f));
+        float pad = dialogWidth * 0.065f;
+        float contentWidth = dialogWidth - pad * 2;
+        TextureRegionDrawable panel = new TextureRegionDrawable(ATLAS_1.findRegion("dialog_bg"));
+        panel.setMinWidth(0);
+        panel.setMinHeight(0);
+        Window.WindowStyle dialogStyle = new Window.WindowStyle(FONT_DEFAULT, Color.WHITE, panel);
+        dialogStyle.stageBackground = skin.getDrawable("dialogDim");
+        purchaseSuccessDialog = new Dialog("", dialogStyle);
+        purchaseSuccessDialog.setMovable(false);
+        purchaseSuccessDialog.getTitleTable().setVisible(false);
+        purchaseSuccessDialog.pad(pad);
+
+        Label title = new Label("Покупка прошла\nуспешно!", new Label.LabelStyle(FONT_BIG_TOYZ, Color.WHITE));
+        title.setAlignment(Align.center);
+        title.setFontScale(Math.min(1, contentWidth / 570));
+        Label description = new Label("Полная версия «Кассы» открыта.\nСпасибо за поддержку!",
+            new Label.LabelStyle(FONT_DEFAULT, Color.WHITE));
+        description.setAlignment(Align.center);
+        description.setWrap(true);
+        description.setFontScale(Math.min(1, contentWidth / 510));
+
+        Button playButton = new Button(new TextureRegionDrawable(ATLAS_1.findRegion("button_green")),
+            new TextureRegionDrawable(ATLAS_1.findRegion("button_green_down")));
+        Label playLabel = new Label("Играть", new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY));
+        playLabel.setFontScale(Math.min(1, contentWidth / 570));
+        playButton.add(playLabel);
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                SoundUtil.playClickSound();
+                GameApplication.get().setGameScreen();
+            }
+        });
+
+        purchaseSuccessDialog.getContentTable().pad(0);
+        purchaseSuccessDialog.getContentTable().add(title).width(contentWidth).padBottom(pad * 0.7f).row();
+        purchaseSuccessDialog.getContentTable().add(description).width(contentWidth).padBottom(pad).row();
+        purchaseSuccessDialog.getContentTable().add(playButton).width(contentWidth * 0.62f).height(dialogWidth * 0.17f);
+        purchaseSuccessDialog.show(stage, null);
+        purchaseSuccessDialog.setPosition(
+            (GameApplication.get().screenWidth - purchaseSuccessDialog.getWidth()) / 2,
+            (GameApplication.get().screenHeight - purchaseSuccessDialog.getHeight()) / 2);
+    }
+
     @Override
     public void render(float delta) {
         if (User.get().isFullVersionBuyed()) {
-            GameApplication.get().setGameScreen();
-            return;
+            if (!purchaseRequested) {
+                GameApplication.get().setGameScreen();
+                return;
+            }
+            // Only the confirmed entitlement opens this dialog, never the payment SDK response.
+            if (purchaseSuccessDialog == null) init();
+        } else {
+            checkPurchases();
         }
-        checkPurchases();
         super.render(delta);
     }
 
@@ -141,5 +209,6 @@ public class BuyFullVersionScreen extends BaseScreen {
     @Override
     public void dispose() {
         stage.dispose();
+        if (backgroundTexture != null) backgroundTexture.dispose();
     }
 }

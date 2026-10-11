@@ -22,20 +22,34 @@ const play = symbol('com.plagame.game.kassa.screens.GameScreen', 'GameScreen');
 const hook = symbol('com.plagame.game.kassa.GameApplication', 'GameApplication');
 const print = symbol('java.lang.Throwable', '$printStackTraceImpl');
 const message = symbol('java.lang.Throwable', 'detailMessage');
-// Observe screens and Java exceptions without adding production-only test hooks.
-const observe = `$wnd.purchaseTestScreen=function(){return ${app}&&${app}.${screen} instanceof ${buy}?1:${app}&&${app}.${screen} instanceof ${play}?2:0};`;
+const dialog = symbol('com.plagame.game.kassa.screens.BuyFullVersionScreen', 'purchaseSuccessDialog');
+const content = symbol('com.badlogic.gdx.scenes.scene2d.ui.Dialog', 'contentTable');
+const children = symbol('com.badlogic.gdx.scenes.scene2d.Group', 'children');
+const items = symbol('com.badlogic.gdx.utils.Array', 'items');
+const coords = Object.fromEntries(['x', 'y', 'width', 'height'].map(name =>
+    [name, symbol('com.badlogic.gdx.scenes.scene2d.Actor', name)]));
+// Observe screens, dialog bounds and Java exceptions without production-only test hooks.
+const observe = `$wnd.purchaseTestScreen=function(){return ${app}&&${app}.${screen} instanceof ${buy}?1:${app}&&${app}.${screen} instanceof ${play}?2:0};
+$wnd.purchaseTestDialog=function(){
+    var d=${app}&&${app}.${screen} instanceof ${buy}&&${app}.${screen}.${dialog};
+    if(!d)return null;
+    var c=d.${content}, b=c.${children}.${items}[2];
+    return {x:d.${coords.x},y:d.${coords.y},width:d.${coords.width},height:d.${coords.height},
+        playX:d.${coords.x}+c.${coords.x}+b.${coords.x}+b.${coords.width}/2,
+        playY:d.${coords.y}+c.${coords.y}+b.${coords.y}+b.${coords.height}/2};
+};`.replace(/\r?\n/g, '');
 
 (async () => {
     const browser = await chromium.launch({headless: true,
         ...(process.env.BROWSER_PATH ? {executablePath: process.env.BROWSER_PATH} : {}),
         args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required']});
     try {
-        for (const mode of ['success', 'restore', 'cancel']) {
+        for (const mode of ['success', 'early-confirmation', 'restore', 'cancel']) {
             const context = await browser.newContext({viewport: {width: 800, height: 1000}});
             const page = await context.newPage();
             const events = [], errors = [], alerts = [];
             await page.exposeFunction('purchaseTestEvent', e => events.push(e));
-            page.on('pageerror', e => errors.push(e.message));
+            page.on('pageerror', e => { errors.push(e.message); console.error(mode + ': ' + e.message); });
             page.on('dialog', async d => { alerts.push(d.message()); await d.dismiss(); });
             await page.addInitScript(({mode, message}) => {
                 let confirmed = mode === 'restore';
@@ -47,6 +61,9 @@ const observe = `$wnd.purchaseTestScreen=function(){return ${app}&&${app}.${scre
                         if (method === 'VKWebAppShowOrderBox') {
                             window.top.purchaseTestBridgeCalls = (window.top.purchaseTestBridgeCalls || 0) + 1;
                             emit({event: 'bridge'});
+                            if (mode === 'early-confirmation') return new Promise(resolve => {
+                                window.top.purchaseTestFinishPayment = () => resolve({success: true, order_id: 'synthetic-order'});
+                            });
                             return Promise.resolve(mode === 'cancel' ? {status: 'cancel'} : {success: true, order_id: 'synthetic-order'});
                         }
                         return Promise.resolve({result: true});
@@ -107,18 +124,57 @@ const observe = `$wnd.purchaseTestScreen=function(){return ${app}&&${app}.${scre
                 mode === 'restore' ? 2 : 1, {timeout: 30000});
             if (mode === 'restore') {
                 assert.equal(events.filter(e => e.event === 'bridge').length, 0);
+                assert.equal(await page.evaluate(() => window.purchaseTestDialog()), null,
+                    'Restoring a previous purchase must skip the success dialog');
             } else {
                 await page.mouse.click(400, 875);
                 await page.waitForFunction(() => window.purchaseTestBridgeCalls === 1);
                 await page.waitForTimeout(300);
                 assert.equal(await page.evaluate(() => window.purchaseTestScreen()), 1);
                 assert(!events.some(e => e.full), 'SDK response alone must not grant the product');
-                if (mode === 'success') {
+                assert.equal(await page.evaluate(() => window.purchaseTestDialog()), null,
+                    'SDK response alone must not show the success dialog');
+                if (mode === 'success' || mode === 'early-confirmation') {
                     await page.evaluate(() => window.purchaseTestConfirm());
-                    await waitForGame();
+                    await page.waitForFunction(() => window.purchaseTestDialog?.());
+                    assert.equal(await page.evaluate(() => window.purchaseTestScreen()), 1,
+                        'Confirmed purchase must wait for the Play button');
                     assert(events.some(e => e.full), 'Server confirmation must save full version');
+                    if (mode === 'early-confirmation') {
+                        await page.evaluate(() => window.purchaseTestFinishPayment());
+                    }
+                    await page.evaluate(() => window.purchaseTestConfirm());
+                    await page.waitForTimeout(200);
+                    assert(await page.evaluate(() => window.purchaseTestDialog()),
+                        'Repeated confirmations must keep the same success step');
+                    // A modal must block taps on the old purchase/close controls.
+                    await page.mouse.click(80, 80);
+                    await page.mouse.click(400, 875);
+                    assert.equal(await page.evaluate(() => window.purchaseTestScreen()), 1);
+                    assert.equal(events.filter(e => e.event === 'bridge').length, 1);
+                    for (const viewport of [{width: 800, height: 1000}, {width: 390, height: 844},
+                        {width: 1000, height: 600}, {width: 844, height: 390}]) {
+                        await page.setViewportSize(viewport);
+                        await page.waitForTimeout(400);
+                        const bounds = await page.evaluate(() => window.purchaseTestDialog());
+                        assert(bounds, 'Resize must preserve the success step');
+                        assert(bounds.x >= 0 && bounds.y >= 0 && bounds.x + bounds.width <= viewport.width + 1
+                            && bounds.y + bounds.height <= viewport.height + 1, 'Dialog must fit the viewport');
+                        if (mode === 'success') {
+                            await page.screenshot({path: path.join(html, '..', 'build',
+                                `purchase-success-${viewport.width}x${viewport.height}.png`)});
+                        }
+                    }
+                    const bounds = await page.evaluate(() => window.purchaseTestDialog());
+                    await page.mouse.click(bounds.playX, page.viewportSize().height - bounds.playY);
+                    await waitForGame();
+                    await page.evaluate(() => window.purchaseTestConfirm());
+                    await page.waitForTimeout(200);
+                    assert.equal(await page.evaluate(() => window.purchaseTestScreen()), 2);
                     await page.reload();
                     await waitForGame();
+                    assert.equal(await page.evaluate(() => window.purchaseTestDialog()), null,
+                        'Reload must not repeat the success dialog');
                     await page.waitForFunction(() => window.purchaseTestConfirm);
                     assert.equal(events.filter(e => e.event === 'send' && e.action === 1).at(-1).accountRestored, true,
                         'Reload must retain the game account');
