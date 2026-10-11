@@ -30,6 +30,16 @@
   <extend-configuration-property name="gdx.reflect.include" value="com.plagame.game.integration.platform.service.api.model.LeaderboardEntry" />
   <extend-configuration-property name="gdx.reflect.include" value="com.plagame.game.kassa.beans.User" />
 
+  <!-- Json resolves declared field types, including collection interfaces, in GWT. -->
+  <extend-configuration-property name="gdx.reflect.include" value="java.util.Collection" />
+  <extend-configuration-property name="gdx.reflect.include" value="java.util.Set" />
+  <extend-configuration-property name="gdx.reflect.include" value="java.util.List" />
+  <extend-configuration-property name="gdx.reflect.include" value="java.util.Map" />
+  <extend-configuration-property name="gdx.reflect.include" value="java.util.HashSet" />
+  <extend-configuration-property name="gdx.reflect.include" value="java.util.HashMap" />
+  <extend-configuration-property name="gdx.reflect.include" value="java.util.ArrayList" />
+  <extend-configuration-property name="gdx.reflect.include" value="java.util.Date" />
+
   <!-- Rarely, projects may need to include files but do not have access to the complete assets. -->
   <!-- This happens for libraries and shared projects, typically, and the configuration goes in that project. -->
   <!-- The value is a path, separated by forward slashes, where the root is your html project's resources root. -->

@@ -74,6 +74,11 @@ public class FileUtilHtml {
                 return null;
             }
 
+            // LocalCloudSaveService writes JSON; older web saves may still contain Base64.
+            if (encoded.trim().startsWith("{")) {
+                return User.fromJson(encoded);
+            }
+
             byte[] data = Base64Coder.decodeLines(encoded);
 
             return User.deserialize(data);

@@ -119,6 +119,10 @@ public class BuyFullVersionScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
+        if (User.get().isFullVersionBuyed()) {
+            GameApplication.get().setGameScreen();
+            return;
+        }
         checkPurchases();
         super.render(delta);
     }

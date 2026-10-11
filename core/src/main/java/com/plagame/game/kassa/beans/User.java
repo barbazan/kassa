@@ -1,5 +1,8 @@
 package com.plagame.game.kassa.beans;
 
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
+
 import static com.plagame.game.kassa.enums.ProductInfo.START_PRODUCT_LIST;
 
 import com.plagame.game.kassa.GameApplication;
@@ -20,7 +23,7 @@ import java.util.Set;
  * Created by Дмитрий Малышев on 11.04.2026.
  * Email: dmitry.malyshev@gmail.com
  */
-public class User {
+public class User implements Json.Serializable {
     private static final long SAVE_INTERVAL = 10_000;
     private static volatile User instance;
 
@@ -191,6 +194,56 @@ public class User {
 
     public boolean isPurchasedToken(String token) {
         return purchasedProducts.contains(token);
+    }
+
+    // GWT reflection cannot access long fields or resolve inherited collection interfaces.
+    @Override public void write(Json json) {
+        json.writeValue("id", id);
+        json.writeValue("secret", secret);
+        json.writeValue("login", login);
+        json.writeValue("location", location);
+        json.writeValue("day", day);
+        json.writeValue("dollars", dollars);
+        json.writeValue("maxKassaDollars", maxKassaDollars);
+        json.writeValue("lastSaveTime", lastSaveTime);
+        json.writeValue("lastLoginTime", lastLoginTime);
+        json.writeValue("soundOn", soundOn);
+        json.writeValue("musicOn", musicOn);
+        json.writeValue("buyedProducts", buyedProducts, HashSet.class, Integer.class);
+        json.writeValue("purchasedProducts", purchasedProducts, HashSet.class, String.class);
+        json.writeValue("achievments", achievments, HashMap.class, Integer.class);
+        json.writeValue("loginDayCount", loginDayCount);
+        json.writeValue("isAdHide", isAdHide);
+        json.writeValue("isFullVersionBuyed", isFullVersionBuyed);
+        json.writeValue("advGoodIndex", advGoodIndex);
+        json.writeValue("advGoodsEndTime", advGoodsEndTime);
+    }
+
+    @Override public void read(Json json, JsonValue data) {
+        id = data.getInt("id", id);
+        secret = data.getString("secret", secret);
+        login = data.getString("login", login);
+        location = data.getInt("location", location);
+        day = data.getInt("day", day);
+        dollars = data.getInt("dollars", dollars);
+        maxKassaDollars = data.getInt("maxKassaDollars", maxKassaDollars);
+        lastSaveTime = data.getLong("lastSaveTime", lastSaveTime);
+        lastLoginTime = data.getLong("lastLoginTime", lastLoginTime);
+        soundOn = data.getBoolean("soundOn", soundOn);
+        musicOn = data.getBoolean("musicOn", musicOn);
+        if (data.has("buyedProducts")) buyedProducts = json.readValue("buyedProducts", HashSet.class, Integer.class, data);
+        if (data.has("purchasedProducts")) purchasedProducts = json.readValue("purchasedProducts", HashSet.class, String.class, data);
+        if (data.has("achievments")) {
+            achievments = new HashMap<>();
+            for (JsonValue entry = data.get("achievments").child; entry != null; entry = entry.next) {
+                if (!"class".equals(entry.name)) achievments.put(Integer.parseInt(entry.name), entry.asInt());
+            }
+        }
+        loginDayCount = data.getLong("loginDayCount", loginDayCount);
+        isAdHide = data.getBoolean("isAdHide", isAdHide);
+        isFullVersionBuyed = data.getBoolean("isFullVersionBuyed", isFullVersionBuyed);
+        advGoodIndex = data.getInt("advGoodIndex", advGoodIndex);
+        advGoodsEndTime = data.getLong("advGoodsEndTime", advGoodsEndTime);
     }
 
     public String toJson() {

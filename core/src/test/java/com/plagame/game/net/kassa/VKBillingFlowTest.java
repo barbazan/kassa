@@ -3,6 +3,8 @@ package com.plagame.game.net.kassa;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+import com.plagame.game.kassa.utils.FileUtilHtml;
 import com.badlogic.gdx.utils.Timer;
 import com.github.czyzby.websocket.WebSocket;
 import com.github.czyzby.websocket.WebSocketListener;
@@ -24,6 +26,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.*;
 
@@ -216,6 +220,40 @@ public class VKBillingFlowTest {
         String newId = current().last(KassaNetworkPacket.NET_ACTION_PREPARE_VK_PURCHASE).vkRequestId;
         current().receive("{\"action\":6,\"vkRequestId\":\"" + newId + "\",\"vkError\":\"server rejected purchase\"}");
         assertEquals("server rejected purchase", error.get());
+    }
+
+    @Test public void localVkSaveRestoresAccountAndFullVersionFromPlainJson() {
+        Preferences preferences = preferences();
+        Gdx.app = proxy(Application.class, (method, args) -> method.equals("getPreferences") ? preferences : null);
+        user.setFullVersionBuyed(true);
+        user.purchasedProducts.add("vk:app:12345");
+        FileUtilHtml.saveUserLocal(user);
+        User restored = FileUtilHtml.loadUserLocalAsBytes();
+        assertNotNull(restored);
+        assertEquals(user.id, restored.id);
+        assertEquals(user.secret, restored.secret);
+        assertTrue(restored.isFullVersionBuyed());
+        assertTrue(restored.isPurchasedToken("vk:app:12345"));
+    }
+
+    @Test public void legacyBase64WebSaveStillRestoresFullVersion() {
+        Preferences preferences = preferences();
+        Gdx.app = proxy(Application.class, (method, args) -> method.equals("getPreferences") ? preferences : null);
+        user.setFullVersionBuyed(true);
+        FileUtilHtml.saveUserLocalAsBytes(user);
+        User restored = FileUtilHtml.loadUserLocalAsBytes();
+        assertNotNull(restored);
+        assertEquals(user.id, restored.id);
+        assertTrue(restored.isFullVersionBuyed());
+    }
+
+    private static Preferences preferences() {
+        Map<String, String> values = new HashMap<>();
+        return proxy(Preferences.class, (method, args) -> {
+            if (method.equals("getString")) return values.getOrDefault((String) args[0], args.length > 1 ? (String) args[1] : "");
+            if (method.equals("putString")) values.put((String) args[0], (String) args[1]);
+            return null;
+        });
     }
 
     private void authorize() {
