@@ -48,7 +48,7 @@ jobs:
           cache: gradle
 
       - name: Test the browser bridge
-        run: node --test html/test/vk-billing.test.cjs
+        run: node --test html/test/vk-billing.test.cjs html/test/ok-billing.test.cjs
 
       - name: Test deployment and rollback
         run: python3 scripts/tests/test_web_deploy.py

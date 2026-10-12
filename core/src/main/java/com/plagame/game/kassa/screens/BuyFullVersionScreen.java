@@ -101,7 +101,8 @@ public class BuyFullVersionScreen extends BaseScreen {
             @Override
             public void tap(InputEvent event, float x, float y, int count, int button) {
                 SoundUtil.playClickSound();
-                if(GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK || User.get().isAuthorized()) {
+                if(GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK
+                    || GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_OK || User.get().isAuthorized()) {
                     purchaseRequested = true;
                     isPurchasesChecked = false;
                     GameApplication.get().platform.billing().buyFullVersion();
@@ -122,7 +123,8 @@ public class BuyFullVersionScreen extends BaseScreen {
             stage.addActor(label);
         } else {
             String priceText = GameConfig.TARGET_PLATFORM == TargetPlatform.HTML_VK
-                ? " \n всего за 50 VK" : " \n всего за 399 руб";
+                ? " \n всего за 50 голосов" : GameConfig.TARGET_PLATFORM == TargetPlatform.HTML_OK
+                    ? " \n Оплатить в ОК" : " \n всего за 399 руб";
             Label label = new Label("Купить полную версию" + priceText,
                 new Label.LabelStyle(FONT_BIG_TOYZ, Color.DARK_GRAY));
             label.setAlignment(Align.center);

@@ -21,6 +21,7 @@ import java.util.List;
 import com.badlogic.gdx.utils.Timer;
 import com.plagame.game.integration.platform.service.api.model.PlatformCallback;
 import static com.plagame.game.net.kassa.KassaNetworkPacket.NET_ACTION_PREPARE_VK_PURCHASE;
+import static com.plagame.game.net.kassa.KassaNetworkPacket.NET_ACTION_PREPARE_OK_PURCHASE;
 
 /**
  * Created by Дмитрий Малышев on 16.11.2023.
@@ -38,6 +39,9 @@ public class KassaNetworkWebSocketClient {
     private PlatformCallback<String> pendingVKPurchase;
     private String pendingVKRequestId;
     private Timer.Task pendingVKTimeout;
+    private PlatformCallback<String> pendingOKPurchase;
+    private String pendingOKRequestId;
+    private Timer.Task pendingOKTimeout;
     private long lastReconnectTime = System.currentTimeMillis() - NETWORK_RECONNECT_INTERVAL;
     private long lastSaveUserTime = System.currentTimeMillis();
 
@@ -177,6 +181,43 @@ public class KassaNetworkWebSocketClient {
         }
     }
 
+    public void prepareOKPurchase(String productId, String launchParams, PlatformCallback<String> callback) {
+        if (!authorized || !isConnected()) {
+            callback.onError("Game server is unavailable");
+            return;
+        }
+        if (pendingOKPurchase != null) {
+            callback.onError("OK purchase is already pending");
+            return;
+        }
+        final String requestId = GameConfig.randomId();
+        pendingOKPurchase = callback;
+        pendingOKRequestId = requestId;
+        pendingOKTimeout = Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                if (requestId.equals(pendingOKRequestId)) {
+                    completeOKPurchase(null, "OK purchase preparation timed out");
+                }
+            }
+        }, 15);
+        sendPacketNow(KassaNetworkPacket.createOKPurchasePacket(productId, launchParams, requestId));
+    }
+
+    private void completeOKPurchase(String item, String error) {
+        PlatformCallback<String> callback = pendingOKPurchase;
+        pendingOKPurchase = null;
+        pendingOKRequestId = null;
+        if (pendingOKTimeout != null) pendingOKTimeout.cancel();
+        pendingOKTimeout = null;
+        if (callback == null) return;
+        if (error != null || item == null || item.isEmpty()) {
+            callback.onError(error == null ? "OK item is missing" : error);
+        } else {
+            callback.onSuccess(item);
+        }
+    }
+
     public void sendGetRatingPacket() {
         System.out.println("----------------- sendGetRatingPacket ----------------- authorized = " + authorized);
         if(authorized) {
@@ -206,7 +247,9 @@ public class KassaNetworkWebSocketClient {
                     String outString = packet.serializeToString();
                     if(NETWORK_DEBUG) {
                         System.out.println("====> OUT packet = " + packet);
-                        System.out.println("====> OUT packet.serializeToString() = " + outString);
+                        if (packet.action != NET_ACTION_PREPARE_VK_PURCHASE && packet.action != NET_ACTION_PREPARE_OK_PURCHASE) {
+                            System.out.println("====> OUT packet.serializeToString() = " + outString);
+                        }
                         System.out.println("====> OUT sendSaveUserPacket outString.length() = " + outString.length());
                     }
                     webSocket.send(outString);
@@ -241,6 +284,11 @@ public class KassaNetworkWebSocketClient {
                             completeVKPurchase(packet.vkItem, packet.vkError);
                         }
                         break;
+                    case NET_ACTION_PREPARE_OK_PURCHASE:
+                        if (pendingOKRequestId != null && pendingOKRequestId.equals(packet.okRequestId)) {
+                            completeOKPurchase(packet.okItem, packet.okError);
+                        }
+                        break;
                     case NET_ACTION_LOGIN:
                         System.out.println("========= GET LOGIN PACKET =========== packet = " + packet);
                         System.out.println("========= SET NEW ID and SECRET =========== packet.userId = " + packet.userId + ", packet.secret = " + packet.secret);
@@ -251,7 +299,8 @@ public class KassaNetworkWebSocketClient {
                         }
                         User.get().saveUser();
                         authorized = true;
-                        if (GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK) {
+                        if ((GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK
+                            || GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_OK)) {
                             GameApplication.get().platform.billing().restorePurchases();
                         }
                         sendGetRatingPacket(); // сразу после логина рейтинг запрашиваем
@@ -264,8 +313,9 @@ public class KassaNetworkWebSocketClient {
                         break;
                     case NET_ACTION_CHECK_PURCHASES:
                         // Login and server pushes may arrive before platform.init sets the listener.
-                        // VKBillingService will request the ledger again when its catalog is ready.
-                        if (GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK
+                        // The billing service requests the ledger again when its catalog is ready.
+                        if ((GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_VK
+                            || GameApplication.get().platform.getPlatform() == TargetPlatform.HTML_OK)
                             && !GameApplication.get().platform.billing().isCatalogLoaded()) break;
                         System.out.println("========= GET CHECK PURCHASES PACKET =========== packet = " + packet);
                         if(authorized) {
@@ -347,6 +397,7 @@ public class KassaNetworkWebSocketClient {
                 if (KassaNetworkWebSocketClient.webSocket == webSocket) {
                     authorized = false;
                     completeVKPurchase(null, "Game server connection was closed");
+                    completeOKPurchase(null, "Game server connection was closed");
                 }
                 return false;
             }

@@ -17,6 +17,7 @@ public class KassaNetworkPacket implements Serializable {
     public static final int NET_ACTION_CHECK_PURCHASES = 4;
     public static final int NET_ACTION_GET_RATING = 5;
     public static final int NET_ACTION_PREPARE_VK_PURCHASE = 6;
+    public static final int NET_ACTION_PREPARE_OK_PURCHASE = 7;
 
     private static final Json JSON = new Json();
 
@@ -29,6 +30,10 @@ public class KassaNetworkPacket implements Serializable {
     public String vkRequestId;
     public String vkItem;
     public String vkError;
+    public String okLaunchParams;
+    public String okRequestId;
+    public String okItem;
+    public String okError;
 
     public KassaNetworkPacket() { // нельзя удалять используется в com.badlogic.gdx.utils.Json
         super();
@@ -82,6 +87,16 @@ public class KassaNetworkPacket implements Serializable {
         packet.productId = productId;
         packet.vkLaunchParams = launchParams;
         packet.vkRequestId = requestId;
+        return packet;
+    }
+
+    public static KassaNetworkPacket createOKPurchasePacket(String productId, String launchParams, String requestId) {
+        KassaNetworkPacket packet = new KassaNetworkPacket(NET_ACTION_PREPARE_OK_PURCHASE);
+        packet.userId = User.get().id;
+        packet.secret = User.get().secret;
+        packet.productId = productId;
+        packet.okLaunchParams = launchParams;
+        packet.okRequestId = requestId;
         return packet;
     }
 

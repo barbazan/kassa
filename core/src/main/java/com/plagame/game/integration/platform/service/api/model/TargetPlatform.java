@@ -7,6 +7,7 @@ public enum TargetPlatform {
     ANDROID_XSOLLA,
     HTML_YANDEX,
     HTML_VK,
+    HTML_OK,
     ;
 
     public static TargetPlatform from(String value) {
@@ -28,6 +29,7 @@ public enum TargetPlatform {
             case ANDROID_XSOLLA: return "X";
             case HTML_YANDEX: return "Y";
             case HTML_VK: return "VK";
+            case HTML_OK: return "OK";
         }
         return "_";
     }

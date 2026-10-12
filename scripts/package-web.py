@@ -7,7 +7,7 @@ import sys
 import tarfile
 import time
 
-REQUIRED = ('index.html', 'vk-billing.js', 'html/html.nocache.js', 'assets/assets.txt')
+REQUIRED = ('index.html', 'vk-billing.js', 'ok-billing.js', 'html/html.nocache.js', 'assets/assets.txt')
 
 
 def package(dist, output, sha, run, attempt):
@@ -21,6 +21,8 @@ def package(dist, output, sha, run, attempt):
         raise ValueError('Compiled game is missing')
     if 'src="vk-billing.js"' not in (dist / 'index.html').read_text(encoding='utf-8'):
         raise ValueError('VK billing is missing from index.html')
+    if 'src="ok-billing.js"' not in (dist / 'index.html').read_text(encoding='utf-8'):
+        raise ValueError('OK billing is missing from index.html')
     output.parent.mkdir(parents=True, exist_ok=True)
     metadata = json.dumps({'commit': sha, 'run': int(run), 'attempt': int(attempt)}, sort_keys=True).encode('utf-8')
     game = json.dumps({'name': 'Касса', 'platform': 'VK', 'icon': 'game-icon.png',

@@ -59,8 +59,8 @@ class WebDeploymentTests(unittest.TestCase):
         (self.target / 'obsolete.js').write_text('old file')
         (self.target / '.gitignore').write_text('*')
         self.dist = self.root / 'dist'
-        for name, value in {'index.html': '<script src="vk-billing.js"></script>',
-                            'vk-billing.js': 'billing', 'html/html.nocache.js': 'loader',
+        for name, value in {'index.html': '<script src="vk-billing.js"></script><script src="ok-billing.js"></script>',
+                            'vk-billing.js': 'billing', 'ok-billing.js': 'ok-billing', 'html/html.nocache.js': 'loader',
                             'html/game.cache.js': 'game', 'assets/assets.txt': 'assets'}.items():
             path = self.dist / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -109,6 +109,7 @@ class WebDeploymentTests(unittest.TestCase):
     def test_success_publishes_verified_files_and_preserves_gitignore(self):
         self.deploy()
         self.assertEqual('billing', (self.target / 'vk-billing.js').read_text())
+        self.assertEqual('ok-billing', (self.target / 'ok-billing.js').read_text())
         self.assertFalse((self.target / 'obsolete.js').exists())
         self.assertEqual('*', (self.target / '.gitignore').read_text())
         state = json.loads((self.root / '.git' / 'kassa-web-deployed.json').read_text())

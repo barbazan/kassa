@@ -44,14 +44,14 @@ $wnd.purchaseTestDialog=function(){
         ...(process.env.BROWSER_PATH ? {executablePath: process.env.BROWSER_PATH} : {}),
         args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--autoplay-policy=no-user-gesture-required']});
     try {
-        for (const mode of ['success', 'early-confirmation', 'restore', 'cancel']) {
+        for (const platform of ['vk', 'ok-fapi', 'ok-bridge']) for (const mode of ['success', 'early-confirmation', 'restore', 'cancel']) {
             const context = await browser.newContext({viewport: {width: 800, height: 1000}});
             const page = await context.newPage();
             const events = [], errors = [], alerts = [];
             await page.exposeFunction('purchaseTestEvent', e => events.push(e));
-            page.on('pageerror', e => { errors.push(e.message); console.error(mode + ': ' + e.message); });
+            page.on('pageerror', e => { errors.push(e.message); console.error(platform + '/' + mode + ': ' + e.message); });
             page.on('dialog', async d => { alerts.push(d.message()); await d.dismiss(); });
-            await page.addInitScript(({mode, message}) => {
+            await page.addInitScript(({mode, platform, message}) => {
                 let confirmed = mode === 'restore';
                 const emit = event => window.top.purchaseTestEvent(event);
                 window.purchaseTestException = error => emit({event: 'javaError', message: error[message]});
@@ -69,9 +69,24 @@ $wnd.purchaseTestDialog=function(){
                         return Promise.resolve({result: true});
                     }
                 };
+                window.FAPI = {
+                    init: (_server, _connection, ready) => ready(),
+                    UI: {
+                        loaded: () => {},
+                        showPayment: (_name, _description, item, price, _options, _attributes, currency, callback, uiConf) => {
+                            emit({event: 'fapi', item, price, currency, callback, uiConf});
+                            window.top.purchaseTestBridgeCalls = (window.top.purchaseTestBridgeCalls || 0) + 1;
+                            emit({event: 'bridge'});
+                            const finish = () => window.API_callback('showPayment', mode === 'cancel' ? 'error' : 'ok',
+                                mode === 'cancel' ? 'cancel' : '299');
+                            if (mode === 'early-confirmation') window.top.purchaseTestFinishPayment = finish;
+                            else setTimeout(finish, 20);
+                        }
+                    }
+                };
                 const userData = () => ({lastLoginTime: 1700000000123, advGoodsEndTime: 1700000000456,
                     purchasedProducts: {class: 'java.util.HashSet', items: []},
-                    purchaseList: confirmed ? [{id: 2, amount: 1, token: 'vk:synthetic:full'}] : [],
+                    purchaseList: confirmed ? [{id: 2, amount: 1, token: (platform === 'vk' ? 'vk' : 'ok') + ':synthetic:full'}] : [],
                     buyedProducts: [1, 4], achievments: {'3': 11},
                     ratingMaxDollars: [{id: 17, login: 'test', value: 1700000000123, rank: 1}]});
                 class FakeSocket {
@@ -88,13 +103,17 @@ $wnd.purchaseTestDialog=function(){
                         if (action === 4 || action === 5) this.reply({action, userId: 17, kassaUserData: userData()});
                         if (action === 6) this.reply({action: 6,
                             vkRequestId: text.match(/"?vkRequestId"?\s*:\s*"?([^,}"\s]+)/)?.[1], vkItem: 'vk2_' + 'a'.repeat(54)});
+                        if (action === 7) this.reply({action: 7,
+                            okRequestId: text.match(/"?okRequestId"?\s*:\s*"?([^,}"\s]+)/)?.[1],
+                            okItem: JSON.stringify({item: 'ok1_' + 'a'.repeat(54), price: 299, currency: 'ok',
+                                productHash: 'b'.repeat(64), mode: platform === 'ok-fapi' ? 'fapi' : 'bridge'})});
                     }
                     reply(packet) { setTimeout(() => this.onmessage?.({data: JSON.stringify(packet)}), 20); }
                     close() { this.readyState = 3; this.onclose?.({code: 1000, reason: ''}); }
                 }
                 Object.assign(FakeSocket, {CONNECTING: 0, OPEN: 1, CLOSING: 2, CLOSED: 3});
                 window.WebSocket = FakeSocket;
-            }, {mode, message});
+            }, {mode, platform, message});
             await page.route('**/*', async route => {
                 const url = new URL(route.request().url());
                 if (url.hostname !== 'mir-game.ru' || !url.pathname.startsWith('/kassa/')) return route.abort();
@@ -119,7 +138,10 @@ $wnd.purchaseTestDialog=function(){
                 await route.fulfill({status: 200, body, contentType});
             });
             const waitForGame = () => page.waitForFunction(() => window.purchaseTestScreen?.() === 2, null, {timeout: 15000});
-            await page.goto('https://mir-game.ru/kassa/?vk_app_id=54675409');
+            const launch = platform === 'vk' ? 'vk_app_id=54675409'
+                : platform === 'ok-bridge' ? 'vk_app_id=123456789&vk_client=ok&vk_user_id=456'
+                : 'api_server=https%3A%2F%2Fapi.ok.ru%2F&apiconnection=synthetic&logged_user_id=456&application_key=public-test-key';
+            await page.goto('https://mir-game.ru/kassa/?' + launch);
             await page.waitForFunction(expected => window.purchaseTestScreen?.() === expected,
                 mode === 'restore' ? 2 : 1, {timeout: 30000});
             if (mode === 'restore') {
@@ -129,6 +151,16 @@ $wnd.purchaseTestDialog=function(){
             } else {
                 await page.mouse.click(400, 875);
                 await page.waitForFunction(() => window.purchaseTestBridgeCalls === 1);
+                const prepared = events.filter(e => e.event === 'send' && (e.action === 6 || e.action === 7));
+                assert.equal(prepared.length, 1);
+                assert.equal(prepared[0].action, platform === 'vk' ? 6 : 7, 'Use the matching platform billing');
+                if (platform === 'ok-fapi') {
+                    const payment = events.find(e => e.event === 'fapi');
+                    assert.equal(payment.price, 299);
+                    assert.equal(payment.currency, 'ok');
+                    assert.equal(payment.callback, 'true');
+                    assert.equal(JSON.parse(payment.uiConf)['popLayer.payment.productHash'], 'b'.repeat(64));
+                }
                 await page.waitForTimeout(300);
                 assert.equal(await page.evaluate(() => window.purchaseTestScreen()), 1);
                 assert(!events.some(e => e.full), 'SDK response alone must not grant the product');
@@ -160,7 +192,7 @@ $wnd.purchaseTestDialog=function(){
                         assert(bounds, 'Resize must preserve the success step');
                         assert(bounds.x >= 0 && bounds.y >= 0 && bounds.x + bounds.width <= viewport.width + 1
                             && bounds.y + bounds.height <= viewport.height + 1, 'Dialog must fit the viewport');
-                        if (mode === 'success') {
+                        if (mode === 'success' && platform === 'vk') {
                             await page.screenshot({path: path.join(html, '..', 'build',
                                 `purchase-success-${viewport.width}x${viewport.height}.png`)});
                         }
@@ -188,7 +220,7 @@ $wnd.purchaseTestDialog=function(){
             assert.deepEqual(alerts, []);
             assert.deepEqual(errors, []);
             assert.deepEqual(events.filter(e => e.event === 'javaError'), [], 'No swallowed Java exceptions');
-            console.log('PASS ' + mode + ': screen, purchase state, saves, collections and timestamps');
+            console.log('PASS ' + platform + '/' + mode + ': screen, purchase state, saves, collections and timestamps');
             await context.close();
         }
     } finally {
